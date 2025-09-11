@@ -1,8 +1,5 @@
 package com.example.Services;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import com.example.Entities.DbModels.People.User;
 
@@ -10,9 +7,9 @@ public class Global {
     public static final String URL = "jdbc:postgresql://localhost:5432/rentacar";
     public static User activeUser;
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL,activeUser.getEmail(),activeUser.getPasswd());
-    }
+    // public static Connection getConnection() throws SQLException {
+    //     return DriverManager.getConnection(URL,activeUser.getEmail(),activeUser.getPasswd());
+    // }
 
     public static void printMenuHeader(String title) {
         int width = 40; // Kutu genişliği (╔═════════40══════════╗)

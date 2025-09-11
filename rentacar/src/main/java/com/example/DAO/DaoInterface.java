@@ -9,5 +9,5 @@ public interface DaoInterface <T>{
     T getyId(int id);
     List<T> getAll();
     void update(T item);
-    void deleteVehicle(int id);
+    void delete(int id);
 }
