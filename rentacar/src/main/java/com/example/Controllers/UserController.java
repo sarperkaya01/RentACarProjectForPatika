@@ -1,7 +1,7 @@
 package com.example.Controllers;
 
 
-import java.sql.SQLException;
+
 import java.util.Arrays;
 
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.example.Services.ControllerInterface;
-import com.example.Services.Global;
-import com.example.Services.UserServices;
+
+
 
 public class UserController implements ControllerInterface {
 
@@ -58,7 +58,7 @@ public class UserController implements ControllerInterface {
     
 
     private void registerUser() {
-        //register menu
+        pageTitle("Register Page");
     }
 
     private void loginUser() {

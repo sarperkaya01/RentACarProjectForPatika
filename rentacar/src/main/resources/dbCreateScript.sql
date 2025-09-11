@@ -13,7 +13,7 @@ CREATE TABLE Users(
     user_id SERIAL PRIMARY KEY,
     email VARCHAR(50) NOT NULL UNIQUE, 
     passwd bytea
-    
+    user_role TINYINT NOT NULL DEFAULT 1;    
     
 );
 

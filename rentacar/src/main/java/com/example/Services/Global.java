@@ -8,13 +8,13 @@ import java.util.Scanner;
 import com.example.Entities.DbModels.People.User;
 
 public class Global {
-    public static final String URL = "jdbc:postgresql://localhost:5432/rentacar";// docker container db olustur ve
+    public static final String URL = "jdbc:postgresql://34.134.112.5:5433/rentacar_db";
                                                                                  // erisim yetkisi ver
     public static User activeUser;
     public static Scanner scanner = new Scanner(System.in);
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, "posgtres", "");
+        return DriverManager.getConnection(URL, "cohort11a", "rentacar");
     }
 
     public static void printMenuHeader(String title) {
