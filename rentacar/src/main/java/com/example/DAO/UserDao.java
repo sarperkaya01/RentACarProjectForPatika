@@ -119,7 +119,7 @@ public class UserDao implements DaoS<User> {
             }
 
         } catch (SQLException e) {
-            System.out.println("An error occurred while retrieving from the user database : " + e.getMessage());
+            System.out.println("An error occurred while retrieving from the user table : " + e.getMessage());
             e.printStackTrace();
             return null;
         }

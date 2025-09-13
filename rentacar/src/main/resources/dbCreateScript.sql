@@ -23,7 +23,7 @@ CREATE TABLE Customers(
     customer_name VARCHAR(20) not null, 
     customer_surname VARCHAR(30) not null, 
     customer_age SMALLINT not null,     
-    company_name VARCHAR(20) not null, 
+    company_name VARCHAR(20) not null UNIQUE, 
     -- Foreign Key constraints
     CONSTRAINT fk_customer_user FOREIGN KEY(user_id) REFERENCES Users(user_id) ON DELETE CASCADE
 );

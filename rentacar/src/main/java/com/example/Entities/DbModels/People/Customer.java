@@ -7,6 +7,15 @@ public class Customer {
     private String customerSurname;
     private Integer age;
     private String companyName;
+    public Customer(Integer customerId, Integer userId, String customerName, String customerSurname, Integer age,
+            String companyName) {
+        this.customerId = customerId;
+        this.userId = userId;
+        this.customerName = customerName;
+        this.customerSurname = customerSurname;
+        this.age = age;
+        this.companyName = companyName;
+    }
     @Override
     public String toString() {
         return "Customer [customerId=" + customerId + ", userId=" + userId + ", customerName=" + customerName
