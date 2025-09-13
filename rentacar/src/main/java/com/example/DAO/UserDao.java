@@ -5,13 +5,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.List;
 
 import com.example.Entities.DbModels.People.User;
-import com.example.Services.HashUtil;
 
-public class UserDao implements DaoInterface<User> {
+import com.example.Services.Enums.UserRoles;
+import com.example.Services.Interfaces.DaoS;
+
+public class UserDao implements DaoS<User> {
     private Connection conn;
 
     public UserDao(Connection conn) {
@@ -21,13 +23,14 @@ public class UserDao implements DaoInterface<User> {
     @Override
     public void add(User item) {
         String sql = """
-                insert into users ( email,passwd)
-                values ( ?, ?);
+                insert into users ( email,passwd,user_role)
+                values ( ?, ?,?);
                 """;
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, item.getEmail());
             ps.setBytes(2, item.getPasswd());
+            ps.setString(3, item.getRole().name());
             ps.executeUpdate();
             System.out.println("New user added correctly !");
 
@@ -49,7 +52,11 @@ public class UserDao implements DaoInterface<User> {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                User u = new User(rs.getInt("user_id"), rs.getString("email"), rs.getBytes("passwd"));
+                User u = new User(
+                        rs.getInt("user_id"),
+                        rs.getString("email"),
+                        rs.getBytes("passwd"),
+                        UserRoles.valueOf(rs.getString("user_role")));
                 return u;
 
             } else {
@@ -59,7 +66,34 @@ public class UserDao implements DaoInterface<User> {
 
         } catch (SQLException e) {
             System.out.println("An error occurred while retrieving from the user database : " + e.getMessage());
-            e.printStackTrace(); 
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+     public User getyByEmail(String email) {
+        String sql = """
+                select * from  USERS WHERE email= ?;
+                """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User u = new User(
+                        rs.getInt("user_id"),
+                        rs.getString("email"),
+                        rs.getBytes("passwd"),
+                        UserRoles.valueOf(rs.getString("user_role")));
+                return u;
+
+            } else {
+                System.out.println("There isn't any user for this id : " + email);
+                return null;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("An error occurred while retrieving from the user database : " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
 
@@ -78,14 +112,15 @@ public class UserDao implements DaoInterface<User> {
                 User u = new User(
                         rs.getInt("user_id"),
                         rs.getString("email"),
-                        rs.getBytes("passwd"));
+                        rs.getBytes("passwd"),
+                        UserRoles.valueOf(rs.getString("user_role")));
                 uList.add(u);
 
-            } 
+            }
 
         } catch (SQLException e) {
             System.out.println("An error occurred while retrieving from the user database : " + e.getMessage());
-            e.printStackTrace(); 
+            e.printStackTrace();
             return null;
         }
         return null;
@@ -94,19 +129,21 @@ public class UserDao implements DaoInterface<User> {
     @Override
     public void update(User item) {
         String sql = """
-                UPDATE users set email=?,passwd=? where user_id = ?;
+                UPDATE users set email=?,passwd=?,user_role=? where user_id = ?;
                 """;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(3, item.getUserId());
+
             ps.setString(1, item.getEmail());
             ps.setBytes(2, item.getPasswd());
+            ps.setString(3, item.getRole().name());
+            ps.setInt(4, item.getUserId());
 
             ps.executeUpdate();
             System.out.println("User updated !");
         } catch (SQLException e) {
             System.out.println("An error occurred while retrieving from the user database : " + e.getMessage());
-            e.printStackTrace(); 
-            
+            e.printStackTrace();
+
         }
     }
 
@@ -125,28 +162,6 @@ public class UserDao implements DaoInterface<User> {
         }
     }
 
-    public boolean login(String email, String password) {
-        String sql = "SELECT passwd FROM Users WHERE email = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, email);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                byte[] storedHash = rs.getBytes("passwd"); // hash from db
-                byte[] inputHash = HashUtil.sha256(password); // user input hash
-
-                return Arrays.equals(storedHash, inputHash);
-            } else {
-                 System.out.println("Email or password is not correct !" );
-                return false;
-            }
-
-        } catch (SQLException e) {
-            System.out.println("An error occurred while retrieving from the user database : " + e.getMessage());
-            e.printStackTrace(); 
-            return false;
-        }
-
-    }
+    
 
 }

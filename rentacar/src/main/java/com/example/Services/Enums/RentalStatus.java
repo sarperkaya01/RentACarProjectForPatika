@@ -1,7 +1,7 @@
-package com.example.Services;
+package com.example.Services.Enums;
 
 public enum RentalStatus {
     AVAILABLE,      // Kiralanabilir, müsait
     RENTED,         // Şu anda kirada
-    NOTAVAILABLE
+    NOT_AVAILABLE
 }

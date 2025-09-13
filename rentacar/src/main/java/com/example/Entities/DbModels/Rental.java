@@ -2,7 +2,7 @@ package com.example.Entities.DbModels;
 
 import java.sql.Date;
 
-import com.example.Services.RentalStatus;
+import com.example.Services.Enums.RentalStatus;
 
 
 public class Rental {

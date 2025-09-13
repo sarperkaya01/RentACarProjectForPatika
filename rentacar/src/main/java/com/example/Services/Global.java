@@ -5,16 +5,18 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import com.example.Entities.DbModels.People.User;
-
 public class Global {
-    public static final String URL = "jdbc:postgresql://34.134.112.5:5433/rentacar_db";
-                                                                                 // erisim yetkisi ver
-    public static User activeUser;
+    public static final String URL = "jdbc:postgresql://cohort11.sarperkaya.site:5433/rentacar_db";
+
     public static Scanner scanner = new Scanner(System.in);
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, "cohort11a", "rentacar");
+    public static Connection getConnection() {
+        try {
+            return DriverManager.getConnection(URL, "cohort11a", "cohort11a");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null; // veya custom handling
+        }
     }
 
     public static void printMenuHeader(String title) {

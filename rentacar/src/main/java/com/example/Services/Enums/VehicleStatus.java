@@ -1,4 +1,4 @@
-package com.example.Services;
+package com.example.Services.Enums;
 
 public enum VehicleStatus {
     

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.DAO.UserDao;
 import com.example.Entities.DbModels.People.User;
+import com.example.Services.Enums.UserRoles;
 
 public class UserServices {
      private UserDao userDao;
@@ -15,7 +16,7 @@ public class UserServices {
 
     public void register(String email, String password) {
         byte[] hash = HashUtil.sha256(password);
-        User user = new User(null, email, hash);
+        User user = new User(null, email, hash,UserRoles.ADMIN);
         userDao.add(user);
     }
     public User getUserByEmail(String email) {
@@ -27,11 +28,7 @@ public class UserServices {
     public void updateUser(User item){
         userDao.update(item);
 
-    }
-
-    public boolean login(String email, String password) {
-        return userDao.login(email, password);
-    }
+    }    
 
     public List<User> getAllUsers() {
         return userDao.getAll();

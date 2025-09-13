@@ -1,10 +1,10 @@
-package com.example.DAO;
+package com.example.Services.Interfaces;
 
 import java.util.List;
 
 
 
-public interface DaoInterface <T>{
+public interface DaoS <T>{
     void add(T item);
     T getyId(int id);
     List<T> getAll();

@@ -1,6 +1,6 @@
 package com.example.Entities.DbModels.Vehicles;
 
-import com.example.Services.VehicleStatus;
+import com.example.Services.Enums.VehicleStatus;
 
 public class Vehicle {
     private Integer vehicleId;

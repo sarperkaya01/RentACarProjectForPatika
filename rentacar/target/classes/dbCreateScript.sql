@@ -9,12 +9,11 @@ WITH
     TEMPLATE = template0;
 
 -- Users table create
-CREATE TABLE Users(
+CREATE TABLE Users (
     user_id SERIAL PRIMARY KEY,
-    email VARCHAR(50) NOT NULL UNIQUE, 
-    passwd bytea
-    user_role TINYINT NOT NULL DEFAULT 1;    
-    
+    email VARCHAR(254) NOT NULL UNIQUE,
+    passwd BYTEA NOT NULL,
+    user_role VARCHAR(10) NOT NULL DEFAULT 'ADMIN'
 );
 
 -- Customers table create
