@@ -29,15 +29,13 @@ public class LoginController implements Controller {
         System.out.println("Password:");
         String passwd = sc.nextLine();
 
-        boolean loginSuccessful;
         do {
-            loginSuccessful = login(email, passwd); // 'x' yerine daha anlamlı bir isim
 
-            if (!loginSuccessful) {
+            if (login(email, passwd) == null) {
                 System.out.println("Email or password is wrong ! Please try again...");
             }
 
-        } while (!loginSuccessful);
+        } while (login(email, passwd) == null);
         MainMenuController mmc = new MainMenuController(conn, sc);
         mmc.start();
 
@@ -53,7 +51,7 @@ public class LoginController implements Controller {
         return Arrays.asList("");
     }
 
-    public boolean login(String email, String password) {
+    public User login(String email, String password) {
 
         UserDao ud = new UserDao(conn);
         User checkUser = ud.getyByEmail(email);
@@ -61,7 +59,7 @@ public class LoginController implements Controller {
         byte[] storedHash = checkUser.getPasswd(); // hash from db
         byte[] inputHash = HashUtil.sha256(password); // user input hash
 
-        return Arrays.equals(storedHash, inputHash);
+        return Arrays.equals(storedHash, inputHash) ? checkUser : null;
 
     }
 
