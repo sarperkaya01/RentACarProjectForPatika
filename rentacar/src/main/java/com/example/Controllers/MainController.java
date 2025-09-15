@@ -1,20 +1,23 @@
 package com.example.Controllers;
 
-import java.sql.Connection;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.Services.Global;
 import com.example.Services.Interfaces.Controller;
 
 public class MainController implements Controller {
-    private Connection conn;
-    private Scanner sc;
+    private final RegisterController registerController;
+    private final LoginController loginController;
 
-    public MainController(Connection conn, Scanner sc) {
-        this.conn = conn;
-        this.sc = sc;
+     @Autowired
+    public MainController(RegisterController registerController, LoginController loginController) {
+        this.registerController = registerController;
+        this.loginController = loginController;
     }
 
     @Override
@@ -28,8 +31,8 @@ public class MainController implements Controller {
                 // this::forgotPassword,
                 this::exit);
 
-        int choice = sc.nextInt();
-        sc.nextLine();
+        int choice =Global.scanner.nextInt();
+        Global.scanner.nextLine();
         boolean checkInput = menuCases(choice, actions);
         if (!checkInput) {
             start();
@@ -42,14 +45,12 @@ public class MainController implements Controller {
     }
 
     private void registerPage() {
-        RegisterController rc = new RegisterController(conn,sc);
-        rc.start();
+        registerController.start();
 
     }
 
     private void loginPage() {
-        LoginController lc = new LoginController(conn, sc);
-        lc.start();
+        loginController.start();
     }
 
     @Override

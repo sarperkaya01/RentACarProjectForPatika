@@ -1,11 +1,35 @@
 package com.example.Entities.DbModels.People;
 
+
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity 
+@Table(name = "customers")
 public class Customer {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "customer_id")
     private Integer customerId;
+
+    @Column(name = "user_id")
     private Integer userId;
+
+    @Column(name = "customer_name", nullable = false, length = 20)
     private String customerName;
+
+    @Column(name = "customer_surname", nullable = false, length = 30)
     private String customerSurname;
+    
+    @Column(name = "customer_age", nullable = false)
     private Integer age;
+    
+    @Column(name = "company_name", nullable = false, unique = true, length = 20)
     private String companyName;
     public Customer(Integer customerId, Integer userId, String customerName, String customerSurname, Integer age,
             String companyName) {

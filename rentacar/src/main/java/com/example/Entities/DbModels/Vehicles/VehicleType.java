@@ -1,14 +1,42 @@
 package com.example.Entities.DbModels.Vehicles;
 
-import com.example.Services.Enums.VehicleTypes;
 
+
+import java.math.BigDecimal;
+
+import com.example.Utils.Enums.VehicleTypes;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+
+@Entity
+@Table(name = "vehicletypes")
 public class VehicleType {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "type_id")
     private Integer typeId;
+
+    @Column(name = "vehicle_type", nullable = false, length = 20)
     private VehicleTypes vehicleType;
-    private Double hourlyPricing;
-    private Double dailyPricing;
-    private Double weaklyPricing;
-    private Double monthlyPricing;
+
+    @Column(name = "hourly_pricing", nullable = false, precision = 6, scale = 2)
+    private BigDecimal hourlyPricing;
+
+    @Column(name = "daily_pricing", nullable = false, precision = 6, scale = 2)
+    private BigDecimal dailyPricing;
+
+    @Column(name = "weekly_pricing", nullable = false, precision = 6, scale = 2)
+    private BigDecimal weaklyPricing; 
+
+    @Column(name = "monthly_pricing", nullable = false, precision = 6, scale = 2)
+    private BigDecimal monthlyPricing;
+
     @Override
     public String toString() {
         return "VehicleType [typeId=" + typeId + ", vehicleType=" + vehicleType + ", hourlyPricing=" + hourlyPricing
@@ -27,28 +55,28 @@ public class VehicleType {
     public void setVehicleType(VehicleTypes vehicleType) {
         this.vehicleType = vehicleType;
     }
-    public Double getHourlyPricing() {
+    public BigDecimal getHourlyPricing() {
         return hourlyPricing;
     }
-    public void setHourlyPricing(Double hourlyPricing) {
+    public void setHourlyPricing(BigDecimal hourlyPricing) {
         this.hourlyPricing = hourlyPricing;
     }
-    public Double getDailyPricing() {
+    public BigDecimal getDailyPricing() {
         return dailyPricing;
     }
-    public void setDailyPricing(Double dailyPricing) {
+    public void setDailyPricing(BigDecimal dailyPricing) {
         this.dailyPricing = dailyPricing;
     }
-    public Double getWeaklyPricing() {
+    public BigDecimal getWeaklyPricing() {
         return weaklyPricing;
     }
-    public void setWeaklyPricing(Double weaklyPricing) {
+    public void setWeaklyPricing(BigDecimal weaklyPricing) {
         this.weaklyPricing = weaklyPricing;
     }
-    public Double getMonthlyPricing() {
+    public BigDecimal getMonthlyPricing() {
         return monthlyPricing;
     }
-    public void setMonthlyPricing(Double monthlyPricing) {
+    public void setMonthlyPricing(BigDecimal monthlyPricing) {
         this.monthlyPricing = monthlyPricing;
     }
 }

@@ -1,33 +1,36 @@
 package com.example.Controllers;
 
-import java.sql.Connection;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
-import com.example.DAO.UserDao;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.example.Entities.DbModels.People.User;
-
+import com.example.Services.Global;
 import com.example.Services.HashUtil;
+import com.example.Services.UserServices;
 import com.example.Services.Interfaces.Controller;
 
 public class LoginController implements Controller {
-    private Connection conn;
-    private Scanner sc;
 
-    public LoginController(Connection conn, Scanner sc) {
-        this.conn = conn;
-        this.sc = sc;
+    private final UserServices userServices;
+    
+
+    @Autowired
+    public LoginController(UserServices userServices) {
+
+        this.userServices = userServices;
+
     }
 
     @Override
     public void start() {
         pageTitle("Log In");
         System.out.println("Email:");
-        String email = sc.nextLine();
+        String email = Global.scanner.nextLine();
         System.out.println("Password:");
-        String passwd = sc.nextLine();
+        String passwd = Global.scanner.nextLine();
 
         do {
 
@@ -36,7 +39,7 @@ public class LoginController implements Controller {
             }
 
         } while (login(email, passwd) == null);
-        MainMenuController mmc = new MainMenuController(conn, sc);
+        MainMenuController mmc = new MainMenuController();
         mmc.start();
 
     }
@@ -53,8 +56,10 @@ public class LoginController implements Controller {
 
     public User login(String email, String password) {
 
-        UserDao ud = new UserDao(conn);
-        User checkUser = ud.getyByEmail(email);
+        User checkUser = userServices.getUserByEmail(email);
+        if (checkUser == null) {
+            return null;
+        }
 
         byte[] storedHash = checkUser.getPasswd(); // hash from db
         byte[] inputHash = HashUtil.sha256(password); // user input hash

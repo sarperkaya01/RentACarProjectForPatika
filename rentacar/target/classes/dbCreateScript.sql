@@ -34,7 +34,7 @@ CREATE TABLE VehicleTypes(
     vehicle_type VARCHAR(20) not null,
     hourly_pricing DECIMAL(6,2) not null,
     daily_pricing DECIMAL(6,2) not null, 
-    weakly_pricing DECIMAL(6,2) not null, 
+    weekly_pricing DECIMAL(6,2) not null, 
     monthly_pricing DECIMAL(6,2) not null  
 );
 

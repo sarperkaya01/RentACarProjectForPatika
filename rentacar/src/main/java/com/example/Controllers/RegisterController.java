@@ -1,23 +1,26 @@
 package com.example.Controllers;
-
-import java.sql.Connection;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 
-import com.example.Services.DbTransactions.RegistrationTransactions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
+import com.example.Entities.DbModels.People.User;
+import com.example.Services.Global;
+import com.example.Services.HashUtil;
+import com.example.Services.UserServices;
 import com.example.Services.Interfaces.Controller;
+import com.example.Utils.Enums.UserRoles;
 
 public class RegisterController implements Controller {
-    private Connection conn;
-    private Scanner sc;
+    private final UserServices userServices;
+    private final MainController mainController;
 
-    public RegisterController(Connection conn, Scanner sc) {
-        this.conn = conn;
-        this.sc = sc;
+    @Autowired
+    public RegisterController(UserServices userServices, @Lazy MainController mainController) {
+        this.userServices = userServices;
+        this.mainController = mainController;
     }
 
     @Override
@@ -29,15 +32,14 @@ public class RegisterController implements Controller {
                 this::addUser,
                 this::exit);
 
-        int choice = sc.nextInt();
-        sc.nextLine();
+        int choice = Global.scanner.nextInt();
+        Global.scanner.nextLine();
         menuCases(choice, actions);
     }
 
     @Override
     public void exit() {
-        MainController mc = new MainController(conn, sc);
-        mc.start();
+        mainController.start();
     }
 
     @Override
@@ -45,14 +47,41 @@ public class RegisterController implements Controller {
         return Arrays.asList("New User", "Exit");
     }
 
-   
-
     private void addUser() {
-        RegistrationTransactions rt = new RegistrationTransactions();
-        rt.registerNewUser();
+         try {
+            System.out.println("Lütfen email adresinizi girin:");
+            String email = Global.scanner.nextLine();
+
+            System.out.println("Lütfen şifrenizi girin:");
+            String password = Global.scanner.nextLine();
+
+            
+            User newUser = new User();
+            newUser.setEmail(email);
+            
+            newUser.setPasswd(HashUtil.sha256(password)); 
+            
+            newUser.setRole(UserRoles.INDIVIDUAL); 
+
+            
+            User savedUser = userServices.newUser(newUser);
+
+            System.out.println("Kayıt başarılı! Kullanıcı ID: " + savedUser.getUserId());
+
+        } catch (IllegalStateException e) {
+            
+            System.out.println("Hata: " + e.getMessage());
+        } catch (Exception e) {
+            
+            System.out.println("Beklenmedik bir hata oluştu: " + e.getMessage());
+        } finally {
+            
+            exit();
+        }
 
         exit();
 
     }
+    
 
 }
