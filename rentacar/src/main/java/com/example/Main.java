@@ -7,7 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.example.Controllers.MainController;
-import com.example.Services.Global;
+import com.example.Utils.Global;
 
 
 @SpringBootApplication
@@ -29,7 +29,7 @@ public class Main implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Global.printMenuHeader("--- Welcome my rent a car app ---"); // Global.printMenuHeader yerine basit bir S.o.p
+        Global.printMenuHeader(" Welcome my rent a car app "); // Global.printMenuHeader yerine basit bir S.o.p
         
       
         mainController.start();

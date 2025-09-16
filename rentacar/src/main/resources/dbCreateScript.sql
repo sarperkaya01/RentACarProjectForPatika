@@ -29,8 +29,8 @@ CREATE TABLE Customers(
 );
 
 -- VehicleTypes table create
-CREATE TABLE VehicleTypes(
-    type_id SERIAL PRIMARY KEY,    
+CREATE TABLE VehicleProperties(
+    prop_id SERIAL PRIMARY KEY,    
     vehicle_type VARCHAR(20) not null,
     hourly_pricing DECIMAL(6,2) not null,
     daily_pricing DECIMAL(6,2) not null, 
@@ -40,7 +40,7 @@ CREATE TABLE VehicleTypes(
 
 CREATE TABLE Vehicles (
     vehicle_id SERIAL PRIMARY KEY,
-    type_id INT NOT NULL,
+    prop_id INT NOT NULL,
     plate VARCHAR(10) NOT NULL UNIQUE,
     model_year SMALLINT NOT NULL,
     model_name VARCHAR(20) not null, 
@@ -50,7 +50,7 @@ CREATE TABLE Vehicles (
     vehicle_value INT NOT NULL,    
     vehicle_status VARCHAR(10) NOT NULL,
     -- Foreign Key constraints
-    CONSTRAINT fk_vehicle_type FOREIGN KEY(type_id) REFERENCES VehicleTypes(type_id) ON DELETE RESTRICT
+    CONSTRAINT fk_vehicle_type FOREIGN KEY(prop_id) REFERENCES VehicleProperties(prop_id) ON DELETE RESTRICT
 );
 
 -- Rental table create
@@ -61,14 +61,22 @@ CREATE TABLE Rentals (
     customer_id INT NOT NULL,    
     rent_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     planned_dropoff_date TIMESTAMP DEFAULT NULL,
-    actual_dropoff_date TIMESTAMP DEFAULT NULL,
-    planned_price DECIMAL(10,2),
-    late_fee DECIMAL(10,2),
-    repair_fee DECIMAL(10,2),
-    checkout DECIMAL(10,2),
+    planned_price DECIMAL(10,2),   
     depozit DECIMAL(10,2),
     rental_status VARCHAR(10) NOT NULL,
     -- Foreign Key constraints
     CONSTRAINT fk_rental_vehicle FOREIGN KEY(vehicle_id) REFERENCES Vehicles(vehicle_id) ON DELETE CASCADE,
     CONSTRAINT fk_rental_customer FOREIGN KEY(customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
+);
+CREATE TABLE CheckOut (
+    checkout_id SERIAL PRIMARY KEY,
+    rental_id INT NOT NULL,   
+    actual_dropoff_date TIMESTAMP DEFAULT NULL,   
+    late_fee_daily DECIMAL(10,2),
+    repair_fee DECIMAL(10,2) DEFAULT NULL,
+    checkout DECIMAL(10,2),    
+    checkout_status VARCHAR(10) NOT NULL,
+    -- Foreign Key constraints
+    CONSTRAINT fk_checkout FOREIGN KEY(rental_id) REFERENCES Rentals(rental_id) ON DELETE CASCADE,
+    
 );

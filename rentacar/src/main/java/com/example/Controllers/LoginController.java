@@ -5,13 +5,15 @@ import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.example.Entities.DbModels.People.User;
-import com.example.Services.Global;
-import com.example.Services.HashUtil;
 import com.example.Services.UserServices;
-import com.example.Services.Interfaces.Controller;
+import com.example.Utils.Global;
+import com.example.Utils.HashUtil;
+import com.example.Utils.Interfaces.Controller;
 
+@Component
 public class LoginController implements Controller {
 
     private final UserServices userServices;

@@ -4,12 +4,13 @@ package com.example.Services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DAO.UserDao;
 
 import com.example.Entities.DbModels.People.User;
-
+@Service
 public class UserServices {
 
     private final UserDao userDao;

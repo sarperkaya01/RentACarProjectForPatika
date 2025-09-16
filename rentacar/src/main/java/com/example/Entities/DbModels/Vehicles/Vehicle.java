@@ -21,8 +21,11 @@ public class Vehicle {
     @Column(name = "vehicle_id")
     private Integer vehicleId;
 
-    @Column(name = "type_id")
-    private Integer typeId;
+    public Vehicle() {
+    }
+
+    @Column(name = "prop_id")
+    private Integer propId;
 
     @Column(name = "plate", nullable = false, unique = true, length = 10)
     private String plate;
@@ -51,7 +54,7 @@ public class Vehicle {
 
     @Override
     public String toString() {
-        return "Vehicle [vehicleId=" + vehicleId + ", typeId=" + typeId + ", plate=" + plate + ", modelYear="
+        return "Vehicle [vehicleId=" + vehicleId + ", propId=" + propId + ", plate=" + plate + ", modelYear="
                 + modelYear + ", modelName=" + modelName + ", brandName=" + brandName + ", km=" + km + ", fuel=" + fuel
                 + ", vehicleValue=" + vehicleValue + ", vehicleStatus=" + vehicleStatus + "]";
     }
@@ -64,19 +67,19 @@ public class Vehicle {
         this.vehicleId = vehicleId;
     }
 
-    public Integer getTypeId() {
-        return typeId;
+    public Integer getPropId() {
+        return propId;
     }
 
-    public void setTypeId(Integer typeId) {
-        this.typeId = typeId;
+    public void setPropId(Integer propId) {
+        this.propId = propId;
     }
 
-    public String getplate() {
+    public String getPlate() {
         return plate;
     }
 
-    public void setplate(String plate) {
+    public void setPlate(String plate) {
         this.plate = plate;
     }
 

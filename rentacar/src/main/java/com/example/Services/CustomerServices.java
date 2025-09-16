@@ -3,6 +3,7 @@ package com.example.Services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.DAO.CustomerDao;
 import com.example.DAO.UserDao;
@@ -10,11 +11,11 @@ import com.example.Entities.DbModels.People.Customer;
 
 
 import jakarta.transaction.Transactional;
-
+@Service
 public class CustomerServices {
 
     private final CustomerDao customerDao;
-    private final UserDao userDao; // Müşteri eklerken User'a ihtiyacımız olacak.
+    private final UserDao userDao; 
 
     @Autowired
     public CustomerServices(CustomerDao customerDao, UserDao userDao) {

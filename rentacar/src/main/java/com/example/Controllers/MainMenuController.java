@@ -4,9 +4,10 @@ package com.example.Controllers;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
 
-import com.example.Services.Interfaces.Controller;
-
+import com.example.Utils.Interfaces.Controller;
+@Component
 public class MainMenuController implements Controller{
 
    

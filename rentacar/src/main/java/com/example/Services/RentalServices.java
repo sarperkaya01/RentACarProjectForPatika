@@ -1,0 +1,89 @@
+package com.example.Services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.DAO.CheckOutDao;
+import com.example.DAO.CustomerDao;
+import com.example.DAO.RentalDao;
+import com.example.DAO.VehicleDao;
+import com.example.Entities.DbModels.Vehicles.Vehicle;
+import com.example.Entities.Renting.CheckOut;
+import com.example.Entities.Renting.Rental;
+import com.example.Utils.Enums.CheckOutStatus;
+import com.example.Utils.Enums.RentalStatus;
+
+@Service
+public class RentalServices {
+    private final RentalDao rentalDao;
+    private final VehicleDao vehicleDao;
+    private final CustomerDao customerDao;
+    private final CheckOutDao checkOutDao;
+
+     @Autowired
+    public RentalServices(RentalDao rentalDao, VehicleDao vehicleDao, CustomerDao customerDao, CheckOutDao checkOutDao) {
+        this.rentalDao = rentalDao;
+        this.vehicleDao = vehicleDao;
+        this.customerDao = customerDao;
+        this.checkOutDao = checkOutDao; // YENİ BAĞIMLILIĞI ATA
+    }
+
+    @Transactional
+    public Rental createRental(Rental newRental) {
+
+        if (!vehicleDao.existsById(newRental.getVehicleId())) {
+            throw new IllegalStateException("Kiralama başarısız. Araç bulunamadı. ID: " + newRental.getVehicleId());
+        }
+
+        if (!customerDao.existsById(newRental.getCustomerId())) {
+            throw new IllegalStateException("Kiralama başarısız. Müşteri bulunamadı. ID: " + newRental.getCustomerId());
+        }
+        
+        newRental.setRentalStatus(RentalStatus.RENTED); 
+        Rental savedRental = rentalDao.save(newRental);
+        
+        CheckOut newCheckOut = new CheckOut();
+        newCheckOut.setRentalId(savedRental.getRentalId());
+
+        newCheckOut.setCheckoutStatus(CheckOutStatus.IN_PROGRESS);
+        checkOutDao.save(newCheckOut);
+        return savedRental;
+    }
+
+    public Rental getRentalById(Integer id) {
+        return rentalDao.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Kiralama kaydı bulunamadı. ID: " + id));
+    }
+
+    public List<Rental> getAllRentals() {
+        return rentalDao.findAll();
+    }
+
+    @Transactional
+    public Rental updateRental(Rental rentalToUpdate) {
+
+        getRentalById(rentalToUpdate.getRentalId());
+
+        return rentalDao.save(rentalToUpdate);
+    }
+
+    @Transactional
+    public void deleteRental(Integer id) {
+        if (!rentalDao.existsById(id)) {
+            throw new IllegalStateException("Silme başarısız. Kiralama kaydı bulunamadı. ID: " + id);
+        }
+        rentalDao.deleteById(id);
+    }
+
+    public List<Rental> getRentalsByVehicleId(Integer vehicleId) {
+        return rentalDao.findByVehicleId(vehicleId);
+    }
+
+    public List<Rental> getRentalsByCustomerId(Integer customerId) {
+        return rentalDao.findByCustomerId(customerId);
+    }
+
+}

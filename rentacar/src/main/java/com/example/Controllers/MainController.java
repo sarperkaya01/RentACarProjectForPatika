@@ -6,10 +6,11 @@ import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import com.example.Services.Global;
-import com.example.Services.Interfaces.Controller;
-
+import com.example.Utils.Global;
+import com.example.Utils.Interfaces.Controller;
+@Component
 public class MainController implements Controller {
     private final RegisterController registerController;
     private final LoginController loginController;

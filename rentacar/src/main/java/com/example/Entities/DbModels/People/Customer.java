@@ -31,14 +31,8 @@ public class Customer {
     
     @Column(name = "company_name", nullable = false, unique = true, length = 20)
     private String companyName;
-    public Customer(Integer customerId, Integer userId, String customerName, String customerSurname, Integer age,
-            String companyName) {
-        this.customerId = customerId;
-        this.userId = userId;
-        this.customerName = customerName;
-        this.customerSurname = customerSurname;
-        this.age = age;
-        this.companyName = companyName;
+    public Customer() {
+        
     }
     @Override
     public String toString() {
