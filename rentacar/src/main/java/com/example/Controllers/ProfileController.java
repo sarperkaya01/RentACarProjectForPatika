@@ -1,14 +1,14 @@
 package com.example.Controllers;
 
-import java.time.format.DateTimeFormatter;
+
 import java.util.Arrays;
 
 import java.util.List;
 import java.util.Optional;
 
-import com.example.DTO.RentalHistoryDto;
+
 import com.example.Entities.DbModels.People.Customer;
-import com.example.Entities.Renting.Rental;
+
 import com.example.Services.CustomerServices;
 import com.example.Services.UserServices;
 import com.example.Utils.Global;

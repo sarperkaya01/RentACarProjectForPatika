@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.example.Utils.Global;
+
 import com.example.Utils.Interfaces.Controller;
 
 @Component
