@@ -41,9 +41,8 @@ public interface Controller {
         List<Runnable> actions = new ArrayList<>();
 
         for (String title : titles) {
-            // DÜZELTME: Aradaki boşlukları ve diğer beyaz karakterleri silmek için
-            // .replaceAll("\\s+", "") eklendi.
-            String methodName = title.toLowerCase().replaceAll("\\s+", "");
+            // YENİ DÖNÜŞÜM METODUNU ÇAĞIRIYORUZ
+            String methodName = toCamelCase(title);
 
             try {
                 Method method = this.getClass().getDeclaredMethod(methodName);
@@ -58,11 +57,23 @@ public interface Controller {
                 });
             } catch (NoSuchMethodException e) {
                 System.out.println("Warning: No method found for menu title '" + title + "'. " +
-                        "Please create a '" + methodName + "()' method.");
+                                   "Please create a '" + methodName + "()' method.");
                 actions.add(() -> System.out.println("Action for '" + title + "' is not implemented."));
             }
         }
         return actions;
+    }
+     private String toCamelCase(String title) {
+        String[] parts = title.split("\\s+"); // Başlığı boşluklardan ayır
+        StringBuilder camelCaseString = new StringBuilder(parts[0].toLowerCase()); // İlk kelime küçük harfle başlar
+
+        for (int i = 1; i < parts.length; i++) {
+            // Sonraki her kelimenin ilk harfini büyük, geri kalanını küçük yap ve birleştir.
+            camelCaseString.append(parts[i].substring(0, 1).toUpperCase())
+                           .append(parts[i].substring(1).toLowerCase());
+        }
+
+        return camelCaseString.toString();
     }
 
     default void runMenuLoop(String menuTitle) {

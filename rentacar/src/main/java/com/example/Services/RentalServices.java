@@ -1,5 +1,7 @@
 package com.example.Services;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,16 +25,18 @@ public class RentalServices {
     private final CustomerDao customerDao;
     private final CheckOutDao checkOutDao;
 
-     @Autowired
-    public RentalServices(RentalDao rentalDao, VehicleDao vehicleDao, CustomerDao customerDao, CheckOutDao checkOutDao) {
+    @Autowired
+    public RentalServices(RentalDao rentalDao, VehicleDao vehicleDao, CustomerDao customerDao,
+            CheckOutDao checkOutDao) {
         this.rentalDao = rentalDao;
         this.vehicleDao = vehicleDao;
         this.customerDao = customerDao;
         this.checkOutDao = checkOutDao; // YENİ BAĞIMLILIĞI ATA
     }
 
-     @Transactional
-    public Rental createRental(Rental newRental) {
+    @Transactional
+    public Rental createRental(Rental newRental, LocalDateTime plannedDropoffDate, 
+                               BigDecimal plannedPrice, BigDecimal deposit) {
         // DÜZELTME: Nesneler ve onların ID'leri üzerinden kontrol yap.
         if (newRental.getVehicle() == null || !vehicleDao.existsById(newRental.getVehicle().getVehicleId())) {
             throw new IllegalStateException("Kiralama başarısız. Araç bulunamadı.");
@@ -40,20 +44,21 @@ public class RentalServices {
         if (newRental.getCustomer() == null || !customerDao.existsById(newRental.getCustomer().getCustomerId())) {
             throw new IllegalStateException("Kiralama başarısız. Müşteri bulunamadı.");
         }
-        
-        newRental.setRentalStatus(RentalStatus.RENTED); 
+
+        newRental.setRentalStatus(RentalStatus.RENTED);
         Rental savedRental = rentalDao.save(newRental);
-        
-        // Kiralama ile birlikte "IN_PROGRESS" bir checkout oluşturma mantığı çok iyi.
+
         CheckOut newCheckOut = new CheckOut();
-        // DÜZELTME: ID yerine doğrudan Rental nesnesini ata.
-        newCheckOut.setRental(savedRental); 
+        newCheckOut.setRental(savedRental); // İlişkiyi kur
+        newCheckOut.setPlannedDropoffDate(plannedDropoffDate);
+        newCheckOut.setPlannedPrice(plannedPrice);
+        newCheckOut.setDeposit(deposit);
         newCheckOut.setCheckoutStatus(CheckOutStatus.IN_PROGRESS);
+
         checkOutDao.save(newCheckOut);
 
         return savedRental;
     }
-
 
     public Rental getRentalById(Integer id) {
         return rentalDao.findById(id)

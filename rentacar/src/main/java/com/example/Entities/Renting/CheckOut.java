@@ -29,8 +29,17 @@ public class CheckOut {
     @JoinColumn(name = "rental_id", nullable = false)
     private Rental rental;
 
+    @Column(name = "planned_dropoff_date")
+    private LocalDateTime plannedDropoffDate;
+
     @Column(name = "actual_dropoff_date")
     private LocalDateTime actualDropoffDate;
+
+    @Column(name = "planned_price", precision = 10, scale = 2)
+    private BigDecimal plannedPrice;
+
+    @Column(name = "depozit", precision = 10, scale = 2)
+    private BigDecimal deposit;
 
     @Column(name = "late_fee", precision = 10, scale = 2)
     private BigDecimal lateFee;
@@ -38,78 +47,119 @@ public class CheckOut {
     @Column(name = "repair_fee", precision = 10, scale = 2)
     private BigDecimal repairFee;
 
-    @Column(name = "checkout", precision = 10, scale = 2)
+    @Column(name = "checkout_amount", precision = 10, scale = 2)
     private BigDecimal checkoutAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "checkout_status", nullable = false, length = 10)
     private CheckOutStatus checkoutStatus;
 
-    @Override
-    public String toString() {
-        return "CheckOut [checkoutId=" + checkoutId + ", rental_Id=" + rental + ", actualDropoffDate="
-                + actualDropoffDate + ", lateFee=" + lateFee + ", repairFee=" + repairFee + ", checkoutAmount="
-                + checkoutAmount + ", checkoutStatus=" + checkoutStatus + "]";
-    }
 
     public Integer getCheckoutId() {
         return checkoutId;
     }
 
+
     public void setCheckoutId(Integer checkoutId) {
         this.checkoutId = checkoutId;
     }
+
 
     public Rental getRental() {
         return rental;
     }
 
+
     public void setRental(Rental rental) {
         this.rental = rental;
     }
-    
+
+
+    public LocalDateTime getPlannedDropoffDate() {
+        return plannedDropoffDate;
+    }
+
+
+    public void setPlannedDropoffDate(LocalDateTime plannedDropoffDate) {
+        this.plannedDropoffDate = plannedDropoffDate;
+    }
+
 
     public LocalDateTime getActualDropoffDate() {
         return actualDropoffDate;
     }
 
+
     public void setActualDropoffDate(LocalDateTime actualDropoffDate) {
         this.actualDropoffDate = actualDropoffDate;
     }
+
+
+    public BigDecimal getPlannedPrice() {
+        return plannedPrice;
+    }
+
+
+    public void setPlannedPrice(BigDecimal plannedPrice) {
+        this.plannedPrice = plannedPrice;
+    }
+
+
+    public BigDecimal getDeposit() {
+        return deposit;
+    }
+
+
+    public void setDeposit(BigDecimal deposit) {
+        this.deposit = deposit;
+    }
+
 
     public BigDecimal getLateFee() {
         return lateFee;
     }
 
+
     public void setLateFee(BigDecimal lateFee) {
         this.lateFee = lateFee;
     }
+
 
     public BigDecimal getRepairFee() {
         return repairFee;
     }
 
+
     public void setRepairFee(BigDecimal repairFee) {
         this.repairFee = repairFee;
     }
+
 
     public BigDecimal getCheckoutAmount() {
         return checkoutAmount;
     }
 
+
     public void setCheckoutAmount(BigDecimal checkoutAmount) {
         this.checkoutAmount = checkoutAmount;
     }
+
 
     public CheckOutStatus getCheckoutStatus() {
         return checkoutStatus;
     }
 
+
     public void setCheckoutStatus(CheckOutStatus checkoutStatus) {
         this.checkoutStatus = checkoutStatus;
     }
 
-    public CheckOut(){}
+
     
 
+   
+    public CheckOut() {
+    }
+
+    
 }

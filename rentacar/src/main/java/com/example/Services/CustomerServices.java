@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.DAO.CustomerDao;
+import com.example.DAO.RentalDao;
 import com.example.DAO.UserDao;
+import com.example.DTO.RentalHistoryDto;
 import com.example.Entities.DbModels.People.Customer;
 import com.example.Entities.DbModels.People.User;
 
@@ -18,23 +20,24 @@ public class CustomerServices {
 
     private final CustomerDao customerDao;
     private final UserDao userDao;
+    private final RentalDao rentalDao;
 
     @Autowired
-    public CustomerServices(CustomerDao customerDao, UserDao userDao) {
+    public CustomerServices(CustomerDao customerDao, UserDao userDao, RentalDao rentalDao) {
         this.customerDao = customerDao;
         this.userDao = userDao;
+        this.rentalDao = rentalDao;
     }
 
-   @Transactional
+    @Transactional
     public Customer newCustomer(Customer newCustomer) {
-        // DÜZELTME: Customer'a bağlı User nesnesi ve onun ID'si kontrol edilmeli.
+
         User user = newCustomer.getUser();
         if (user == null || user.getUserId() == null || !userDao.existsById(user.getUserId())) {
             throw new IllegalStateException("Müşteri oluşturulamaz! Geçerli bir kullanıcıya bağlanmalıdır.");
         }
-        
-        // Bir kullanıcının zaten bir müşteri profili var mı diye kontrol etmek iyi bir fikir.
-        if(customerDao.findByUser_UserId(user.getUserId()).isPresent()){
+
+        if (customerDao.findByUser_UserId(user.getUserId()).isPresent()) {
             throw new IllegalStateException("Bu kullanıcı için zaten bir müşteri profili mevcut.");
         }
 
@@ -91,6 +94,10 @@ public class CustomerServices {
         return customerDao.findByCompanyName(companyName)
                 .orElseThrow(() -> new IllegalStateException(
                         "There is no such customer : " + companyName));
+    }
+
+    public List<RentalHistoryDto> getCustomerRentalHistory(Integer customerId) {
+        return rentalDao.findRentalHistoryByCustomerId(customerId);
     }
 
 }

@@ -43,12 +43,13 @@ public class MainController implements Controller {
     }
 
     @SuppressWarnings("unused")
-    private void forgotpassword() {
+    private void forgotPassword() {
         System.out.println("Forgot password functionality is not implemented yet.");
     }
 
     @Override
     public void exit() {
         System.out.println("Exiting the application. Goodbye!");
+        System.exit(0);
     }
 }
