@@ -1,21 +1,20 @@
 package com.example.Controllers;
 
-
 import java.util.Arrays;
 import java.util.List;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.example.Utils.Global;
 import com.example.Utils.Interfaces.Controller;
+
 @Component
 public class MainController implements Controller {
     private final RegisterController registerController;
     private final LoginController loginController;
 
-     @Autowired
+    @Autowired
     public MainController(RegisterController registerController, LoginController loginController) {
         this.registerController = registerController;
         this.loginController = loginController;
@@ -23,39 +22,33 @@ public class MainController implements Controller {
 
     @Override
     public void start() {
-        pageTitle("Main Menu");
-        printMenu();
 
-        List<Runnable> actions = Arrays.asList(
-                this::registerPage,
-                this::loginPage,
-                // this::forgotPassword,
-                this::exit);
-
-        int choice =Global.scanner.nextInt();
-        Global.scanner.nextLine();
-        boolean checkInput = menuCases(choice, actions);
-        if (!checkInput) {
-            start();
-        }
+        runMenuLoop("Welcome my rent a car app");
     }
 
     @Override
     public List<String> getMenuTitles() {
-        return Arrays.asList("Register", "Login", "Forget Passoword", "Exit");
+        return Arrays.asList("Register", "Login", "Forgot Password", "Exit");
     }
 
-    private void registerPage() {
+    @SuppressWarnings("unused")
+    private void register() {
         registerController.start();
 
     }
 
-    private void loginPage() {
+    @SuppressWarnings("unused")
+    private void login() {
         loginController.start();
+    }
+
+    @SuppressWarnings("unused")
+    private void forgotpassword() {
+        System.out.println("Forgot password functionality is not implemented yet.");
     }
 
     @Override
     public void exit() {
-        System.exit(0);
+        System.out.println("Exiting the application. Goodbye!");
     }
 }

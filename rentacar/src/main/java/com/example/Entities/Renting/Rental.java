@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import java.time.LocalDateTime;
 
+import com.example.Entities.DbModels.People.Customer;
+import com.example.Entities.DbModels.Vehicles.Vehicle;
 import com.example.Utils.Enums.RentalStatus;
 
 import jakarta.persistence.Column;
@@ -13,9 +15,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
-
 
 @Entity
 @Table(name = "rentals")
@@ -24,84 +26,65 @@ public class Rental {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "rental_id")
-    private Integer rentalId; 
+    private Integer rentalId;
 
-   
-    @Column(name = "vehicle_id", nullable = false)
-    private Integer vehicleId;
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;   
 
-    @Column(name = "customer_id", nullable = false)
-    private Integer customerId;
+    @ManyToOne
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    private Vehicle vehicle;   
 
-   
     @Column(name = "rent_date", nullable = false)
-    private LocalDateTime rentDate; 
+    private LocalDateTime rentDate;
 
     @Column(name = "planned_dropoff_date")
-    private LocalDateTime plannedDropoffDate;        
-   
+    private LocalDateTime plannedDropoffDate;
+
     @Column(name = "planned_price", precision = 10, scale = 2)
-    private BigDecimal plannedPrice;    
-    
-    @Column(name = "depozit", precision = 10, scale = 2) 
+    private BigDecimal plannedPrice;
+
+    @Column(name = "depozit", precision = 10, scale = 2)
     private BigDecimal deposit;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rental_status", nullable = false, length = 10)
-    private RentalStatus rentalStatus; 
-    
-    
-    
+    private RentalStatus rentalStatus;
 
-    public Rental() {
-    }
-
-    @Override
-    public String toString() {
-        return "Rental [rentalId=" + rentalId + ", vehicleId=" + vehicleId + ", customerId=" + customerId
-                + ", rentDate=" + rentDate + ", plannedDropoffDate=" + plannedDropoffDate + ", plannedPrice="
-                + plannedPrice + ", deposit=" + deposit + ", rentalStatus=" + rentalStatus + "]";
-    }
+    
 
     public Integer getRentalId() {
         return rentalId;
     }
 
-
     public void setRentalId(Integer rentalId) {
         this.rentalId = rentalId;
     }
 
-
-    public Integer getVehicleId() {
-        return vehicleId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-
-    public void setVehicleId(Integer vehicleId) {
-        this.vehicleId = vehicleId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
-
-    public Integer getCustomerId() {
-        return customerId;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setVehicleId(Vehicle vehicleId) {
+        this.vehicle = vehicleId;
     }
-
 
     public LocalDateTime getRentDate() {
         return rentDate;
     }
 
-
     public void setRentDate(LocalDateTime rentDate) {
         this.rentDate = rentDate;
     }
-
 
     public LocalDateTime getPlannedDropoffDate() {
         return plannedDropoffDate;
@@ -110,7 +93,7 @@ public class Rental {
     public void setPlannedDropoffDate(LocalDateTime plannedDropoffDate) {
         this.plannedDropoffDate = plannedDropoffDate;
     }
-   
+
     public BigDecimal getPlannedPrice() {
         return plannedPrice;
     }
@@ -123,21 +106,19 @@ public class Rental {
         return deposit;
     }
 
-
     public void setDeposit(BigDecimal deposit) {
         this.deposit = deposit;
     }
-
 
     public RentalStatus getRentalStatus() {
         return rentalStatus;
     }
 
-
     public void setRentalStatus(RentalStatus rentalStatus) {
         this.rentalStatus = rentalStatus;
     }
-    
-    
-    
+
+    public Rental() {
+    }
+
 }

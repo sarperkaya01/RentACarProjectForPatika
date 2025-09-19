@@ -1,15 +1,14 @@
 
---DataBase Creation
 CREATE DATABASE rent_a_car
 WITH 
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'en_US.UTF-8'
-    LC_CTYPE = 'en_US.UTF-8'
+    OWNER = postgres,
+    ENCODING = 'UTF8',
+    LC_COLLATE = 'en_US.UTF-8',
+    LC_CTYPE = 'en_US.UTF-8',
     TEMPLATE = template0;
 
 -- Users table create
-CREATE TABLE Users (
+CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     email VARCHAR(254) NOT NULL UNIQUE,
     passwd BYTEA NOT NULL,
@@ -17,7 +16,7 @@ CREATE TABLE Users (
 );
 
 -- Customers table create
-CREATE TABLE Customers(
+CREATE TABLE customers(
     customer_id SERIAL PRIMARY KEY,
     user_id INT not NULL,
     customer_name VARCHAR(20) not null, 
@@ -25,11 +24,11 @@ CREATE TABLE Customers(
     customer_age SMALLINT not null,     
     company_name VARCHAR(20) not null UNIQUE, 
     -- Foreign Key constraints
-    CONSTRAINT fk_customer_user FOREIGN KEY(user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+    CONSTRAINT fk_customer_user FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 -- VehicleTypes table create
-CREATE TABLE VehicleProperties(
+CREATE TABLE vehicle_properties(
     prop_id SERIAL PRIMARY KEY,    
     vehicle_type VARCHAR(20) not null,
     hourly_pricing DECIMAL(6,2) not null,
@@ -38,7 +37,7 @@ CREATE TABLE VehicleProperties(
     monthly_pricing DECIMAL(6,2) not null  
 );
 
-CREATE TABLE Vehicles (
+CREATE TABLE vehicles (
     vehicle_id SERIAL PRIMARY KEY,
     prop_id INT NOT NULL,
     plate VARCHAR(10) NOT NULL UNIQUE,
@@ -50,33 +49,34 @@ CREATE TABLE Vehicles (
     vehicle_value INT NOT NULL,    
     vehicle_status VARCHAR(10) NOT NULL,
     -- Foreign Key constraints
-    CONSTRAINT fk_vehicle_type FOREIGN KEY(prop_id) REFERENCES VehicleProperties(prop_id) ON DELETE RESTRICT
+    CONSTRAINT fk_vehicle_type FOREIGN KEY(prop_id) REFERENCES vehicle_properties(prop_id) ON DELETE RESTRICT
 );
 
 -- Rental table create
 
-CREATE TABLE Rentals (
+CREATE TABLE rentals (
     rental_id SERIAL PRIMARY KEY,
-    vehicle_id INT NOT NULL,
-    customer_id INT NOT NULL,    
+    customer_id INT NOT NULL,  
+    vehicle_id INT NOT NULL,      
     rent_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     planned_dropoff_date TIMESTAMP DEFAULT NULL,
     planned_price DECIMAL(10,2),   
     depozit DECIMAL(10,2),
     rental_status VARCHAR(10) NOT NULL,
     -- Foreign Key constraints
-    CONSTRAINT fk_rental_vehicle FOREIGN KEY(vehicle_id) REFERENCES Vehicles(vehicle_id) ON DELETE CASCADE,
-    CONSTRAINT fk_rental_customer FOREIGN KEY(customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
+
+    CONSTRAINT fk_rental_vehicle FOREIGN KEY(vehicle_id) REFERENCES vehicles(vehicle_id) ON DELETE RESTRICT,
+    CONSTRAINT fk_rental_customer FOREIGN KEY(customer_id) REFERENCES customers(customer_id) ON DELETE RESTRICT
 );
-CREATE TABLE CheckOut (
+CREATE TABLE checkOut (
     checkout_id SERIAL PRIMARY KEY,
     rental_id INT NOT NULL,   
     actual_dropoff_date TIMESTAMP DEFAULT NULL,   
-    late_fee_daily DECIMAL(10,2),
+    late_fee DECIMAL(10,2),
     repair_fee DECIMAL(10,2) DEFAULT NULL,
-    checkout DECIMAL(10,2),    
+    checkout_amount DECIMAL(10,2),    
     checkout_status VARCHAR(10) NOT NULL,
     -- Foreign Key constraints
-    CONSTRAINT fk_checkout FOREIGN KEY(rental_id) REFERENCES Rentals(rental_id) ON DELETE CASCADE,
+    CONSTRAINT fk_checkout FOREIGN KEY(rental_id) REFERENCES rentals(rental_id) ON DELETE CASCADE
     
 );

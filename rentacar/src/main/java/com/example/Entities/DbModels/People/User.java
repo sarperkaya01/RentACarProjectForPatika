@@ -21,10 +21,6 @@ public class User {
     @Column(name = "user_id")
     private Integer userId;
 
-    public User() {
-
-    }
-
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
@@ -34,6 +30,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role")
     private UserRoles role;
+
+    public User(){}
+    
 
     @Override
     public String toString() {

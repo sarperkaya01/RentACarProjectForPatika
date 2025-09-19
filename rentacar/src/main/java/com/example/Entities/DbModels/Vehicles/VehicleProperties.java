@@ -8,6 +8,8 @@ import com.example.Utils.Enums.VehicleTypes;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,13 +19,13 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "vehicleproperties")
 public class VehicleProperties {
-    public VehicleProperties() {
-    }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "prop_id")
     private Integer propId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false, length = 20)
     private VehicleTypes vehicleType;
 
@@ -39,6 +41,8 @@ public class VehicleProperties {
     @Column(name = "monthly_pricing", nullable = false, precision = 6, scale = 2)
     private BigDecimal monthlyPricing;
 
+    public VehicleProperties(){}
+    
     @Override
     public String toString() {
         return "VehicleType [propId=" + propId + ", vehicleType=" + vehicleType + ", hourlyPricing=" + hourlyPricing

@@ -11,7 +11,8 @@ import com.example.Utils.Enums.VehicleStatus;
 @Repository
 public interface VehicleDao extends JpaRepository<Vehicle, Integer> {
     Optional<Vehicle> findByPlate(String plate);
-    List<Vehicle> findByVehiclePropertyId(Integer propId);
+    List<Vehicle> findByProperties_PropId(Integer propId);
+
     List<Vehicle> findByModelYear(Integer modelYear);
     List<Vehicle> findByModelName(String modelName);
     List<Vehicle> findByBrandName(String brandName);

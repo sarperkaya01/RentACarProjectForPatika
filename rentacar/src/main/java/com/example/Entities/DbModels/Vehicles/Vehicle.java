@@ -11,6 +11,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -21,11 +23,9 @@ public class Vehicle {
     @Column(name = "vehicle_id")
     private Integer vehicleId;
 
-    public Vehicle() {
-    }
-
-    @Column(name = "prop_id")
-    private Integer propId;
+    @ManyToOne
+    @JoinColumn(name = "prop_id", nullable = false)
+    private VehicleProperties properties;
 
     @Column(name = "plate", nullable = false, unique = true, length = 10)
     private String plate;
@@ -47,17 +47,10 @@ public class Vehicle {
 
     @Column(name = "vehicle_value", nullable = false)
     private Integer vehicleValue;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_status", nullable = false, length = 10)
     private VehicleStatus vehicleStatus;
-
-    @Override
-    public String toString() {
-        return "Vehicle [vehicleId=" + vehicleId + ", propId=" + propId + ", plate=" + plate + ", modelYear="
-                + modelYear + ", modelName=" + modelName + ", brandName=" + brandName + ", km=" + km + ", fuel=" + fuel
-                + ", vehicleValue=" + vehicleValue + ", vehicleStatus=" + vehicleStatus + "]";
-    }
 
     public Integer getVehicleId() {
         return vehicleId;
@@ -67,12 +60,12 @@ public class Vehicle {
         this.vehicleId = vehicleId;
     }
 
-    public Integer getPropId() {
-        return propId;
+   public VehicleProperties getProperties() {
+        return properties;
     }
 
-    public void setPropId(Integer propId) {
-        this.propId = propId;
+    public void setProperties(VehicleProperties properties) {
+        this.properties = properties;
     }
 
     public String getPlate() {
@@ -137,6 +130,9 @@ public class Vehicle {
 
     public void setVehicleStatus(VehicleStatus vehicleStatus) {
         this.vehicleStatus = vehicleStatus;
+    }
+
+    public Vehicle() {
     }
 
 }

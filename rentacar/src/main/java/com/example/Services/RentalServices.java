@@ -10,7 +10,7 @@ import com.example.DAO.CheckOutDao;
 import com.example.DAO.CustomerDao;
 import com.example.DAO.RentalDao;
 import com.example.DAO.VehicleDao;
-import com.example.Entities.DbModels.Vehicles.Vehicle;
+
 import com.example.Entities.Renting.CheckOut;
 import com.example.Entities.Renting.Rental;
 import com.example.Utils.Enums.CheckOutStatus;
@@ -31,27 +31,29 @@ public class RentalServices {
         this.checkOutDao = checkOutDao; // YENİ BAĞIMLILIĞI ATA
     }
 
-    @Transactional
+     @Transactional
     public Rental createRental(Rental newRental) {
-
-        if (!vehicleDao.existsById(newRental.getVehicleId())) {
-            throw new IllegalStateException("Kiralama başarısız. Araç bulunamadı. ID: " + newRental.getVehicleId());
+        // DÜZELTME: Nesneler ve onların ID'leri üzerinden kontrol yap.
+        if (newRental.getVehicle() == null || !vehicleDao.existsById(newRental.getVehicle().getVehicleId())) {
+            throw new IllegalStateException("Kiralama başarısız. Araç bulunamadı.");
         }
-
-        if (!customerDao.existsById(newRental.getCustomerId())) {
-            throw new IllegalStateException("Kiralama başarısız. Müşteri bulunamadı. ID: " + newRental.getCustomerId());
+        if (newRental.getCustomer() == null || !customerDao.existsById(newRental.getCustomer().getCustomerId())) {
+            throw new IllegalStateException("Kiralama başarısız. Müşteri bulunamadı.");
         }
         
         newRental.setRentalStatus(RentalStatus.RENTED); 
         Rental savedRental = rentalDao.save(newRental);
         
+        // Kiralama ile birlikte "IN_PROGRESS" bir checkout oluşturma mantığı çok iyi.
         CheckOut newCheckOut = new CheckOut();
-        newCheckOut.setRentalId(savedRental.getRentalId());
-
+        // DÜZELTME: ID yerine doğrudan Rental nesnesini ata.
+        newCheckOut.setRental(savedRental); 
         newCheckOut.setCheckoutStatus(CheckOutStatus.IN_PROGRESS);
         checkOutDao.save(newCheckOut);
+
         return savedRental;
     }
+
 
     public Rental getRentalById(Integer id) {
         return rentalDao.findById(id)
@@ -79,11 +81,11 @@ public class RentalServices {
     }
 
     public List<Rental> getRentalsByVehicleId(Integer vehicleId) {
-        return rentalDao.findByVehicleId(vehicleId);
+        return rentalDao.findByVehicle_VehicleId(vehicleId);
     }
 
     public List<Rental> getRentalsByCustomerId(Integer customerId) {
-        return rentalDao.findByCustomerId(customerId);
+        return rentalDao.findByCustomer_CustomerId(customerId);
     }
 
 }

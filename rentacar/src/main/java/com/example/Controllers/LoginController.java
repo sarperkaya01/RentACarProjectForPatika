@@ -1,8 +1,8 @@
 package com.example.Controllers;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,32 +17,35 @@ import com.example.Utils.Interfaces.Controller;
 public class LoginController implements Controller {
 
     private final UserServices userServices;
-    
+    private final MainMenuController mainMenuController;
 
     @Autowired
-    public LoginController(UserServices userServices) {
-
+    public LoginController(UserServices userServices, MainMenuController mainMenuController) {
         this.userServices = userServices;
-
+        this.mainMenuController = mainMenuController;
     }
 
     @Override
     public void start() {
-        pageTitle("Log In");
+        runMenuLoop("Log In");
         System.out.println("Email:");
         String email = Global.scanner.nextLine();
         System.out.println("Password:");
         String passwd = Global.scanner.nextLine();
 
-        do {
+        User u;
 
-            if (login(email, passwd) == null) {
+        do {
+            u = login(email, passwd);
+
+            if (u == null) {
                 System.out.println("Email or password is wrong ! Please try again...");
             }
 
-        } while (login(email, passwd) == null);
-        MainMenuController mmc = new MainMenuController();
-        mmc.start();
+        } while (u == null);
+        Global.currentUser = u;
+
+        mainMenuController.start();
 
     }
 
@@ -53,7 +56,7 @@ public class LoginController implements Controller {
 
     @Override
     public List<String> getMenuTitles() {
-        return Arrays.asList("");
+        return Collections.emptyList();
     }
 
     public User login(String email, String password) {
@@ -63,8 +66,8 @@ public class LoginController implements Controller {
             return null;
         }
 
-        byte[] storedHash = checkUser.getPasswd(); // hash from db
-        byte[] inputHash = HashUtil.sha256(password); // user input hash
+        byte[] storedHash = checkUser.getPasswd();
+        byte[] inputHash = HashUtil.sha256(password);
 
         return Arrays.equals(storedHash, inputHash) ? checkUser : null;
 
