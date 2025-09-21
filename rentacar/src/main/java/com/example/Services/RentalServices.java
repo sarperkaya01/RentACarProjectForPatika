@@ -13,7 +13,7 @@ import com.example.DAO.CustomerDao;
 import com.example.DAO.RentalDao;
 import com.example.DAO.VehicleDao;
 
-import com.example.Entities.Renting.CheckOut;
+import com.example.Entities.Renting.Checkout;
 import com.example.Entities.Renting.Rental;
 import com.example.Utils.Enums.CheckOutStatus;
 import com.example.Utils.Enums.RentalStatus;
@@ -48,8 +48,8 @@ public class RentalServices {
         newRental.setRentalStatus(RentalStatus.RENTED);
         Rental savedRental = rentalDao.save(newRental);
 
-        CheckOut newCheckOut = new CheckOut();
-        newCheckOut.setRental(savedRental); // İlişkiyi kur
+        Checkout newCheckOut = new Checkout();
+        
         newCheckOut.setPlannedDropoffDate(plannedDropoffDate);
         newCheckOut.setPlannedPrice(plannedPrice);
         newCheckOut.setDeposit(deposit);

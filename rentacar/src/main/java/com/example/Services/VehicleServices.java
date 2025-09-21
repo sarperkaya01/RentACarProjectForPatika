@@ -1,99 +1,156 @@
 package com.example.Services;
+import com.example.DAO.AutomobileDao;
+import com.example.DAO.HelicopterDao; 
 
-import java.util.List;
+import com.example.DAO.MotorcycleDao;
+import com.example.DAO.VehicleDao;
+import com.example.Entities.DbModels.Vehicles.Automobile;
+import com.example.Entities.DbModels.Vehicles.Helicopter;
+import com.example.Entities.DbModels.Vehicles.Motorcycle;
+import com.example.Entities.DbModels.Vehicles.Vehicle;
+
+import com.example.Utils.Annotations.VehiclesTransactional;
+import com.example.Utils.Enums.VehicleStatus;
+import com.example.Utils.Enums.VehicleTypes;
+
 import java.util.Optional;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.DAO.VehicleDao;
-import com.example.DAO.VehiclePropertiesDao;
-import com.example.Entities.DbModels.Vehicles.Vehicle;
-import com.example.Entities.DbModels.Vehicles.VehicleProperties;
-import com.example.Utils.Enums.VehicleStatus;
+import org.springframework.stereotype.Service;
 
 @Service
 public class VehicleServices {
-    private final VehicleDao vDao;
-    private final VehiclePropertiesDao vPropertiesDao;
 
-    public VehicleServices(VehicleDao vDao, VehiclePropertiesDao vPropertiesDao) {
-        this.vDao = vDao;
-        this.vPropertiesDao = vPropertiesDao;
+    private final VehicleDao vehicleDao;
+    private final AutomobileDao automobileDao;
+    private final MotorcycleDao motorcycleDao;
+    private final HelicopterDao helicopterDao; 
+
+    @Autowired
+    public VehicleServices(VehicleDao vehicleDao, AutomobileDao automobileDao, MotorcycleDao motorcycleDao, HelicopterDao helicopterDao) { 
+        this.vehicleDao = vehicleDao;
+        this.automobileDao = automobileDao;
+        this.motorcycleDao = motorcycleDao;
+        this.helicopterDao = helicopterDao;
     }
 
-    @Transactional
-    public Vehicle createVehicle(Vehicle newVehicle) {
-        if (vDao.findByPlate(newVehicle.getPlate()).isPresent()) {
-            throw new IllegalStateException("Bu plakaya sahip bir araç zaten mevcut: " + newVehicle.getPlate());
-        }
-
-        VehicleProperties properties = newVehicle.getProperties();
-        if (properties == null || properties.getPropId() == null
-                || !vPropertiesDao.existsById(properties.getPropId())) {
-            throw new IllegalStateException("Araç oluşturulamaz. Geçersiz veya eksik özellik bilgisi.");
-        }
-
-        return vDao.save(newVehicle);
-    }
-
-    @Transactional
-    public Vehicle updateVehicle(Vehicle vehicleToUpdate) {
-        vDao.findById(vehicleToUpdate.getVehicleId())
-                .orElseThrow(() -> new IllegalStateException(
-                        "Güncelleme başarısız. Araç bulunamadı. ID: " + vehicleToUpdate.getVehicleId()));
-
-       
-        VehicleProperties properties = vehicleToUpdate.getProperties();
-        if (properties == null || properties.getPropId() == null
-                || !vPropertiesDao.existsById(properties.getPropId())) {
-            throw new IllegalStateException("Güncelleme başarısız. Geçersiz veya eksik özellik bilgisi.");
-        }
-
-        return vDao.save(vehicleToUpdate);
-    }
-
-    @Transactional
-    public void deleteVehicle(Integer id) {
-        if (!vDao.existsById(id)) {
-            throw new IllegalStateException("Silme başarısız. Araç bulunamadı. ID: " + id);
-        }
-        vDao.deleteById(id);
-    }
-
-     public List<Vehicle> getVehiclesByPropertyId(Integer propId) {
+    @VehiclesTransactional
+    public Vehicle createAutomobile(Automobile automobile) {
         
-        return vDao.findByProperties_PropId(propId);
+        if (automobileDao.findByPlate(automobile.getPlate()).isPresent()) {
+            throw new IllegalStateException("An automobile with this plate already exists: " + automobile.getPlate());
+        }
+        
+        Automobile savedAutomobile = automobileDao.save(automobile);
+        
+        Vehicle vehicle = new Vehicle();
+        vehicle.setVehicleStatus(VehicleStatus.AVAILABLE);
+        vehicle.setDetailTableType(VehicleTypes.AUTOMOBILE);
+        vehicle.setDetailTableId(savedAutomobile.getId());
+
+        return vehicleDao.save(vehicle);
     }
 
-    public List<Vehicle> getAllVehicles() {
-        return vDao.findAll();
+    @VehiclesTransactional
+    public Vehicle createMotorcycle(Motorcycle motorcycle) {
+        // Benzersizlik kontrolü
+        if (motorcycleDao.findByPlate(motorcycle.getPlate()).isPresent()) {
+            throw new IllegalStateException("A motorcycle with this plate already exists: " + motorcycle.getPlate());
+        }
+
+        Motorcycle savedMotorcycle = motorcycleDao.save(motorcycle);
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.setVehicleStatus(VehicleStatus.AVAILABLE);
+        vehicle.setDetailTableType(VehicleTypes.MOTORCYCLE);
+        vehicle.setDetailTableId(savedMotorcycle.getId());
+
+        return vehicleDao.save(vehicle);
     }
 
-    public Optional<Vehicle> getVehicleByPlate(String plate) {
-        return vDao.findByPlate(plate);
+    @VehiclesTransactional
+    public Vehicle createHelicopter(Helicopter helicopter) {
+        // Benzersizlik kontrolü
+        if (helicopterDao.findByTailNumber(helicopter.getTailNumber()).isPresent()) {
+            throw new IllegalStateException("A helicopter with this tail number already exists: " + helicopter.getTailNumber());
+        }
+
+        Helicopter savedHelicopter = helicopterDao.save(helicopter);
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.setVehicleStatus(VehicleStatus.AVAILABLE);
+        vehicle.setDetailTableType(VehicleTypes.HELICOPTER);
+        vehicle.setDetailTableId(savedHelicopter.getId());
+
+        return vehicleDao.save(vehicle);
     }
 
+    @VehiclesTransactional
+    public void deleteAutomobile(Integer autoId) {
+        Vehicle vehicle = vehicleDao
+            .findByDetailTableTypeAndDetailTableId(VehicleTypes.AUTOMOBILE, autoId)
+            .orElseThrow(() -> new IllegalStateException("Parent Vehicle not found for automobile id: " + autoId));
+        
+        vehicleDao.delete(vehicle);
+        automobileDao.deleteById(autoId);
+    }
+
+    @VehiclesTransactional
+    public void deleteMotorcycle(Integer motorId) {
+        Vehicle vehicle = vehicleDao
+            .findByDetailTableTypeAndDetailTableId(VehicleTypes.MOTORCYCLE, motorId)
+            .orElseThrow(() -> new IllegalStateException("Parent Vehicle not found for motorcycle id: " + motorId));
+            
+        vehicleDao.delete(vehicle);
+        motorcycleDao.deleteById(motorId);
+    }
+
+    @VehiclesTransactional
+    public void deleteHelicopter(Integer heliId) {
+        Vehicle vehicle = vehicleDao
+            .findByDetailTableTypeAndDetailTableId(VehicleTypes.HELICOPTER, heliId)
+            .orElseThrow(() -> new IllegalStateException("Parent Vehicle not found for helicopter id: " + heliId));
+            
+        vehicleDao.delete(vehicle);
+        helicopterDao.deleteById(heliId);
+    }
+
+
+    public Optional<Automobile> getAutomobileByPlate(String plate) {
+        return automobileDao.findByPlate(plate);
+    }
+
+    public Optional<Motorcycle> getMotorcycleByPlate(String plate) {
+        return motorcycleDao.findByPlate(plate);
+    }
     
-
-    public List<Vehicle> getVehiclesByModelYear(Integer modelYear) {
-        return vDao.findByModelYear(modelYear);
+    public Optional<Helicopter> getHelicopterByTailNumber(String tailNumber) {
+        return helicopterDao.findByTailNumber(tailNumber);
+    }
+     @VehiclesTransactional
+    public Automobile updateAutomobile(Automobile automobile) {
+        if (automobile.getId() == null || !automobileDao.existsById(automobile.getId())) {
+            throw new IllegalArgumentException("Automobile with ID " + automobile.getId() + " not found for update.");
+        }
+        return automobileDao.save(automobile);
     }
 
-    public List<Vehicle> getVehiclesByModelName(String modelName) {
-        return vDao.findByModelName(modelName);
+    @VehiclesTransactional
+    public Motorcycle updateMotorcycle(Motorcycle motorcycle) {
+        if (motorcycle.getId() == null || !motorcycleDao.existsById(motorcycle.getId())) {
+            throw new IllegalArgumentException("Motorcycle with ID " + motorcycle.getId() + " not found for update.");
+        }
+        return motorcycleDao.save(motorcycle);
     }
 
-    public List<Vehicle> getVehiclesByBrandName(String brandName) {
-        return vDao.findByBrandName(brandName);
+    @VehiclesTransactional
+    public Helicopter updateHelicopter(Helicopter helicopter) {
+        if (helicopter.getId() == null || !helicopterDao.existsById(helicopter.getId())) {
+            throw new IllegalArgumentException("Helicopter with ID " + helicopter.getId() + " not found for update.");
+        }
+        return helicopterDao.save(helicopter);
     }
 
-    public List<Vehicle> getVehiclesByStatus(VehicleStatus vehicleStatus) {
-        return vDao.findByVehicleStatus(vehicleStatus);
-    }
-
-    public List<Vehicle> getVehiclesByValueBetween(Integer minValue, Integer maxValue) {
-        return vDao.findByVehicleValueBetween(minValue, maxValue);
-    }
-
+   
 }

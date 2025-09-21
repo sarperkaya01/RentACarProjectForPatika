@@ -46,7 +46,7 @@ public class RegisterController implements Controller {
     public List<String> getMenuTitles() {
         return Arrays.asList("New User", "Exit");
     }
-
+@SuppressWarnings("unused")
     private void newUser() {
         try {
             System.out.println("Please enter your email adress:");

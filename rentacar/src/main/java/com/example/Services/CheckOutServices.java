@@ -1,108 +1,27 @@
 package com.example.Services;
 
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.example.DAO.CheckOutDao;
 import com.example.DAO.RentalDao;
-import com.example.DAO.VehiclePropertiesDao;
-import com.example.Entities.DbModels.Vehicles.Vehicle;
-
-import com.example.Entities.Renting.CheckOut;
+import com.example.Entities.DbModels.Vehicles.Automobile;
+import com.example.Entities.DbModels.Vehicles.Helicopter;
+import com.example.Entities.DbModels.Vehicles.Motorcycle;
+import com.example.Entities.Renting.Checkout;
 import com.example.Entities.Renting.Rental;
 import com.example.Utils.Enums.CheckOutStatus;
-
 import com.example.Utils.Enums.RentalStatus;
 import com.example.Utils.Enums.VehicleStatus;
 
+// Spring'in kendi @Transactional'ını kullanmak bu tür karmaşık işlemlerde en güvenlisidir.
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 public class CheckOutServices {
-
-    private final CheckOutDao checkOutDao;
-    private final RentalDao rentalDao;
-    private final VehicleServices vehicleServices;
-    private final VehiclePropertiesDao vehiclePropertiesDao;
-
-    @Autowired
-    public CheckOutServices(CheckOutDao checkOutDao, RentalDao rentalDao, VehicleServices vehicleServices,
-            VehiclePropertiesDao vehiclePropertiesDao) {
-        this.checkOutDao = checkOutDao;
-        this.rentalDao = rentalDao;
-        this.vehicleServices = vehicleServices;
-        this.vehiclePropertiesDao = vehiclePropertiesDao;
-    }
-
-    @Transactional
-    public CheckOut processCheckOut(Integer rentalId) {
-        Rental rental = rentalDao.findById(rentalId)
-                .orElseThrow(() -> new IllegalStateException("Kiralama kaydı bulunamadı. ID: " + rentalId));
-
-        if (rental.getRentalStatus() == RentalStatus.COMPLETED) {
-            throw new IllegalStateException("Bu kiralama işlemi zaten tamamlanmış.");
-        }
-
-        CheckOut checkOut = checkOutDao.findByRental_RentalId(rentalId)
-                .orElseThrow(() -> new IllegalStateException("Bu kiralama için bir iade süreci bulunamadı."));
-
-        Vehicle vehicle = rental.getVehicle();
-
-        vehicle.setVehicleStatus(VehicleStatus.AVAILABLE);
-        vehicleServices.updateVehicle(vehicle);
-        rental.setRentalStatus(RentalStatus.COMPLETED);
-        rentalDao.save(rental);
-
-        checkOut.setCheckoutStatus(CheckOutStatus.IN_PROGRESS);
-        return checkOutDao.save(checkOut);
-    }
-
-    @Transactional
-    public CheckOut updateCheckOut(CheckOut checkoutToUpdate) {
-        Integer id = checkoutToUpdate.getCheckoutId();
-        if (id == null || !checkOutDao.existsById(id)) {
-            throw new IllegalStateException("Güncelleme başarısız. İade kaydı bulunamadı. ID: " + id);
-        }
-        return checkOutDao.save(checkoutToUpdate);
-    }
-
-    @Transactional
-    public void deleteCheckOut(Integer id) {
-        if (!checkOutDao.existsById(id)) {
-            throw new IllegalStateException("Silme başarısız. İade kaydı bulunamadı. ID: " + id);
-        }
-        checkOutDao.deleteById(id);
-    }
-
-    // private BigDecimal calculateCheckOutPrice(CheckOut ca, Integer rentalId) {
-    //     Rental rental = rentalDao.findById(rentalId)
-    //             .orElseThrow(() -> new IllegalStateException("There is no rentol record for this ID " + rentalId));
-    //     if (ca.getActualDropoffDate().isAfter(rental.getPlannedDropoffDate())) {
-    //         long lateDays = ChronoUnit.DAYS.between(rental.getPlannedDropoffDate().toLocalDate(),
-    //                 ca.getActualDropoffDate().toLocalDate());
-
-    //         if (lateDays > 0) {
-
-    //             return ca.getLateFee().multiply(new BigDecimal(lateDays));
-    //         }
-    //     }
-    //     return BigDecimal.ZERO;
-    // }
-
-    // private BigDecimal calculateRepairFee(DamageType damageType) {
-
-    //     if (damageType == null) {
-    //         return DamageType.NO_DAMAGE.getFee();
-    //     }
-
-    //     return damageType.getFee();
-    // }
-
-    public CheckOut getCheckOutByRentalId(Integer rentalId) {
-        
-        return checkOutDao.findByRental_RentalId(rentalId)
-                .orElseThrow(() -> new IllegalStateException(
-                        "Bu kiralamaya ait iade kaydı bulunamadı. Rental ID: " + rentalId));
-    }
 
 }

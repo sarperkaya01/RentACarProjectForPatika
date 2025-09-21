@@ -38,17 +38,11 @@ CREATE TABLE vehicle_properties (
 
 CREATE TABLE vehicles (
     vehicle_id SERIAL PRIMARY KEY,
-    prop_id INT NOT NULL,
-    plate VARCHAR(10) NOT NULL UNIQUE,
-    model_year SMALLINT NOT NULL,
-    model_name VARCHAR(20) not null,
-    brand_name VARCHAR(20) not null,
-    km NUMERIC(12, 2) NOT NULL,
-    fuel NUMERIC(5, 2) NOT NULL,
-    vehicle_value INT NOT NULL,
-    vehicle_status VARCHAR(10) NOT NULL,
-    -- Foreign Key constraints
-    CONSTRAINT fk_vehicle_type FOREIGN KEY (prop_id) REFERENCES vehicle_properties (prop_id) ON DELETE RESTRICT
+    vehicle_status VARCHAR(20) NOT NULL,
+    detail_table_type VARCHAR(20) NOT NULL,
+    detail_table_id INT NOT NULL,
+    -- Bu iki kolonun birlikte benzersiz olmasını sağlamak veri bütünlüğünü artırır.
+    UNIQUE (detail_table_type, detail_table_id)
 );
 
 -- Rental table create
@@ -57,16 +51,17 @@ CREATE TABLE rentals (
     rental_id SERIAL PRIMARY KEY,
     customer_id INT NOT NULL,
     vehicle_id INT NOT NULL,
+    checkout_id INT NOT NULL,
     rent_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     rental_status VARCHAR(10) NOT NULL,
     -- Foreign Key constraints
     CONSTRAINT fk_rental_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles (vehicle_id) ON DELETE RESTRICT,
-    CONSTRAINT fk_rental_customer FOREIGN KEY (customer_id) REFERENCES customers (customer_id) ON DELETE RESTRICT
+    CONSTRAINT fk_rental_customer FOREIGN KEY (customer_id) REFERENCES customers (customer_id) ON DELETE RESTRICT,
+    CONSTRAINT fk_rental_checkout FOREIGN KEY (checkout_id) REFERENCES checkout (checkout_id) ON DELETE CASCADE
 );
 
-CREATE TABLE checkOut (
-    checkout_id SERIAL PRIMARY KEY,
-    rental_id INT NOT NULL,
+CREATE TABLE checkout (
+    checkout_id SERIAL PRIMARY KEY,    
     planned_dropoff_date TIMESTAMP DEFAULT NULL,
     actual_dropoff_date TIMESTAMP DEFAULT NULL,
     planned_price DECIMAL(10, 2),
@@ -76,5 +71,53 @@ CREATE TABLE checkOut (
     checkout_amount DECIMAL(10, 2),
     checkout_status VARCHAR(10) NOT NULL,
     -- Foreign Key constraints
-    CONSTRAINT fk_checkout FOREIGN KEY (rental_id) REFERENCES rentals (rental_id) ON DELETE CASCADE
+    
+);
+
+CREATE TABLE automobiles (
+    -- BaseVehicle'dan gelen kolonlar
+    auto_id SERIAL PRIMARY KEY,
+    brand_name VARCHAR(30) NOT NULL,
+    model_name VARCHAR(30) NOT NULL,
+    model_year INT NOT NULL,
+    vehicle_value INT NOT NULL,
+
+    -- Automobile sınıfından gelen kolonlar
+    plate VARCHAR(15) NOT NULL UNIQUE,
+    km NUMERIC(12, 2) NOT NULL,
+    current_fuel NUMERIC(6, 2) NOT NULL,
+    max_fuel_capacity NUMERIC(6, 2) NOT NULL,
+    wheel_drive_type VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE motorcycles (
+    -- BaseVehicle'dan gelen kolonlar
+    motor_id SERIAL PRIMARY KEY,
+    brand_name VARCHAR(30) NOT NULL,
+    model_name VARCHAR(30) NOT NULL,
+    model_year INT NOT NULL,
+    vehicle_value INT NOT NULL,
+
+    -- Motorcycle sınıfından gelen kolonlar
+    plate VARCHAR(15) NOT NULL UNIQUE,
+    km NUMERIC(12, 2) NOT NULL,
+    current_fuel NUMERIC(6, 2) NOT NULL,
+    max_fuel_capacity NUMERIC(6, 2) NOT NULL,
+    engine_cc INT NOT NULL,
+    mobility_type VARCHAR(20) NOT NULL
+);
+CREATE TABLE helicopters (
+    -- BaseVehicle'dan gelen kolonlar
+    heli_id SERIAL PRIMARY KEY,
+    brand_name VARCHAR(30) NOT NULL,
+    model_name VARCHAR(30) NOT NULL,
+    model_year INT NOT NULL,
+    vehicle_value INT NOT NULL,
+
+    -- Helicopter sınıfından gelen kolonlar
+    tail_number VARCHAR(15) NOT NULL UNIQUE,
+    flight_hours NUMERIC(12, 2) NOT NULL,
+    current_fuel NUMERIC(8, 2) NOT NULL,
+    max_fuel_capacity NUMERIC(8, 2) NOT NULL,
+    speciality VARCHAR(20) NOT NULL
 );

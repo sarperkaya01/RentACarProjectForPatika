@@ -10,14 +10,12 @@ public class RentalsController implements Controller {
 
     @Override
     public void start() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'start'");
+        runMenuLoop("Rentals Menu");
     }
 
     @Override
     public void exit() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'exit'");
+        System.out.println("");
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.DAO.CustomerDao;
 import com.example.DAO.RentalDao;
 import com.example.DAO.UserDao;
+import com.example.DTO.CustomerInfoDto;
 import com.example.DTO.RentalHistoryDto;
 import com.example.Entities.DbModels.People.Customer;
 import com.example.Entities.DbModels.People.User;
@@ -98,6 +99,10 @@ public class CustomerServices {
 
     public List<RentalHistoryDto> getCustomerRentalHistory(Integer customerId) {
         return rentalDao.findRentalHistoryByCustomerId(customerId);
+    }
+
+    public List<CustomerInfoDto> getAllCustomerInfo() {
+        return customerDao.findAllCustomerInfo();
     }
 
 }

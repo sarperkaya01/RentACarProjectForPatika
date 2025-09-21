@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.example.Utils.Interfaces.Controller;
+
 @Component
 public class VehiclesController implements Controller {
     private MainMenuController mmc;
@@ -25,19 +26,20 @@ public class VehiclesController implements Controller {
     public List<String> getMenuTitles() {
         return Arrays.asList("Vehicle List", "Add new vehicle", "Edit a vehicle", "Exit");
     }
-     private void list() {
-        
+
+    @SuppressWarnings("unused")
+    private void list() {
 
     }
 
+    @SuppressWarnings("unused")
     private void newVehicle() {
-       
+
     }
 
+    @SuppressWarnings("unused")
     private void editVehicle() {
 
-
     }
-    
 
 }

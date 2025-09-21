@@ -12,22 +12,21 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "checkout") // Tablo adını küçük harfle belirtmek iyi bir pratiktir.
-public class CheckOut {
+public class Checkout {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "checkout_id")
     private Integer checkoutId;
 
-    @OneToOne
-    @JoinColumn(name = "rental_id", nullable = false)
-    private Rental rental;
+    @OneToOne(mappedBy = "checkout")
+    private Rental rental;    
 
     @Column(name = "planned_dropoff_date")
     private LocalDateTime plannedDropoffDate;
@@ -64,15 +63,6 @@ public class CheckOut {
         this.checkoutId = checkoutId;
     }
 
-
-    public Rental getRental() {
-        return rental;
-    }
-
-
-    public void setRental(Rental rental) {
-        this.rental = rental;
-    }
 
 
     public LocalDateTime getPlannedDropoffDate() {
@@ -158,7 +148,7 @@ public class CheckOut {
     
 
    
-    public CheckOut() {
+    public Checkout() {
     }
 
     

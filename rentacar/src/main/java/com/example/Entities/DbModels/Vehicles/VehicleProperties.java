@@ -13,6 +13,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import jakarta.persistence.Table;
 
 
@@ -24,6 +25,9 @@ public class VehicleProperties {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "prop_id")
     private Integer propId;
+
+    @Column(name = "specific_vehicle_id", nullable = false, unique = true)
+    private Integer specificVehicleId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false, length = 20)

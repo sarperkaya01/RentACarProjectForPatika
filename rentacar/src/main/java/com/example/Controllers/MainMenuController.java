@@ -47,19 +47,23 @@ public class MainMenuController implements Controller {
         return menuCases;
     }
 
+    @SuppressWarnings("unused")
     private void vehicles() {
         vehiclesController.start();
 
     }
 
+    @SuppressWarnings("unused")
     private void rentals() {
         rentalsController.start();
     }
 
+    @SuppressWarnings("unused")
     private void settings() {
 
     }
 
+    @SuppressWarnings("unused")
     private void profile() {
 
     }
