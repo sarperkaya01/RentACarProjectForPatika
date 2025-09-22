@@ -1,67 +1,69 @@
 package com.example.Entities.DbModels.Vehicles;
 
 import com.example.Utils.Enums.VehicleStatus;
-import com.example.Utils.Enums.VehicleTypes;
+
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "vehicles")
-public class Vehicle {
+@Inheritance(strategy = InheritanceType.JOINED) // En önemli kısım burası!
+@DiscriminatorColumn(name = "vehicle_type", discriminatorType = DiscriminatorType.STRING) 
+public abstract class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "vehicle_id")
-    private Integer vehicleId;
+    private Integer id;
+
+    @Column(name = "brand_name", nullable = false, length = 30)
+    private String brandName;
+
+    @Column(name = "model_name", nullable = false, length = 30)
+    private String modelName;
+
+    @Column(name = "model_year", nullable = false)
+    private Integer modelYear;
+
+    @Column(name = "vehicle_value", nullable = false)
+    private Integer vehicleValue;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_status", nullable = false, length = 20)
     private VehicleStatus vehicleStatus;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "detail_table_type", nullable = false, length = 20)
-    private VehicleTypes detailTableType;
-
-    @Column(name = "detail_table_id", nullable = false)
-    private Integer detailTableId;
+    // VehicleProperties ilişkisi burada kalabilir, doğru görünüyor.
+    @ManyToOne(fetch = FetchType.LAZY) // Performans için LAZY kullanmak genellikle daha iyidir.
+    @JoinColumn(name = "prop_id", nullable = false)
+    private VehicleProperties properties;
 
     // --- Getter'lar ve Setter'lar ---
-    public Integer getVehicleId() {
-        return vehicleId;
-    }
-
-    public void setVehicled(Integer vehicleId) {
-        this.vehicleId = vehicleId;
-    }
-
-    public VehicleStatus getVehicleStatus() {
-        return vehicleStatus;
-    }
-
-    public void setVehicleStatus(VehicleStatus vehicleStatus) {
-        this.vehicleStatus = vehicleStatus;
-    }
-
-    public VehicleTypes getDetailTableType() {
-        return detailTableType;
-    }
-
-    public void setDetailTableType(VehicleTypes detailTableType) {
-        this.detailTableType = detailTableType;
-    }
-
-    public Integer getDetailTableId() {
-        return detailTableId;
-    }
-
-    public void setDetailTableId(Integer detailTableId) {
-        this.detailTableId = detailTableId;
-    }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+    public String getBrandName() { return brandName; }
+    public void setBrandName(String brandName) { this.brandName = brandName; }
+    public String getModelName() { return modelName; }
+    public void setModelName(String modelName) { this.modelName = modelName; }
+    public Integer getModelYear() { return modelYear; }
+    public void setModelYear(Integer modelYear) { this.modelYear = modelYear; }
+    public Integer getVehicleValue() { return vehicleValue; }
+    public void setVehicleValue(Integer vehicleValue) { this.vehicleValue = vehicleValue; }
+    public VehicleStatus getVehicleStatus() { return vehicleStatus; }
+    public void setVehicleStatus(VehicleStatus vehicleStatus) { this.vehicleStatus = vehicleStatus; }
+    public VehicleProperties getProperties() { return properties; }
+    public void setProperties(VehicleProperties properties) { this.properties = properties; }
 }

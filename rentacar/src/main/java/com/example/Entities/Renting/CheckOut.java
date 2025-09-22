@@ -3,7 +3,7 @@ package com.example.Entities.Renting;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.example.Utils.Enums.CheckOutStatus;
+import com.example.Utils.Enums.CheckoutStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,7 +51,7 @@ public class Checkout {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "checkout_status", nullable = false, length = 10)
-    private CheckOutStatus checkoutStatus;
+    private CheckoutStatus checkoutStatus;
 
 
     public Integer getCheckoutId() {
@@ -135,12 +135,12 @@ public class Checkout {
     }
 
 
-    public CheckOutStatus getCheckoutStatus() {
+    public CheckoutStatus getCheckoutStatus() {
         return checkoutStatus;
     }
 
 
-    public void setCheckoutStatus(CheckOutStatus checkoutStatus) {
+    public void setCheckoutStatus(CheckoutStatus checkoutStatus) {
         this.checkoutStatus = checkoutStatus;
     }
 

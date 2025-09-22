@@ -1,6 +1,6 @@
 package com.example.Utils.Enums;
 
-public enum CheckOutStatus {
+public enum CheckoutStatus {
     PAID,
     IN_PROGRESS,
     LATE

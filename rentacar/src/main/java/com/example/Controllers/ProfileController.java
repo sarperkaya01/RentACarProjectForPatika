@@ -19,12 +19,11 @@ import com.example.Utils.Interfaces.Controller;
 public class ProfileController implements Controller {
     private final UserServices userServices;
     private final CustomerServices customerServices;
-    
 
     public ProfileController(UserServices userServices, CustomerServices customerServices) {
         this.userServices = userServices;
         this.customerServices = customerServices;
-        
+
     }
 
     @Override
@@ -46,7 +45,7 @@ public class ProfileController implements Controller {
     private void info() {
 
         Optional<CustomerInfoDto> optionalCustomerDto = customerServices.getAllCustomerInfo().stream()
-                .filter(customerDto -> customerDto.getEmail().equalsIgnoreCase(Global.currentUser.getEmail()))     
+                .filter(customerDto -> customerDto.getEmail().equalsIgnoreCase(Global.currentUser.getEmail()))
                 .findFirst();
 
         if (optionalCustomerDto.isPresent()) {
@@ -113,25 +112,24 @@ public class ProfileController implements Controller {
 
     }
 
-    // @SuppressWarnings("unused")
-    // private void listAllCustomers() {
-    // // 1. Servisten DTO listesini iste
-    // List<CustomerInfoDto> customers = customerServices.getAllCustomerInfo();
+    @SuppressWarnings("unused")
+    private void listAllCustomers() {
+        // 1. Servisten DTO listesini iste
+        List<CustomerInfoDto> customers = customerServices.getAllCustomerInfo();
 
-    // System.out.println("\n--- All Customers ---");
-    // if (customers.isEmpty()) {
-    // System.out.println("No customers found.");
-    // } else {
-    // // 2. DTO'ları döngüye al ve yazdır (DTO'nun toString() metodu otomatik
-    // çalışır)
-    // for (CustomerInfoDto customer : customers) {
-    // System.out.println(customer);
-    // }
-    // System.out.println("----------------------------------------");
-    // }
+        System.out.println("\n--- All Customers ---");
+        if (customers.isEmpty()) {
+            System.out.println("No customers found.");
+        } else {
+            // 2. DTO'ları döngüye al ve yazdır (DTO'nun toString() metodu otomatik çalışır)
+            for (CustomerInfoDto customer : customers) {
+                System.out.println(customer);
+            }
+            System.out.println("----------------------------------------");
+        }
 
-    // System.out.println("\nPress Enter to return to the menu...");
-    // Global.scanner.nextLine();
-    // }
+        System.out.println("\nPress Enter to return to the menu...");
+        Global.scanner.nextLine();
+    }
 
 }

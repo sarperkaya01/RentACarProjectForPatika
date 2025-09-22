@@ -8,61 +8,67 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.DAO.CheckOutDao;
 import com.example.DAO.CustomerDao;
 import com.example.DAO.RentalDao;
 import com.example.DAO.VehicleDao;
-
+import com.example.Entities.DbModels.People.Customer;
+import com.example.Entities.DbModels.Vehicles.Vehicle;
 import com.example.Entities.Renting.Checkout;
 import com.example.Entities.Renting.Rental;
-import com.example.Utils.Enums.CheckOutStatus;
+import com.example.Utils.Enums.CheckoutStatus;
 import com.example.Utils.Enums.RentalStatus;
+import com.example.Utils.Enums.VehicleStatus;
 
 @Service
 public class RentalServices {
     private final RentalDao rentalDao;
     private final VehicleDao vehicleDao;
     private final CustomerDao customerDao;
-    private final CheckOutDao checkOutDao;
 
     @Autowired
-    public RentalServices(RentalDao rentalDao, VehicleDao vehicleDao, CustomerDao customerDao,
-            CheckOutDao checkOutDao) {
+    public RentalServices(RentalDao rentalDao, VehicleDao vehicleDao, CustomerDao customerDao) {
         this.rentalDao = rentalDao;
         this.vehicleDao = vehicleDao;
         this.customerDao = customerDao;
-        this.checkOutDao = checkOutDao; // YENİ BAĞIMLILIĞI ATA
+
     }
 
     @Transactional
-    public Rental createRental(Rental newRental, LocalDateTime plannedDropoffDate, 
-                               BigDecimal plannedPrice, BigDecimal deposit) {
-        // DÜZELTME: Nesneler ve onların ID'leri üzerinden kontrol yap.
-        if (newRental.getVehicle() == null || !vehicleDao.existsById(newRental.getVehicle().getVehicleId())) {
-            throw new IllegalStateException("Kiralama başarısız. Araç bulunamadı.");
-        }
-        if (newRental.getCustomer() == null || !customerDao.existsById(newRental.getCustomer().getCustomerId())) {
-            throw new IllegalStateException("Kiralama başarısız. Müşteri bulunamadı.");
+    public Rental createNewRental(Integer customerId, Integer vehicleId,
+            LocalDateTime plannedDropoffDate, BigDecimal plannedPrice, BigDecimal deposit) {
+
+        Customer customer = customerDao.findById(customerId)
+                .orElseThrow(() -> new IllegalStateException("Customer not found with id: " + customerId));
+
+        Vehicle vehicle = vehicleDao.findById(vehicleId)
+                .orElseThrow(() -> new IllegalStateException("Vehicle not found with id: " + vehicleId));
+
+        if (vehicle.getVehicleStatus() != VehicleStatus.AVAILABLE) {
+            throw new IllegalStateException(
+                    "Vehicle is not available for rent. Current status: " + vehicle.getVehicleStatus());
         }
 
+        Checkout newCheckout = new Checkout();
+        newCheckout.setPlannedDropoffDate(plannedDropoffDate);
+        newCheckout.setPlannedPrice(plannedPrice);
+        newCheckout.setDeposit(deposit);
+        newCheckout.setCheckoutStatus(CheckoutStatus.IN_PROGRESS);
+
+        Rental newRental = new Rental();
+        newRental.setCustomer(customer);
+        newRental.setVehicle(vehicle);
+        newRental.setRentDate(LocalDateTime.now());
         newRental.setRentalStatus(RentalStatus.RENTED);
-        Rental savedRental = rentalDao.save(newRental);
+        newRental.setCheckout(newCheckout);
 
-        Checkout newCheckOut = new Checkout();
-        
-        newCheckOut.setPlannedDropoffDate(plannedDropoffDate);
-        newCheckOut.setPlannedPrice(plannedPrice);
-        newCheckOut.setDeposit(deposit);
-        newCheckOut.setCheckoutStatus(CheckOutStatus.IN_PROGRESS);
+        vehicle.setVehicleStatus(VehicleStatus.RENTED);
 
-        checkOutDao.save(newCheckOut);
-
-        return savedRental;
+        return rentalDao.save(newRental);
     }
 
     public Rental getRentalById(Integer id) {
         return rentalDao.findById(id)
-                .orElseThrow(() -> new IllegalStateException("Kiralama kaydı bulunamadı. ID: " + id));
+                .orElseThrow(() -> new IllegalStateException("Rental recoird not found. ID: " + id));
     }
 
     public List<Rental> getAllRentals() {

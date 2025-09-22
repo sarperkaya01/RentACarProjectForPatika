@@ -4,17 +4,23 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.example.Utils.Enums.CheckOutStatus;
+import com.example.Utils.Enums.CheckoutStatus;
+import com.example.Utils.Enums.RentalStatus;
 
 public class RentalHistoryDto {
-   
-    // Rental'dan ve Vehicle'dan gelenler
-    private final String vehicleBrand;
-    private final String vehicleModel;
-    private final String vehiclePlate;
-    private final LocalDateTime rentDate;
+   // Rental
+    private final Integer rentalId;
+
+    // Customer
+    private final String customerFullName;
+    private final String customerCompany;
     
-    // CheckOut'tan gelen alanlar
+    // Vehicle
+    private final String vehicleBrandAndModel;
+    private final String vehicleIdentifier; // Plaka veya Kuyruk No
+
+    // Checkout
+    private final LocalDateTime rentDate;
     private final LocalDateTime plannedDropoffDate;
     private final LocalDateTime actualDropoffDate;
     private final BigDecimal plannedPrice;
@@ -22,15 +28,19 @@ public class RentalHistoryDto {
     private final BigDecimal lateFee;
     private final BigDecimal repairFee;
     private final BigDecimal checkoutAmount;
-    private final CheckOutStatus checkoutStatus;
+    private final RentalStatus rentalStatus;
+    private final CheckoutStatus checkoutStatus;
 
-    public RentalHistoryDto(String vehicleBrand, String vehicleModel, String vehiclePlate, LocalDateTime rentDate,
-                            LocalDateTime plannedDropoffDate, LocalDateTime actualDropoffDate,
+    public RentalHistoryDto(Integer rentalId, String customerName, String customerSurname, String companyName,
+                            String vehicleBrand, String vehicleModel, String vehicleIdentifier,
+                            LocalDateTime rentDate, LocalDateTime plannedDropoffDate, LocalDateTime actualDropoffDate,
                             BigDecimal plannedPrice, BigDecimal deposit, BigDecimal lateFee,
-                            BigDecimal repairFee, BigDecimal checkoutAmount, CheckOutStatus checkoutStatus) {
-        this.vehicleBrand = vehicleBrand;
-        this.vehicleModel = vehicleModel;
-        this.vehiclePlate = vehiclePlate;
+                            BigDecimal repairFee, BigDecimal checkoutAmount, RentalStatus rentalStatus, CheckoutStatus checkoutStatus) {
+        this.rentalId = rentalId;
+        this.customerFullName = customerName + " " + customerSurname;
+        this.customerCompany = companyName;
+        this.vehicleBrandAndModel = vehicleBrand + " " + vehicleModel;
+        this.vehicleIdentifier = vehicleIdentifier;
         this.rentDate = rentDate;
         this.plannedDropoffDate = plannedDropoffDate;
         this.actualDropoffDate = actualDropoffDate;
@@ -39,29 +49,13 @@ public class RentalHistoryDto {
         this.lateFee = lateFee;
         this.repairFee = repairFee;
         this.checkoutAmount = checkoutAmount;
+        this.rentalStatus = rentalStatus;
         this.checkoutStatus = checkoutStatus;
     }
-
-    // --- Getter'lar ---
-
-    public String getVehicleBrand() { return vehicleBrand; }
-    public String getVehicleModel() { return vehicleModel; }
-    public String getVehiclePlate() { return vehiclePlate; }
-    public LocalDateTime getRentDate() { return rentDate; }
-    public LocalDateTime getPlannedDropoffDate() { return plannedDropoffDate; }
-    public LocalDateTime getActualDropoffDate() { return actualDropoffDate; }
-    public BigDecimal getPlannedPrice() { return plannedPrice; }
-    public BigDecimal getDeposit() { return deposit; }
-    public BigDecimal getLateFee() { return lateFee; }
-    public BigDecimal getRepairFee() { return repairFee; }
-    public BigDecimal getCheckoutAmount() { return checkoutAmount; }
-    public CheckOutStatus getCheckoutStatus() { return checkoutStatus; }
-
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
-       
         String plannedReturnStr = plannedDropoffDate != null ? plannedDropoffDate.format(formatter) : "N/A";
         String actualReturnStr = actualDropoffDate != null ? actualDropoffDate.format(formatter) : "Not returned yet";
         String plannedPriceStr = plannedPrice != null ? String.format("$%.2f", plannedPrice) : "N/A";
@@ -71,22 +65,29 @@ public class RentalHistoryDto {
         String totalAmountStr = checkoutAmount != null ? String.format("$%.2f", checkoutAmount) : "In progress";
 
         return String.format(
-            "----------------------------------------\n" +
-            " Vehicle           : %s %s (%s)\n" +
-            " Rented On         : %s\n" +
-            " Planned Return    : %s\n" +
-            " Actual Return     : %s\n" +
-            " \n" + 
-            " Planned Price     : %s\n" +
-            " Deposit           : %s\n" +
-            " Late Fee          : %s\n" +
-            " Repair Fee        : %s\n" +
-            " ------------------\n" + 
-            " Total Amount      : %s\n" +
-            " \n" + 
-            " Status            : %s",
-            vehicleBrand, vehicleModel, vehiclePlate,
-            rentDate.format(formatter),
+                "----------------------------------------\n" +
+                " RENTAL INVOICE - ID: %d\n" +
+                " Customer          : %s (%s)\n" +
+                " ----------------------------------------\n" +
+                " Vehicle           : %s (%s)\n" +
+                " Rented On         : %s\n" +
+                " Planned Return    : %s\n" +
+                " Actual Return     : %s\n" +
+                " \n" +
+                " Planned Price     : %s\n" +
+                " Deposit           : %s\n" +
+                " Late Fee          : %s\n" +
+                " Repair Fee        : %s\n" +
+                " ------------------\n" +
+                " Total Amount      : %s\n" +
+                " \n" +
+                " Rental Status            : %s\n" +
+                " Chekcout Status.         : %s\\n" +
+                "----------------------------------------",
+            this.rentalId,
+            this.customerFullName, this.customerCompany,
+            this.vehicleBrandAndModel, this.vehicleIdentifier,
+            this.rentDate.format(formatter),
             plannedReturnStr,
             actualReturnStr,
             plannedPriceStr,
@@ -94,7 +95,8 @@ public class RentalHistoryDto {
             lateFeeStr,
             repairFeeStr,
             totalAmountStr,
-            checkoutStatus
+            this.rentalStatus,
+            this.checkoutStatus
         );
     }
 }

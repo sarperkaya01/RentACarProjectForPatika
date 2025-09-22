@@ -14,10 +14,15 @@ import com.example.Utils.Interfaces.Controller;
 public class MainMenuController implements Controller {
     private final VehiclesController vehiclesController;
     private final RentalsController rentalsController;
+    private final ProfileController profileController;
 
-    public MainMenuController(VehiclesController vehiclesController, RentalsController rentalsController) {
+   
+
+    public MainMenuController(VehiclesController vehiclesController, RentalsController rentalsController,
+            ProfileController profileController) {
         this.vehiclesController = vehiclesController;
         this.rentalsController = rentalsController;
+        this.profileController = profileController;
     }
 
     @Override
@@ -65,6 +70,7 @@ public class MainMenuController implements Controller {
 
     @SuppressWarnings("unused")
     private void profile() {
+        profileController.start();
 
     }
 

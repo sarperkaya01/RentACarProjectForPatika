@@ -38,11 +38,14 @@ CREATE TABLE vehicle_properties (
 
 CREATE TABLE vehicles (
     vehicle_id SERIAL PRIMARY KEY,
+    vehicle_type VARCHAR(31) NOT NULL,
+    prop_id INT NOT NULL,
+    brand_name VARCHAR(30) NOT NULL,
+    model_name VARCHAR(30) NOT NULL,
+    model_year INT NOT NULL,
+    vehicle_value INT NOT NULL,
     vehicle_status VARCHAR(20) NOT NULL,
-    detail_table_type VARCHAR(20) NOT NULL,
-    detail_table_id INT NOT NULL,
-    -- Bu iki kolonun birlikte benzersiz olmasını sağlamak veri bütünlüğünü artırır.
-    UNIQUE (detail_table_type, detail_table_id)
+    CONSTRAINT fk_vehicle_properties FOREIGN KEY (prop_id) REFERENCES vehicle_properties (prop_id)
 );
 
 -- Rental table create
@@ -61,7 +64,7 @@ CREATE TABLE rentals (
 );
 
 CREATE TABLE checkout (
-    checkout_id SERIAL PRIMARY KEY,    
+    checkout_id SERIAL PRIMARY KEY,
     planned_dropoff_date TIMESTAMP DEFAULT NULL,
     actual_dropoff_date TIMESTAMP DEFAULT NULL,
     planned_price DECIMAL(10, 2),
@@ -71,53 +74,35 @@ CREATE TABLE checkout (
     checkout_amount DECIMAL(10, 2),
     checkout_status VARCHAR(10) NOT NULL,
     -- Foreign Key constraints
-    
 );
 
 CREATE TABLE automobiles (
-    -- BaseVehicle'dan gelen kolonlar
-    auto_id SERIAL PRIMARY KEY,
-    brand_name VARCHAR(30) NOT NULL,
-    model_name VARCHAR(30) NOT NULL,
-    model_year INT NOT NULL,
-    vehicle_value INT NOT NULL,
-
-    -- Automobile sınıfından gelen kolonlar
+    auto_id INT PRIMARY KEY,
     plate VARCHAR(15) NOT NULL UNIQUE,
     km NUMERIC(12, 2) NOT NULL,
     current_fuel NUMERIC(6, 2) NOT NULL,
     max_fuel_capacity NUMERIC(6, 2) NOT NULL,
-    wheel_drive_type VARCHAR(20) NOT NULL
+    wheel_drive_type VARCHAR(20) NOT NULL,
+    CONSTRAINT fk_auto_vehicle FOREIGN KEY (auto_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );
 
 CREATE TABLE motorcycles (
-    -- BaseVehicle'dan gelen kolonlar
-    motor_id SERIAL PRIMARY KEY,
-    brand_name VARCHAR(30) NOT NULL,
-    model_name VARCHAR(30) NOT NULL,
-    model_year INT NOT NULL,
-    vehicle_value INT NOT NULL,
-
-    -- Motorcycle sınıfından gelen kolonlar
+    motor_id INT PRIMARY KEY,
     plate VARCHAR(15) NOT NULL UNIQUE,
     km NUMERIC(12, 2) NOT NULL,
     current_fuel NUMERIC(6, 2) NOT NULL,
     max_fuel_capacity NUMERIC(6, 2) NOT NULL,
     engine_cc INT NOT NULL,
-    mobility_type VARCHAR(20) NOT NULL
+    mobility_type VARCHAR(20) NOT NULL,
+    CONSTRAINT fk_motor_vehicle FOREIGN KEY (motor_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );
-CREATE TABLE helicopters (
-    -- BaseVehicle'dan gelen kolonlar
-    heli_id SERIAL PRIMARY KEY,
-    brand_name VARCHAR(30) NOT NULL,
-    model_name VARCHAR(30) NOT NULL,
-    model_year INT NOT NULL,
-    vehicle_value INT NOT NULL,
 
-    -- Helicopter sınıfından gelen kolonlar
+CREATE TABLE helicopters (
+    heli_id INT PRIMARY KEY,
     tail_number VARCHAR(15) NOT NULL UNIQUE,
     flight_hours NUMERIC(12, 2) NOT NULL,
     current_fuel NUMERIC(8, 2) NOT NULL,
     max_fuel_capacity NUMERIC(8, 2) NOT NULL,
-    speciality VARCHAR(20) NOT NULL
+    speciality VARCHAR(20) NOT NULL,
+    CONSTRAINT fk_heli_vehicle FOREIGN KEY (heli_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );
