@@ -23,7 +23,7 @@ import jakarta.persistence.Table;
 @Table(name = "vehicles")
 @Inheritance(strategy = InheritanceType.JOINED) // En önemli kısım burası!
 @DiscriminatorColumn(name = "vehicle_type", discriminatorType = DiscriminatorType.STRING) 
-public abstract class Vehicle {
+public abstract class Vehicle extends VehicleProperties{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

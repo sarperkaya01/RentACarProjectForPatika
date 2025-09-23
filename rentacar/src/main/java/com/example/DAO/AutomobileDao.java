@@ -14,6 +14,6 @@ public interface AutomobileDao extends JpaRepository<Automobile, Integer> {
 
     Optional<Automobile> findByPlate(String plate);
 
-    List<Automobile> findByWheelDriveType(WheelDriveType wheelDriveType);
+    
 
 }

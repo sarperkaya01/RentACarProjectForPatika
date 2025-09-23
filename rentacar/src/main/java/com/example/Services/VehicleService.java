@@ -5,20 +5,17 @@ import com.example.DAO.HelicopterDao;
 
 import com.example.DAO.MotorcycleDao;
 import com.example.DAO.VehicleDao;
+import com.example.DTO.AutomobileDto;
+import com.example.DTO.HelicopterDto;
+import com.example.DTO.MotorcycleDto;
+
 import com.example.DTO.VehicleListDto;
-import com.example.Entities.DbModels.Vehicles.Automobile;
-import com.example.Entities.DbModels.Vehicles.Helicopter;
-import com.example.Entities.DbModels.Vehicles.Motorcycle;
+
 import com.example.Entities.DbModels.Vehicles.Vehicle;
 
-import com.example.Utils.Enums.HeliSpeciality;
-import com.example.Utils.Enums.MotorcycleMobility;
-import com.example.Utils.Enums.VehicleStatus;
 
-import com.example.Utils.Enums.WheelDriveType;
-
-import java.math.BigDecimal;
 import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,17 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class VehicleService {
 
     private final VehicleDao vehicleDao;
-    private final AutomobileDao automobileDao;
-    private final HelicopterDao helicopterDao;
-    private final MotorcycleDao motorcycleDao;
+
 
     @Autowired
-    public VehicleService(VehicleDao vehicleDao, AutomobileDao automobileDao,
-            HelicopterDao helicopterDao, MotorcycleDao motorcycleDao) {
+    public VehicleService(VehicleDao vehicleDao) {
         this.vehicleDao = vehicleDao;
-        this.automobileDao = automobileDao;
-        this.helicopterDao = helicopterDao;
-        this.motorcycleDao = motorcycleDao;
+       
     }
 
     @Transactional
@@ -48,10 +40,28 @@ public class VehicleService {
     }
 
     @Transactional
-    public Vehicle updateVehicleStatus(Integer vehicleId, VehicleStatus newStatus) {
-        Vehicle vehicleToUpdate = getVehicleById(vehicleId);
-        vehicleToUpdate.setVehicleStatus(newStatus);
-        return vehicleDao.save(vehicleToUpdate);
+    public Vehicle updateVehicle(Vehicle vehicleToUpdate) {
+
+        Vehicle existingVehicle = getVehicleById(vehicleToUpdate.getId());   
+        
+        if (vehicleToUpdate.getId() == null) {
+            throw new IllegalArgumentException("Id can not be null for update.");
+        }
+
+        if (!vehicleDao.existsById(vehicleToUpdate.getId())) {
+            throw new IllegalStateException(
+                    "Update failed. Propertiy not found. ID: " + vehicleToUpdate.getId());
+        }
+
+        return vehicleDao.save(existingVehicle);
+    }
+
+    @Transactional
+    public void deleteVehicle(Integer vehicleId) {
+        if (!vehicleDao.existsById(vehicleId)) {
+            throw new IllegalStateException("Vehicle not found. ID: " + vehicleId);
+        }
+        vehicleDao.deleteById(vehicleId);
     }
 
     @Transactional(readOnly = true)
@@ -61,85 +71,66 @@ public class VehicleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Vehicle> getAllVehicles() {
-        return vehicleDao.findAll();
-    }
-
-    @Transactional(readOnly = true)
     public List<VehicleListDto> getAllVehiclesAsDto() {
         return vehicleDao.findAllAsVehicleListDto();
     }
 
-    @Transactional(readOnly = true)
-    public List<Vehicle> getVehiclesByPropertyId(Integer propId) {
-        return vehicleDao.findByProperties_PropId(propId);
+     @Transactional(readOnly = true)
+    public List<AutomobileDto> getAllAutomobilesAsDto() {
+        return vehicleDao.findAllAutomobilesAsDto();
     }
 
     @Transactional(readOnly = true)
-    public List<Vehicle> getVehiclesByModelYear(Integer modelYear) {
-        return vehicleDao.findByModelYear(modelYear);
+    public List<MotorcycleDto> getAllMotorcyclesAsDto() {
+        return vehicleDao.findAllMotorcyclesAsDto();
     }
 
     @Transactional(readOnly = true)
-    public List<Vehicle> getVehiclesByModelName(String modelName) {
-        return vehicleDao.findByModelName(modelName);
+    public List<HelicopterDto> getAllHelicoptersAsDto() {
+        return vehicleDao.findAllHelicoptersAsDto();
     }
 
-    @Transactional(readOnly = true)
-    public List<Vehicle> getVehiclesByBrandName(String brandName) {
-        return vehicleDao.findByBrandName(brandName);
-    }
 
-    @Transactional(readOnly = true)
-    public List<Vehicle> getVehiclesByStatus(VehicleStatus vehicleStatus) {
-        return vehicleDao.findByVehicleStatus(vehicleStatus);
-    }
 
-    @Transactional(readOnly = true)
-    public List<Vehicle> getVehiclesByValueBetween(Integer minValue, Integer maxValue) {
-        return vehicleDao.findByVehicleValueBetween(minValue, maxValue);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Automobile> getAutomobilesByDriveType(WheelDriveType driveType) {
-        return automobileDao.findByWheelDriveType(driveType);
-    }
-
-    @Transactional(readOnly = true)
-    public Automobile getAutomobileByPlate(String plate) {
-        return automobileDao.findByPlate(plate)
-                .orElseThrow(() -> new IllegalStateException("Automobile not found with plate: " + plate));
-    }
-
-    @Transactional(readOnly = true)
-    public List<Helicopter> getHelicoptersBySpeciality(HeliSpeciality speciality) {
-        return helicopterDao.findBySpeciality(speciality);
-    }
-
-    @Transactional(readOnly = true)
-    public Helicopter getHelicopterByTailNumber(String tailNumber) {
-        return helicopterDao.findByTailNumber(tailNumber)
-                .orElseThrow(() -> new IllegalStateException("Helicopter not found with tail number: " + tailNumber));
-    }
-
-    @Transactional(readOnly = true)
-    public List<Helicopter> getHelicoptersWithFlightHoursGreaterThan(BigDecimal hours) {
-        return helicopterDao.findByFlightHoursGreaterThan(hours);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Motorcycle> getMotorcyclesWithEngineCcGreaterThan(Integer cc) {
-        return motorcycleDao.findByEngineCCGreaterThan(cc);
-    }
-
-    @Transactional(readOnly = true)
-    public Motorcycle getMotorcycleByPlate(String plate) {
-        return motorcycleDao.findByPlate(plate)
-                .orElseThrow(() -> new IllegalStateException("Motorcycle not found with plate: " + plate));
-    }
-
-    @Transactional(readOnly = true)
-    public List<Motorcycle> getMotorcyclesByMobilityType(MotorcycleMobility mobilityType) {
-        return motorcycleDao.findByMobilityType(mobilityType);
-    }
 }
+
+// if (vehicleToUpdate instanceof Automobile) {
+//             Automobile newAuto = (Automobile) vehicleToUpdate;
+//             Automobile existingAuto = (Automobile) existingVehicle;
+
+//             if (!existingAuto.getPlate().equals(newAuto.getPlate())
+//                     && automobileDao.findByPlate(newAuto.getPlate()).isPresent()) {
+//                 throw new IllegalStateException("Plate " + newAuto.getPlate() + " already taken.");
+//             }
+
+//             existingAuto.setPlate(newAuto.getPlate());
+//             existingAuto.setKm(newAuto.getKm());
+//             existingAuto.setBrandName(newAuto.getBrandName());
+//             existingAuto.setCurrentFuel(newAuto.getCurrentFuel());
+//             existingAuto.setModelName(newAuto.getModelName());
+//             existingAuto.setModelYear(newAuto.getModelYear());
+//             existingAuto.set
+
+//         } else if (vehicleToUpdate instanceof Motorcycle) {
+//             Motorcycle newMotor = (Motorcycle) vehicleToUpdate;
+//             Motorcycle existingMotor = (Motorcycle) existingVehicle;
+
+//             if (!existingMotor.getPlate().equals(newMotor.getPlate())
+//                     && motorcycleDao.findByPlate(newMotor.getPlate()).isPresent()) {
+//                 throw new IllegalStateException("Plate " + newMotor.getPlate() + " already taken.");
+//             }
+
+//             existingMotor.setPlate(newMotor.getPlate());
+//             existingMotor.setKm(newMotor.getKm());
+//         } else if (vehicleToUpdate instanceof Helicopter) {
+//             Helicopter newHeli = (Helicopter) vehicleToUpdate;
+//             Helicopter existingHeli = (Helicopter) existingVehicle;
+
+//             if (!existingHeli.getTailNumber().equals(newHeli.getTailNumber())
+//                     && helicopterDao.findByTailNumber(newHeli.getTailNumber()).isPresent()) {
+//                 throw new IllegalStateException("TailNumber " + newHeli.getTailNumber() + " already taken.");
+//             }
+
+//             existingHeli.setTailNumber(newHeli.getTailNumber());
+//             existingHeli.setFlightHours(newHeli.getFlightHours());
+//         }

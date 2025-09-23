@@ -4,6 +4,7 @@ public enum UserRoles {
     ADMIN,
     EMPLOYEE,
     CORPORATE ,
-    INDIVIDUAL
+    INDIVIDUAL,
+    DISABLED
 
 }
