@@ -28,9 +28,7 @@ CREATE TABLE customers (
 
 -- VehicleTypes table create
 CREATE TABLE vehicle_properties (
-    prop_id SERIAL PRIMARY KEY,
-    vehicle_type VARCHAR(20) not null,
-    hourly_pricing DECIMAL(6, 2) not null,
+    prop_id SERIAL PRIMARY KEY,   
     daily_pricing DECIMAL(6, 2) not null,
     weekly_pricing DECIMAL(6, 2) not null,
     monthly_pricing DECIMAL(6, 2) not null
@@ -98,7 +96,7 @@ CREATE TABLE motorcycles (
 );
 
 CREATE TABLE helicopters (
-    heli_id INT PRIMARY KEY,
+    heli_id INT PRIMARY KEY,m 
     tail_number VARCHAR(15) NOT NULL UNIQUE,
     flight_hours NUMERIC(12, 2) NOT NULL,
     current_fuel NUMERIC(8, 2) NOT NULL,

@@ -12,7 +12,7 @@ import com.example.Entities.Renting.Rental;
 
 @Repository
 public interface RentalDao extends JpaRepository<Rental, Integer> {
-    List<Rental> findByVehicle_VehicleId(Integer vehicleId);
+    List<Rental> findByVehicle_Id(Integer vehicleId);
 
     List<Rental> findByCustomer_CustomerId(Integer customerId);
 

@@ -26,15 +26,10 @@ public class VehicleProperties {
     @Column(name = "prop_id")
     private Integer propId;
 
-    @Column(name = "specific_vehicle_id", nullable = false, unique = true)
-    private Integer specificVehicleId;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false, length = 20)
     private VehicleTypes vehicleType;
-
-    @Column(name = "hourly_pricing", nullable = false, precision = 6, scale = 2)
-    private BigDecimal hourlyPricing;
+   
 
     @Column(name = "daily_pricing", nullable = false, precision = 6, scale = 2)
     private BigDecimal dailyPricing;
@@ -49,7 +44,7 @@ public class VehicleProperties {
     
     @Override
     public String toString() {
-        return "VehicleType [propId=" + propId + ", vehicleType=" + vehicleType + ", hourlyPricing=" + hourlyPricing
+        return "VehicleType [propId=" + propId + ", vehicleType=" + vehicleType + ", " 
                 + ", dailyPricing=" + dailyPricing + ", weeklyPricing=" + weeklyPricing + ", monthlyPricing="
                 + monthlyPricing + "]";
     }
@@ -65,12 +60,7 @@ public class VehicleProperties {
     public void setVehicleType(VehicleTypes vehicleType) {
         this.vehicleType = vehicleType;
     }
-    public BigDecimal getHourlyPricing() {
-        return hourlyPricing;
-    }
-    public void setHourlyPricing(BigDecimal hourlyPricing) {
-        this.hourlyPricing = hourlyPricing;
-    }
+   
     public BigDecimal getDailyPricing() {
         return dailyPricing;
     }

@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
 import com.example.DTO.CustomerInfoDto;
 import com.example.DTO.RentalHistoryDto;
 import com.example.Entities.DbModels.People.Customer;
@@ -15,7 +17,7 @@ import com.example.Utils.Global;
 import com.example.Utils.HashUtil;
 
 import com.example.Utils.Interfaces.Controller;
-
+@Component
 public class ProfileController implements Controller {
     private final UserServices userServices;
     private final CustomerServices customerServices;

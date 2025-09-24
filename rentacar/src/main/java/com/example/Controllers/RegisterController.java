@@ -27,14 +27,14 @@ public class RegisterController implements Controller {
             @Lazy MainController mainController) {
         this.userServices = userServices;
         this.mainController = mainController;
-        this.customerServices= customerServices;
+        this.customerServices = customerServices;
     }
 
     @Override
     public void start() {
 
         runMenuLoop("Register");
-       
+
     }
 
     @Override
@@ -46,7 +46,8 @@ public class RegisterController implements Controller {
     public List<String> getMenuTitles() {
         return Arrays.asList("New User", "Exit");
     }
-@SuppressWarnings("unused")
+
+    @SuppressWarnings("unused")
     private void newUser() {
         try {
             System.out.println("Please enter your email adress:");
@@ -114,15 +115,22 @@ public class RegisterController implements Controller {
         String customerSurname = Global.scanner.nextLine();
         c.setCustomerSurname(customerSurname);
 
-        System.out.println("Please enter your Age:");
-        Integer age = Global.scanner.nextInt();
-        c.setAge(age);
-        Global.scanner.nextLine();
+        int age = 0;
+        while (true) {
+            System.out.print("Please enter your Age: ");
+            String ageInput = Global.scanner.nextLine();
+            try {
+                age = Integer.parseInt(ageInput);
+                break;
+            } catch (NumberFormatException e) {
+
+                System.out.println("Invalid input. Please enter a valid number for age.");
+            }
+        }
+        c.setAge(age);        
 
         System.out.println("Please enter your CompanyName (If you are individual please pass this with 'Enter'):");
         String companyName = Global.scanner.nextLine();
-
-       
 
         if (companyName.isEmpty()) {
             companyName = "-";

@@ -28,13 +28,17 @@ public interface VehicleDao extends JpaRepository<Vehicle, Integer> {
 
     List<Vehicle> findByVehicleValueBetween(Integer minValue, Integer maxValue);
 
-    @Query("SELECT new com.example.DTO.VehicleListDto(" +
-            "v.id, v.vehicleType, v.brandName, v.modelName, " +
-            "COALESCE(TREAT(v AS com.example.Entities.DbModels.Vehicles.Automobile).plate, " +
-            "TREAT(v AS com.example.Entities.DbModels.Vehicles.Motorcycle).plate, " +
-            "TREAT(v AS com.example.Entities.DbModels.Vehicles.Helicopter).tailNumber), " +
-            "v.vehicleStatus, prop.dailyPricing) " +
-            "FROM Vehicle v JOIN v.properties prop")
+     @Query("SELECT new com.example.DTO.VehicleListDto(" +
+           "v.id, " +
+           "prop.vehicleType, " + 
+           "v.brandName, " +
+           "v.modelName, " +
+           "COALESCE(TREAT(v AS com.example.Entities.DbModels.Vehicles.Automobile).plate, " +
+           "TREAT(v AS com.example.Entities.DbModels.Vehicles.Motorcycle).plate, " +
+           "TREAT(v AS com.example.Entities.DbModels.Vehicles.Helicopter).tailNumber), " +
+           "v.vehicleStatus, " +
+           "prop.dailyPricing) " +
+           "FROM Vehicle v JOIN v.properties prop") 
     List<VehicleListDto> findAllAsVehicleListDto();
 
     @Query("SELECT new com.example.DTO.AutomobileDto(" +

@@ -4,19 +4,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.example.Services.VehicleService;
-import com.example.Utils.Global;
-import com.example.Utils.Enums.UserRoles;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
+
 import com.example.Utils.Interfaces.Controller;
 
+@Component
 public class VehicleOperationsController implements Controller {
-    private final MainMenuController mmc;
-    private final VehicleService vs;
+    private final AutomobileController automobileController;
 
-    public VehicleOperationsController(MainMenuController mmc, VehicleService vs) {
-        this.mmc = mmc;
-        this.vs = vs;
+    @Lazy
+    @Autowired
+    public VehicleOperationsController(AutomobileController automobileController) {
+        this.automobileController = automobileController;
     }
+
+    
+   
 
     @Override
     public void start() {
@@ -30,15 +36,15 @@ public class VehicleOperationsController implements Controller {
 
     @Override
     public List<String> getMenuTitles() {
-        List<String> menuCases = new ArrayList<>(Arrays.asList("Search Automobile", "Search Motorcycle", "Search Helicopter"));
+        List<String> menuCases = new ArrayList<>(Arrays.asList("Automobile", "Motorcycle", "Helicopter"));
 
-        if (Global.currentUser != null) {
-            if (Global.currentUser.getRole() == UserRoles.ADMIN) {
-                menuCases.add("Insert Vehicle");
-                menuCases.add("Update Vehicle");
-                menuCases.add("Delete Vehicle");
-            }
-        }
+        // if (Global.currentUser != null) {
+        //     if (Global.currentUser.getRole() == UserRoles.ADMIN) {
+        //         menuCases.add("Insert Vehicle");
+        //         menuCases.add("Update Vehicle");
+        //         menuCases.add("Delete Vehicle");
+        //     }
+        // }
 
         menuCases.add("Exit");
 
@@ -46,33 +52,20 @@ public class VehicleOperationsController implements Controller {
     }
 
     @SuppressWarnings("unused")
-    public void searchAutomobiles() {
+    public void automobile() {
+        automobileController.start();
 
     }
 
     @SuppressWarnings("unused")
-    public void searchMotorcycles() {
+    public void motorcycle() {
 
     }
 
     @SuppressWarnings("unused")
-    public void searchHelicopters() {
+    public void helicopter() {
 
     }
 
-    @SuppressWarnings("unused")
-    public void insertVehicle() {
-
-    }
-
-    @SuppressWarnings("unused")
-    public void updateVehicle() {
-
-    }
-
-    @SuppressWarnings("unused")
-    public void deleteVehicle() {
-
-    }
 
 }

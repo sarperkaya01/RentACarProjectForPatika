@@ -92,7 +92,7 @@ public class RentalServices {
     }
 
     public List<Rental> getRentalsByVehicleId(Integer vehicleId) {
-        return rentalDao.findByVehicle_VehicleId(vehicleId);
+        return rentalDao.findByVehicle_Id(vehicleId);
     }
 
     public List<Rental> getRentalsByCustomerId(Integer customerId) {

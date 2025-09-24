@@ -23,7 +23,7 @@ public class VehiclePropertiesServices {
     }
 
     @Transactional
-    public VehicleProperties newVehicleProperties(VehicleProperties vp) {
+    public VehicleProperties saveNewProperties(VehicleProperties vp) {
         return propertiesDao.save(vp);
     }
 
