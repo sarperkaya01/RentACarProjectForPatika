@@ -2,39 +2,55 @@ package com.example.Utils.Interfaces;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 
+import com.example.Entities.DbModels.Vehicles.VehicleProperties;
 import com.example.Utils.Global;
 
 import com.example.Utils.Action.MenuAction;
 
-public interface UpdateController<T, S> {
+public interface UpdateController<T, S> extends DynamicController {
 
     S getUpdateService();
 
+    /**
+     * Bu metot, implemente eden sınıfın, Entity'nin doğrudan kendi alanı olmayan
+     * ama menüde gösterilmesini istediği "ilişkili" veya "sanal" alan adlarını
+     * bir liste olarak sunmasını sağlar. Varsayılan olarak boş liste döner.
+     * 
+     * @return Menüye dahil edilecek ek alan adlarının bir listesi.
+     */
+    default List<String> getAdditionalUpdatableFields() { // <-- İSİM DÜZELTİLDİ
+        return new ArrayList<>();
+    }
+
+    /**
+     * Otomatik güncelleme menüsünü başlatan ana metottur.
+     * Bu metot, görev haritasını ve menü aksiyonlarını oluşturup menü döngüsünü
+     * çalıştırır.
+     * 
+     * @param entityId   Güncellenecek olan nesnenin veritabanı ID'si.
+     * @param entityType Güncellenecek olan nesnenin Class tipi (örn:
+     *                   Automobile.class).
+     */
     default void runUpdateMenu(Integer entityId, Class<T> entityType) {
         if (entityId == null) {
             System.out.println("Cannot start update menu without a valid ID.");
             return;
         }
 
-        // 1. Görev haritasını otomatik oluştur.
         Map<String, BiConsumer<Integer, Object>> fieldUpdaters = generateFieldUpdaters(entityType);
-
-        // 2. Bu haritayı kullanarak menü aksiyonlarını doğrudan burada oluştur.
         List<MenuAction> menuActions = generateUpdateActions(entityId, entityType, fieldUpdaters);
 
-        // 3. Menü döngüsünü başlat.
         while (true) {
-            System.out.println("\n--- Update " + entityType.getName() + " Menu ---");
+            System.out.println("\n--- Update " + entityType.getSimpleName() + " Menu ---");
             for (int i = 0; i < menuActions.size(); i++) {
                 System.out.println((i + 1) + ". " + menuActions.get(i).getDisplayName());
             }
@@ -49,9 +65,8 @@ public interface UpdateController<T, S> {
                 continue;
             }
 
-            if (choice == menuActions.size() + 1) {
+            if (choice == menuActions.size() + 1)
                 break;
-            }
 
             if (choice > 0 && choice <= menuActions.size()) {
                 menuActions.get(choice - 1).getAction().run();
@@ -62,37 +77,81 @@ public interface UpdateController<T, S> {
     }
 
     /**
-     * Verilen görev haritasını kullanarak menü aksiyonlarını üretir.
-     * Bu metot artık DynamicActionFactory'nin işini yapar.
+     * Oluşturulan görev haritasını kullanarak, menüde gösterilecek her bir
+     * satır için (örn: "Update Plate") bir 'MenuAction' nesnesi üretir.
+     * Bu metot, 'DynamicActionFactory' sınıfının görevini üstlenmiştir.
      */
     private List<MenuAction> generateUpdateActions(Integer entityId, Class<T> entityType,
             Map<String, BiConsumer<Integer, Object>> fieldUpdaters) {
         List<MenuAction> actions = new ArrayList<>();
-        List<Field> fields = getAllFields(entityType)
-                .stream()
-                .filter(field -> fieldUpdaters.containsKey(field.getName()))
-                .collect(Collectors.toList());
 
-        for (Field field : fields) {
-            String fieldName = field.getName();
-            String displayName = "Update " + formatFieldName(fieldName);
-            Runnable action = createUpdateAction(field, entityId, fieldUpdaters.get(fieldName));
-            actions.add(new MenuAction(displayName, action));
+        // --- Referans için tüm alanların bir haritasını oluşturalım ---
+        Map<String, Field> allFieldsMap = new HashMap<>();
+        // Önce ana entity'nin alanları...
+        for (Field field : DynamicController.getAllFields(entityType)) {
+            allFieldsMap.put(field.getName(), field);
         }
+        // Sonra da VehicleProperties gibi genel olabilecek diğer entity'lerin
+        // alanları...
+        // Bu, tiplerini bulmak için gereklidir.
+        for (Field field : DynamicController.getAllFields(VehicleProperties.class)) {
+            allFieldsMap.putIfAbsent(field.getName(), field);
+        }
+
+        // --- Menüyü oluşturalım ---
+        // 1. Önce Entity'nin kendi alanlarını ekle
+        for (Field field : DynamicController.getAllFields(entityType)) {
+            String fieldName = field.getName();
+            if (fieldUpdaters.containsKey(fieldName)) {
+                String displayName = "Update " + DynamicController.formatFieldName(fieldName);
+                Runnable action = createUpdateAction(field, entityId, fieldUpdaters.get(fieldName));
+                actions.add(new MenuAction(displayName, action));
+            }
+        }
+
+        // 2. Şimdi de "ek" alanları ekle
+        for (String additionalFieldName : getAdditionalUpdatableFields()) {
+            if (fieldUpdaters.containsKey(additionalFieldName)) {
+                Field field = allFieldsMap.get(additionalFieldName);
+                if (field != null) {
+                    String displayName = "Update " + DynamicController.formatFieldName(additionalFieldName);
+                    Runnable action = createUpdateAction(field, entityId, fieldUpdaters.get(additionalFieldName));
+                    actions.add(new MenuAction(displayName, action));
+                }
+            }
+        }
+
         return actions;
     }
 
     /**
-     * Tek bir güncelleme aksiyonu (Runnable) oluşturur.
+     * Menüdeki tek bir seçenek ("Update Plate" gibi) seçildiğinde çalışacak olan
+     * 'Runnable' komutunu oluşturur. Bu komut, kullanıcıdan veri alır,
+     * veriyi doğru tipe çevirir ve ilgili servis metodunu çağırır.
      */
     private Runnable createUpdateAction(Field field, Integer entityId, BiConsumer<Integer, Object> updater) {
         return () -> {
             try {
-                System.out.print("Enter new value for " + formatFieldName(field.getName()) + ": ");
+                // Alanın tipi Enum mu diye kontrol et
+                if (field.getType().isEnum()) {
+                    System.out.println("Please select a new value for "
+                            + DynamicController.formatFieldName(field.getName()) + ":");
+                    // Enum'un tüm olası değerlerini al ve listele
+                    Object[] enumConstants = field.getType().getEnumConstants();
+                    for (int i = 0; i < enumConstants.length; i++) {
+                        System.out.println((i + 1) + ". " + enumConstants[i].toString());
+                    }
+                    System.out.print("Enter your choice (number): ");
+                } else {
+                    System.out
+                            .print("Enter new value for " + DynamicController.formatFieldName(field.getName()) + ": ");
+                }
+
                 String input = Global.scanner.nextLine();
-                Object convertedValue = convertInput(input, field.getType());
+                // Artık akıllı olan convertInput metodunu çağır
+                Object convertedValue = DynamicController.convertInput(input, field.getType());
                 updater.accept(entityId, convertedValue);
-                System.out.println(formatFieldName(field.getName()) + " updated successfully.");
+                System.out.println(DynamicController.formatFieldName(field.getName()) + " updated successfully.");
             } catch (Exception e) {
                 System.out.println("Error updating field: " + e.getMessage());
             }
@@ -100,74 +159,59 @@ public interface UpdateController<T, S> {
     }
 
     /**
-     * Yansıma (reflection) kullanarak Entity ve Servis sınıfları arasında
-     * otomatik olarak bir "görev haritası" oluşturur.
+     * Yansıma (reflection) kullanarak, Entity'nin alan adları ile Servis'in metot
+     * adları arasında
+     * bir "görev haritası" oluşturur. Örneğin, 'plate' alanını 'updatePlate'
+     * metoduna bağlar.
+     * 
+     * @param entityType Taranacak olan Entity'nin Class'ı.
+     * @return Alan adları ve onları güncelleyecek fonksiyonları içeren bir Map.
      */
     default Map<String, BiConsumer<Integer, Object>> generateFieldUpdaters(Class<T> entityType) {
-        S service = getUpdateService();
-        Map<String, BiConsumer<Integer, Object>> updaters = new HashMap<>();
-        List<Field> fields = getAllFields(entityType);
+    S service = getUpdateService();
+    Map<String, BiConsumer<Integer, Object>> updaters = new HashMap<>();
 
-        for (Field field : fields) {
-            String fieldName = field.getName();
-            try {
-                String methodName = "update" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-                Method updateMethod = service.getClass().getMethod(methodName, Integer.class, field.getType());
-
-                BiConsumer<Integer, Object> updater = (id, value) -> {
-                    try {
-                        updateMethod.invoke(service, id, value);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error executing update method: " + methodName, e);
-                    }
-                };
-                updaters.put(fieldName, updater);
-
-            } catch (NoSuchMethodException e) {
-                // Bu alan için bir update metodu yoksa sessizce geç.
-            }
-        }
-        return updaters;
+    // --- Referans için tüm olası alanların tiplerini bir haritada toplayalım ---
+    Map<String, Class<?>> allFieldTypes = new HashMap<>();
+    for (Field field : DynamicController.getAllFields(entityType)) {
+        allFieldTypes.put(field.getName(), field.getType());
+    }
+    for (Field field : DynamicController.getAllFields(VehicleProperties.class)) {
+        allFieldTypes.putIfAbsent(field.getName(), field.getType());
     }
 
-    // --- ÖZEL YARDIMCI (PRIVATE) METOTLAR ---
-    // Bu metotlar sadece bu arayüz içinde kullanılır ve dışarıdan erişilemez.
-
-    private List<Field> getAllFields(Class<?> type) {
-        List<Field> fields = new ArrayList<>();
-        for (Class<?> c = type; c != null; c = c.getSuperclass()) {
-            fields.addAll(Arrays.asList(c.getDeclaredFields()));
-        }
-        return fields;
+    // --- Şimdi tüm taranması gereken alan adlarını tek bir listede birleştirelim ---
+    List<String> allFieldNamesToScan = new ArrayList<>();
+    // Önce entity'nin kendi alan adları
+    for (Field field : DynamicController.getAllFields(entityType)) {
+        allFieldNamesToScan.add(field.getName());
     }
+    // Sonra da "ek" alan adları
+    allFieldNamesToScan.addAll(getAdditionalUpdatableFields());
 
-    private String formatFieldName(String fieldName) {
-        if (fieldName == null || fieldName.isEmpty()) {
-            return "";
-        }
-        StringBuilder formattedName = new StringBuilder();
-        formattedName.append(Character.toUpperCase(fieldName.charAt(0)));
-        for (int i = 1; i < fieldName.length(); i++) {
-            char currentChar = fieldName.charAt(i);
-            if (Character.isUpperCase(currentChar)) {
-                formattedName.append(' ');
-            }
-            formattedName.append(currentChar);
-        }
-        return formattedName.toString();
-    }
+    // --- Şimdi bu birleşik liste üzerinde dönelim ve metotları arayalım ---
+    for (String fieldName : allFieldNamesToScan) {
+        Class<?> fieldType = allFieldTypes.get(fieldName);
+        if (fieldType == null) continue; // Tipi bilinmeyen alanı atla
 
-    private Object convertInput(String input, Class<?> targetType) {
-        if (targetType.equals(String.class))
-            return input;
-        if (targetType.equals(Integer.class))
-            return Integer.parseInt(input);
-        if (targetType.equals(BigDecimal.class))
-            return new BigDecimal(input);
-        if (targetType.isEnum()) {
-            return Enum.valueOf((Class<Enum>) targetType, input.toUpperCase());
+        try {
+            String methodName = "update" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+            Method updateMethod = service.getClass().getMethod(methodName, Integer.class, fieldType);
+
+            BiConsumer<Integer, Object> updater = (id, value) -> {
+                try {
+                    updateMethod.invoke(service, id, value);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error executing update method: " + methodName, e);
+                }
+            };
+            updaters.put(fieldName, updater);
+        } catch (NoSuchMethodException e) {
+            // Metot bulunamadıysa sessizce geç
         }
-        throw new IllegalArgumentException("Unsupported field type for conversion: " + targetType.getSimpleName());
     }
+    
+    return updaters;
+}
 
 }

@@ -18,6 +18,7 @@ com/example/Utils/Exceptions/DuplicateEmailException.class
 com/example/Controllers/MainController.class
 com/example/DAO/RentalDao.class
 com/example/Controllers/ProfileController.class
+com/example/Utils/Interfaces/SearchController.class
 com/example/Services/VehicleService.class
 com/example/Utils/Enums/VehicleStatus.class
 com/example/Services/CustomerServices.class
@@ -34,6 +35,7 @@ com/example/Entities/DbModels/People/User.class
 com/example/Utils/Enums/RentalStatus.class
 com/example/Aspects/VehicleTransactionAspect.class
 com/example/Controllers/RentalsController.class
+com/example/Utils/Abstracts/VehicleDetailDto.class
 com/example/Entities/DbModels/Vehicles/Vehicle.class
 com/example/DTO/VehicleListDto.class
 com/example/DTO/AutomobileDto.class
@@ -47,6 +49,7 @@ com/example/Utils/Interfaces/LandVehicle.class
 com/example/DTO/CustomerInfoDto.class
 com/example/DTO/RentalHistoryDto.class
 com/example/DAO/VehicleDao.class
+com/example/Utils/Interfaces/DynamicController.class
 com/example/Controllers/RegisterController.class
 com/example/Main.class
 com/example/Controllers/AutomobileController.class
@@ -61,6 +64,7 @@ com/example/Utils/Action/MenuAction.class
 com/example/Services/RentalServices.class
 com/example/Utils/Action/DynamicActionFactory.class
 com/example/Utils/Enums/CheckoutStatus.class
+com/example/Controllers/AutomobileUpdateController.class
 com/example/Entities/DbModels/Vehicles/Automobile.class
 com/example/Utils/HashUtil.class
 com/example/Utils/Enums/UserRoles.class

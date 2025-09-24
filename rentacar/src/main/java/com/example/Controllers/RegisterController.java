@@ -69,7 +69,7 @@ public class RegisterController implements Controller {
             } while (password1 == password2);
 
             User newUser = new User();
-            newUser.setEmail(email);
+            newUser.setEmail(email); 
 
             newUser.setPasswd(HashUtil.sha256(password1));
 
@@ -140,5 +140,8 @@ public class RegisterController implements Controller {
 
         return c;
     }
+
+
+
 
 }

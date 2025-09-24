@@ -1,90 +1,49 @@
 package com.example.DTO;
 
+import com.example.Utils.Abstracts.VehicleDetailDto;
 import com.example.Utils.Enums.MotorcycleMobility;
 import com.example.Utils.Enums.VehicleStatus;
 import java.math.BigDecimal;
 
-public class MotorcycleDto {
+public class MotorcycleDto  extends VehicleDetailDto {
 
-    private Integer id;
-    private String brandName;
-    private String modelName;
-    private Integer modelYear;
-    private String plate;
-    private Integer engineCC;
-    private MotorcycleMobility mobilityType;
-    private VehicleStatus vehicleStatus;
-    private BigDecimal dailyPricing;
+    // --- SADECE MOTOSİKLETE ÖZGÜ ALANLAR ---
+    private final String plate;
+    private final Integer engineCC;
+    private final MotorcycleMobility mobilityType;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getBrandName() {
-        return brandName;
-    }
-
-    public void setBrandName(String brandName) {
-        this.brandName = brandName;
-    }
-
-    public String getModelName() {
-        return modelName;
-    }
-
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
-    }
-
-    public Integer getModelYear() {
-        return modelYear;
-    }
-
-    public void setModelYear(Integer modelYear) {
-        this.modelYear = modelYear;
-    }
-
-    public String getPlate() {
-        return plate;
-    }
-
-    public void setPlate(String plate) {
+    public MotorcycleDto(
+            // Ortak alanlar (super constructor için)
+            Integer vehicleId, String brandName, String modelName, Integer modelYear,
+            Integer vehicleValue, VehicleStatus vehicleStatus,
+            BigDecimal dailyPricing, BigDecimal weeklyPricing, BigDecimal monthlyPricing,
+            
+            // Motosiklete özgü alanlar
+            String plate, Integer engineCC, MotorcycleMobility mobilityType) {
+        
+        // 1. Adım: Ortak alanları doldurması için üst sınıfın constructor'ını çağır.
+        super(vehicleId, brandName, modelName, modelYear, vehicleValue, vehicleStatus,
+              dailyPricing, weeklyPricing, monthlyPricing);
+        
+        // 2. Adım: Sadece bu sınıfa özgü alanları doldur.
         this.plate = plate;
-    }
-
-    public Integer getEngineCC() {
-        return engineCC;
-    }
-
-    public void setEngineCC(Integer engineCC) {
         this.engineCC = engineCC;
-    }
-
-    public MotorcycleMobility getMobilityType() {
-        return mobilityType;
-    }
-
-    public void setMobilityType(MotorcycleMobility mobilityType) {
         this.mobilityType = mobilityType;
     }
 
-    public VehicleStatus getVehicleStatus() {
-        return vehicleStatus;
-    }
-
-    public void setVehicleStatus(VehicleStatus vehicleStatus) {
-        this.vehicleStatus = vehicleStatus;
-    }
-
-    public BigDecimal getDailyPricing() {
-        return dailyPricing;
-    }
-
-    public void setDailyPricing(BigDecimal dailyPricing) {
-        this.dailyPricing = dailyPricing;
+    /**
+     * Üst sınıftan gelen ve doldurulması ZORUNLU olan soyut metot.
+     * Sadece motosiklete özgü detayları formatlar.
+     */
+    @Override
+    public String getSpecificDetails() {
+        return String.format(
+            " Plate             : %s\n" +
+            " Engine Capacity   : %d cc\n" +
+            " Mobility Type     : %s\n",
+            this.plate,
+            this.engineCC,
+            this.mobilityType
+        );
     }
 }

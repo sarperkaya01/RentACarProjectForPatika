@@ -24,15 +24,15 @@ import com.example.Utils.Interfaces.Controller;
 public class AutomobileController implements Controller {
 
     private final AutomobileServices automobileServices;
-    private final AutomobileUpdateController automobileUpdateController;    
+    private final AutomobileUpdateController automobileUpdateController;
     private final VehiclePropertiesServices vehiclePropertiesServices;
 
     public AutomobileController(AutomobileServices automobileServices,
-            AutomobileUpdateController automobileUpdateController, 
+            AutomobileUpdateController automobileUpdateController,
             VehiclePropertiesServices vehiclePropertiesServices) {
         this.automobileServices = automobileServices;
         this.automobileUpdateController = automobileUpdateController;
-        
+
         this.vehiclePropertiesServices = vehiclePropertiesServices;
     }
 
@@ -48,7 +48,7 @@ public class AutomobileController implements Controller {
 
     @Override
     public List<String> getMenuTitles() {
-        List<String> menuCases = new ArrayList<>(Arrays.asList("Search"));
+        List<String> menuCases = new ArrayList<>(Arrays.asList("Search Automobile"));
 
         if (Global.currentUser != null) {
             if (Global.currentUser.getRole() == UserRoles.ADMIN) {
@@ -63,8 +63,8 @@ public class AutomobileController implements Controller {
         return menuCases;
     }
 
-    public void search() {
-        // TODO: Implement method
+    public void searchAutomobiel() {
+        List<AutomobileDto> automobileList = automobileServices.getAllAutomobilesAsDto();
     }
 
     public void insertAutomobile() {
@@ -74,17 +74,28 @@ public class AutomobileController implements Controller {
 
     public void updateAutomobile() {
 
-        List<AutomobileDto> ad = automobileServices.getAllAutomobilesAsDto();
+        List<AutomobileDto> automobileList = automobileServices.getAllAutomobilesAsDto();
 
-        for (AutomobileDto automobileDto : ad) {
-            System.out.println(automobileDto);
+        if (automobileList.isEmpty()) {
+            System.out.println("There are no automobiles in the system to update.");
+            return; // Metodu sonlandır.
         }
-        System.out.println("Please insert an id for whitch one do you want to update ?");
-        int selectID = Global.scanner.nextInt();
 
-        automobileUpdateController.start(selectID);
+        automobileList.forEach(System.out::println);
+        System.out.print("\nPlease enter the ID of the automobile you want to update: ");
 
-        // TODO: Implement method
+        try {
+
+            int selectedId = Integer.parseInt(Global.scanner.nextLine());
+
+            automobileUpdateController.start(selectedId);
+
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid ID format. Please enter a number.");
+        } catch (Exception e) {
+
+            System.out.println("An error occurred: " + e.getMessage());
+        }
     }
 
     public void deleteAutomobile() {
@@ -108,7 +119,7 @@ public class AutomobileController implements Controller {
 
             // VehicleProperties nesnesini oluştur ve kaydet.
             VehicleProperties newProperties = new VehicleProperties();
-           
+
             newProperties.setDailyPricing(dailyPricing);
             newProperties.setWeeklyPricing(weeklyPricing);
             newProperties.setMonthlyPricing(monthlyPricing);
@@ -194,3 +205,4 @@ public class AutomobileController implements Controller {
         }
     }
 }
+

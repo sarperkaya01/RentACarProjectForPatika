@@ -1,10 +1,4 @@
-CREATE DATABASE rent_a_car
-WITH
-    OWNER = postgres,
-    ENCODING = 'UTF8',
-    LC_COLLATE = 'en_US.UTF-8',
-    LC_CTYPE = 'en_US.UTF-8',
-    TEMPLATE = template0;
+
 
 -- Users table create
 CREATE TABLE users (
@@ -26,7 +20,7 @@ CREATE TABLE customers (
     CONSTRAINT fk_customer_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
--- VehicleTypes table create
+
 CREATE TABLE vehicle_properties (
     prop_id SERIAL PRIMARY KEY,   
     daily_pricing DECIMAL(6, 2) not null,
@@ -46,6 +40,19 @@ CREATE TABLE vehicles (
     CONSTRAINT fk_vehicle_properties FOREIGN KEY (prop_id) REFERENCES vehicle_properties (prop_id)
 );
 
+CREATE TABLE checkout (
+    checkout_id SERIAL PRIMARY KEY,
+    planned_dropoff_date TIMESTAMP DEFAULT NULL,
+    actual_dropoff_date TIMESTAMP DEFAULT NULL,
+    planned_price DECIMAL(10, 2),
+    depozit DECIMAL(10, 2),
+    late_fee DECIMAL(10, 2),
+    repair_fee DECIMAL(10, 2) DEFAULT NULL,
+    checkout_amount DECIMAL(10, 2),
+    checkout_status VARCHAR(10) NOT NULL
+    -- Foreign Key constraints
+);
+
 -- Rental table create
 
 CREATE TABLE rentals (
@@ -61,18 +68,7 @@ CREATE TABLE rentals (
     CONSTRAINT fk_rental_checkout FOREIGN KEY (checkout_id) REFERENCES checkout (checkout_id) ON DELETE CASCADE
 );
 
-CREATE TABLE checkout (
-    checkout_id SERIAL PRIMARY KEY,
-    planned_dropoff_date TIMESTAMP DEFAULT NULL,
-    actual_dropoff_date TIMESTAMP DEFAULT NULL,
-    planned_price DECIMAL(10, 2),
-    depozit DECIMAL(10, 2),
-    late_fee DECIMAL(10, 2),
-    repair_fee DECIMAL(10, 2) DEFAULT NULL,
-    checkout_amount DECIMAL(10, 2),
-    checkout_status VARCHAR(10) NOT NULL,
-    -- Foreign Key constraints
-);
+
 
 CREATE TABLE automobiles (
     auto_id INT PRIMARY KEY,
@@ -96,7 +92,7 @@ CREATE TABLE motorcycles (
 );
 
 CREATE TABLE helicopters (
-    heli_id INT PRIMARY KEY,m 
+    heli_id INT PRIMARY KEY,
     tail_number VARCHAR(15) NOT NULL UNIQUE,
     flight_hours NUMERIC(12, 2) NOT NULL,
     current_fuel NUMERIC(8, 2) NOT NULL,

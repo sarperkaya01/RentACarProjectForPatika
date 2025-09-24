@@ -39,7 +39,7 @@ public class MainMenuController implements Controller {
 
         if (Global.currentUser != null) {
             if (Global.currentUser.getRole() == UserRoles.ADMIN) {
-                menuCases.add("Settings");
+                menuCases.add("Users");
             } else {
                 menuCases.add("Profile");
             }
@@ -62,7 +62,7 @@ public class MainMenuController implements Controller {
     }
 
     @SuppressWarnings("unused")
-    private void settings() {
+    private void users() {
 
     }
 

@@ -18,18 +18,13 @@ import jakarta.persistence.Table;
 
 
 @Entity
-@Table(name = "vehicleproperties")
+@Table(name = "vehicle_properties")
 public class VehicleProperties {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "prop_id")
     private Integer propId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "vehicle_type", nullable = false, length = 20)
-    private VehicleTypes vehicleType;
-   
 
     @Column(name = "daily_pricing", nullable = false, precision = 6, scale = 2)
     private BigDecimal dailyPricing;
@@ -44,7 +39,7 @@ public class VehicleProperties {
     
     @Override
     public String toString() {
-        return "VehicleType [propId=" + propId + ", vehicleType=" + vehicleType + ", " 
+        return "VehicleType [propId=" + propId + ", " 
                 + ", dailyPricing=" + dailyPricing + ", weeklyPricing=" + weeklyPricing + ", monthlyPricing="
                 + monthlyPricing + "]";
     }
@@ -53,13 +48,7 @@ public class VehicleProperties {
     }
     public void setPropId(Integer propId) {
         this.propId = propId;
-    }
-    public VehicleTypes getVehicleType() {
-        return vehicleType;
-    }
-    public void setVehicleType(VehicleTypes vehicleType) {
-        this.vehicleType = vehicleType;
-    }
+    }   
    
     public BigDecimal getDailyPricing() {
         return dailyPricing;

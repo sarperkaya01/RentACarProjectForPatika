@@ -61,7 +61,7 @@ public abstract class VehicleDetailDto {
         String vehicleTypeHeader = this.getClass().getSimpleName().replace("Dto", "").toUpperCase();
         
         return String.format(
-            "--------------------------------------------------\n" +
+            "**************************************************\n" +
             " %s DETAILS - ID: %d\n" +
             "--------------------------------------------------\n" +
             " Make & Model      : %s %s (%d)\n" +

@@ -19,10 +19,12 @@ import com.example.Utils.Enums.WheelDriveType;
 public class AutomobileServices {
 
     private final AutomobileDao automobileDao;
+    private final VehiclePropertiesServices vehiclePropertiesServices;
 
     @Autowired
-    public AutomobileServices(AutomobileDao automobileDao) {
+    public AutomobileServices(AutomobileDao automobileDao, VehiclePropertiesServices vehiclePropertiesServices) {
         this.automobileDao = automobileDao;
+        this.vehiclePropertiesServices = vehiclePropertiesServices;
     }
 
     @Transactional
@@ -134,6 +136,35 @@ public class AutomobileServices {
         Automobile automobile = getAutomobileById(automobileId);
         automobile.setWheelDriveType(newWheelDriveType);
         return automobileDao.save(automobile);
+    }
+
+    @Transactional
+    public Automobile updateMaxFuelCapacity(Integer automobileId, BigDecimal newMaxCapacity) {
+        Automobile automobile = getAutomobileById(automobileId);
+        automobile.setMaxFuelCapacity(newMaxCapacity);
+        return automobileDao.save(automobile);
+    }
+
+    @Transactional
+    public Automobile updateDailyPricing(Integer automobileId, BigDecimal newDailyPricing) {
+        Automobile automobile = getAutomobileById(automobileId);
+        // İşi asıl uzmanına devret
+        vehiclePropertiesServices.updateDailyPricing(automobile.getProperties().getPropId(), newDailyPricing);
+        return automobile;
+    }
+
+    @Transactional
+    public Automobile updateWeeklyPricing(Integer automobileId, BigDecimal newWeeklyPricing) {
+        Automobile automobile = getAutomobileById(automobileId);
+        vehiclePropertiesServices.updateWeeklyPricing(automobile.getProperties().getPropId(), newWeeklyPricing);
+        return automobile;
+    }
+
+    @Transactional
+    public Automobile updateMonthlyPricing(Integer automobileId, BigDecimal newMonthlyPricing) {
+        Automobile automobile = getAutomobileById(automobileId);
+        vehiclePropertiesServices.updateMonthlyPricing(automobile.getProperties().getPropId(), newMonthlyPricing);
+        return automobile;
     }
 
     @Transactional(readOnly = true)

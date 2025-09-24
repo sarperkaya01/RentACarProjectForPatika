@@ -1,90 +1,53 @@
 package com.example.DTO;
 
+import com.example.Utils.Abstracts.VehicleDetailDto;
 import com.example.Utils.Enums.HeliSpeciality;
 import com.example.Utils.Enums.VehicleStatus;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
-public class HelicopterDto {
+public class HelicopterDto extends VehicleDetailDto {
 
-    private Integer id;
-    private String brandName;
-    private String modelName;
-    private Integer modelYear;
-    private String tailNumber;
-    private BigDecimal flightHours;
-    private HeliSpeciality speciality;
-    private VehicleStatus vehicleStatus;
-    private BigDecimal dailyPricing;
+    private final String tailNumber;
+    private final BigDecimal flightHours;
+    private final HeliSpeciality speciality;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getBrandName() {
-        return brandName;
-    }
-
-    public void setBrandName(String brandName) {
-        this.brandName = brandName;
-    }
-
-    public String getModelName() {
-        return modelName;
-    }
-
-    public void setModelName(String modelName) {
-        this.modelName = modelName;
-    }
-
-    public Integer getModelYear() {
-        return modelYear;
-    }
-
-    public void setModelYear(Integer modelYear) {
-        this.modelYear = modelYear;
-    }
-
-    public String getTailNumber() {
-        return tailNumber;
-    }
-
-    public void setTailNumber(String tailNumber) {
+    public HelicopterDto(
+            // Ortak alanlar (super constructor için)
+            Integer vehicleId, String brandName, String modelName, Integer modelYear,
+            Integer vehicleValue, VehicleStatus vehicleStatus,
+            BigDecimal dailyPricing, BigDecimal weeklyPricing, BigDecimal monthlyPricing,
+            
+            // Helikoptere özgü alanlar
+            String tailNumber, BigDecimal flightHours, HeliSpeciality speciality) {
+        
+        // 1. Adım: Ortak alanları doldurması için üst sınıfın constructor'ını çağır.
+        super(vehicleId, brandName, modelName, modelYear, vehicleValue, vehicleStatus,
+              dailyPricing, weeklyPricing, monthlyPricing);
+        
+        // 2. Adım: Sadece bu sınıfa özgü alanları doldur.
         this.tailNumber = tailNumber;
-    }
-
-    public BigDecimal getFlightHours() {
-        return flightHours;
-    }
-
-    public void setFlightHours(BigDecimal flightHours) {
         this.flightHours = flightHours;
-    }
-
-    public HeliSpeciality getSpeciality() {
-        return speciality;
-    }
-
-    public void setSpeciality(HeliSpeciality speciality) {
         this.speciality = speciality;
     }
 
-    public VehicleStatus getVehicleStatus() {
-        return vehicleStatus;
-    }
+    /**
+     * Üst sınıftan gelen ve doldurulması ZORUNLU olan soyut metot.
+     * Sadece helikoptere özgü detayları formatlar.
+     */
+    @Override
+    public String getSpecificDetails() {
+        NumberFormat numberFormatter = NumberFormat.getNumberInstance(Locale.US);
+        String flightHoursStr = flightHours != null ? numberFormatter.format(flightHours) + " hours" : "N/A";
 
-    public void setVehicleStatus(VehicleStatus vehicleStatus) {
-        this.vehicleStatus = vehicleStatus;
-    }
-
-    public BigDecimal getDailyPricing() {
-        return dailyPricing;
-    }
-
-    public void setDailyPricing(BigDecimal dailyPricing) {
-        this.dailyPricing = dailyPricing;
+        return String.format(
+            " Tail Number       : %s\n" +
+            " Flight Hours      : %s\n" +
+            " Speciality        : %s\n",
+            this.tailNumber,
+            flightHoursStr,
+            this.speciality
+        );
     }
 }

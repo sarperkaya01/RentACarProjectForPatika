@@ -30,7 +30,14 @@ public interface VehicleDao extends JpaRepository<Vehicle, Integer> {
 
      @Query("SELECT new com.example.DTO.VehicleListDto(" +
            "v.id, " +
-           "prop.vehicleType, " + 
+           "CASE " +
+           "  WHEN TYPE(v) = com.example.Entities.DbModels.Vehicles.Automobile THEN 'AUTOMOBILE' " +
+           
+           "  WHEN TYPE(v) = com.example.Entities.DbModels.Vehicles.Motorcycle THEN 'MOTORCYCLE' " + 
+           
+           "  WHEN TYPE(v) = com.example.Entities.DbModels.Vehicles.Helicopter THEN 'HELICOPTER' " +
+           "  ELSE 'UNKNOWN' " +
+           "END, " +
            "v.brandName, " +
            "v.modelName, " +
            "COALESCE(TREAT(v AS com.example.Entities.DbModels.Vehicles.Automobile).plate, " +
@@ -38,7 +45,7 @@ public interface VehicleDao extends JpaRepository<Vehicle, Integer> {
            "TREAT(v AS com.example.Entities.DbModels.Vehicles.Helicopter).tailNumber), " +
            "v.vehicleStatus, " +
            "prop.dailyPricing) " +
-           "FROM Vehicle v JOIN v.properties prop") 
+           "FROM Vehicle v JOIN v.properties prop")
     List<VehicleListDto> findAllAsVehicleListDto();
 
     @Query("SELECT new com.example.DTO.AutomobileDto(" +

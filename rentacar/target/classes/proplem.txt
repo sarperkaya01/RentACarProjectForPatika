@@ -1,0 +1,7 @@
+simdi burda bir duralimcunku yanlis ilerliyorz 
+1.si soru su update controller kullanirken ekstra bir print metodumuz yoktu ancak zaten ihtiyacim da yok 
+@Transactional(readOnly = true)
+    public List<AutomobileDto> getAllAutomobilesAsDto() {
+        return automobileDao.findAllAutomobileAsDto();
+    } bu var zaten 
+2. konu da su nasil update yapacagim zaman karsima nasil bu listes cikiyorsa

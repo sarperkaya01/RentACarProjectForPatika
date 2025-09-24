@@ -19,17 +19,17 @@ public interface AutomobileDao extends JpaRepository<Automobile, Integer> {
 
 
     @Query("SELECT new com.example.DTO.AutomobileDto(" +
-            "a.id, a.brandName, a.modelName, a.modelYear, a.vehicleValue, a.vehicleStatus, " +
-            "a.plate, a.km, a.currentFuel, a.maxFuelCapacity, a.wheelDriveType, " +
-            "p.dailyPricing, p.weeklyPricing, p.monthlyPricing) " +
-            "FROM Automobile a JOIN a.properties p WHERE a.plate = :plate")
-    Optional<AutomobileDto> findByPlateAsDto(String plate);
+           "a.id, a.brandName, a.modelName, a.modelYear, a.vehicleValue, a.vehicleStatus, " +
+           "p.dailyPricing, p.weeklyPricing, p.monthlyPricing, " +
+           "a.plate, a.km, a.currentFuel, a.maxFuelCapacity, a.wheelDriveType) " +
+           "FROM Automobile a JOIN a.properties p WHERE a.plate = :plate")
+    Optional<AutomobileDto> findByPlateAsDto(@Param("plate") String plate);
 
     @Query("SELECT new com.example.DTO.AutomobileDto(" +
-            "a.id, a.brandName, a.modelName, a.modelYear, a.vehicleValue, a.vehicleStatus, " +
-            "a.plate, a.km, a.currentFuel, a.maxFuelCapacity, a.wheelDriveType, " +
-            "p.dailyPricing, p.weeklyPricing, p.monthlyPricing) " +
-            "FROM Automobile a JOIN a.properties p")
+           "a.id, a.brandName, a.modelName, a.modelYear, a.vehicleValue, a.vehicleStatus, " +
+           "p.dailyPricing, p.weeklyPricing, p.monthlyPricing, " +
+           "a.plate, a.km, a.currentFuel, a.maxFuelCapacity, a.wheelDriveType) " +
+           "FROM Automobile a JOIN a.properties p")
     List<AutomobileDto> findAllAutomobileAsDto();
 
     @Query("SELECT a FROM Automobile a WHERE a.brandName = :brandName")
