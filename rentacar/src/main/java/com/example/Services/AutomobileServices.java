@@ -3,7 +3,6 @@ package com.example.Services;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,15 +28,10 @@ public class AutomobileServices {
 
     @Transactional
     public Automobile saveNewAutomobile(Automobile newAutomobile) {
-        if (automobileDao.findByPlate(newAutomobile.getPlate()).isPresent()) {
-            throw new IllegalStateException("Plate " + newAutomobile.getPlate() + " is already taken.");
+        if (automobileDao.findByPlateOrTailNumber(newAutomobile.getPlateOrTailNumber()).isPresent()) {
+            throw new IllegalStateException("Plate " + newAutomobile.getPlateOrTailNumber() + " is already taken.");
         }
         return automobileDao.save(newAutomobile);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Automobile> getAllAutomobiles() {
-        return automobileDao.findAll();
     }
 
     public Automobile getAutomobileById(Integer id) {
@@ -45,8 +39,10 @@ public class AutomobileServices {
                 .orElseThrow(() -> new IllegalStateException("Automobile not found with ID: " + id));
     }
 
-    public Optional<Automobile> getAutomobileByPlate(String plate) {
-        return automobileDao.findByPlate(plate);
+    @Transactional(readOnly = true)
+    public Optional<AutomobileDto> getAutomobileByPlateOrTailNumberAsDto(String plate) {
+
+        return automobileDao.findByPlateOrTailNumberAsDto(plate);
     }
 
     @Transactional
@@ -57,22 +53,28 @@ public class AutomobileServices {
         automobileDao.deleteById(id);
     }
 
-    @Transactional
-    public Automobile updateAutomobile(Automobile automobileToUpdate) {
+    // @Transactional
+    // public Automobile updateAutomobile(Automobile automobileToUpdate) {
 
-        Automobile existingAutomobile = automobileDao.findById(automobileToUpdate.getId())
-                .orElseThrow(() -> new IllegalStateException(
-                        "Automobile to update not found with ID: " + automobileToUpdate.getId()));
+    // Automobile existingAutomobile =
+    // automobileDao.findById(automobileToUpdate.getId())
+    // .orElseThrow(() -> new IllegalStateException(
+    // "Automobile to update not found with ID: " + automobileToUpdate.getId()));
 
-        if (!existingAutomobile.getPlate().equals(automobileToUpdate.getPlate())) {
-            if (automobileDao.findByPlate(automobileToUpdate.getPlate()).isPresent()) {
-                throw new IllegalStateException(
-                        "Plate " + automobileToUpdate.getPlate() + " is already taken by another vehicle.");
-            }
-        }
+    // if
+    // (!existingAutomobile.getPlateOrTailNumber().equals(automobileToUpdate.getPlateOrTailNumber()))
+    // {
+    // if
+    // (automobileDao.findByPlateOrTailNumber(automobileToUpdate.getPlateOrTailNumber()).isPresent())
+    // {
+    // throw new IllegalStateException(
+    // "Plate " + automobileToUpdate.getPlateOrTailNumber() + " is already taken by
+    // another vehicle.");
+    // }
+    // }
 
-        return automobileDao.save(automobileToUpdate);
-    }
+    // return automobileDao.save(automobileToUpdate);
+    // }
 
     @Transactional
     public Automobile updateBrandName(Integer automobileId, String newBrandName) {
@@ -96,17 +98,18 @@ public class AutomobileServices {
     }
 
     @Transactional
-    public Automobile updatePlate(Integer automobileId, String newPlate) {
+    public Automobile updatePlateOrTailNumber(Integer automobileId, String newPlate) {
         if (newPlate == null || newPlate.trim().isEmpty()) {
             throw new IllegalArgumentException("Plaka boş olamaz.");
         }
         Automobile automobile = getAutomobileById(automobileId);
 
-        if (!automobile.getPlate().equalsIgnoreCase(newPlate) && automobileDao.findByPlate(newPlate).isPresent()) {
-            throw new IllegalStateException("Plaka " + newPlate + " zaten başka bir araç tarafından kullanılıyor.");
+        if (!automobile.getPlateOrTailNumber().equalsIgnoreCase(newPlate)
+                && automobileDao.findByPlateOrTailNumber(newPlate).isPresent()) {
+            throw new IllegalStateException("Plate " + newPlate + " is already in use.");
         }
 
-        automobile.setPlate(newPlate);
+        automobile.setPlateOrTailNumber(newPlate);
         return automobileDao.save(automobile);
     }
 
@@ -173,59 +176,41 @@ public class AutomobileServices {
     }
 
     @Transactional(readOnly = true)
-    public Optional<AutomobileDto> getAutomobileByPlateAsDto(String plate) {
-        return automobileDao.findByPlateAsDto(plate);
-    }
-
-    private AutomobileDto convertToDto(Automobile a) {
-        return new AutomobileDto(
-
-                a.getId(),
-                a.getBrandName(),
-                a.getModelName(),
-                a.getModelYear(),
-                a.getVehicleValue(),
-                a.getVehicleStatus(),
-                a.getProperties().getDailyPricing(),
-                a.getProperties().getWeeklyPricing(),
-                a.getProperties().getMonthlyPricing(),
-                a.getPlate(),
-                a.getKm(),
-                a.getCurrentFuel(),
-                a.getMaxFuelCapacity(),
-                a.getWheelDriveType());
-    }
-
-    @Transactional(readOnly = true)
     public List<AutomobileDto> getAutomobilesByBrandNameAsDto(String brandName) {
-        List<Automobile> automobiles = automobileDao.findByBrandName(brandName);
-        return automobiles.stream()
-                .map(this::convertToDto) // Her bir entity'yi DTO'ya çevir
-                .collect(Collectors.toList()); // Sonucu liste yap
+        return automobileDao.findByBrandNameAsDto(brandName);
     }
 
     @Transactional(readOnly = true)
     public List<AutomobileDto> getAutomobilesByModelNameAsDto(String modelName) {
-        List<Automobile> automobiles = automobileDao.findByModelName(modelName);
-        return automobiles.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        return automobileDao.findByModelNameAsDto(modelName);
     }
 
     @Transactional(readOnly = true)
     public List<AutomobileDto> getAutomobilesByModelYearAsDto(Integer modelYear) {
-        List<Automobile> automobiles = automobileDao.findByModelYear(modelYear);
-        return automobiles.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        return automobileDao.findByModelYearAsDto(modelYear);
     }
 
     @Transactional(readOnly = true)
     public List<AutomobileDto> getAutomobilesByWheelDriveTypeAsDto(WheelDriveType wheelDriveType) {
-        List<Automobile> automobiles = automobileDao.findByWheelDriveType(wheelDriveType);
-        return automobiles.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+        return automobileDao.findByWheelDriveTypeAsDto(wheelDriveType);
     }
+
+    // private AutomobileDto convertToDto(Automobile a) {
+    // return new AutomobileDto(
+    // a.getId(),
+    // a.getBrandName(),
+    // a.getModelName(),
+    // a.getModelYear(),
+    // a.getPlateOrTailNumber(),
+    // a.getCurrentFuel(),
+    // a.getMaxFuelCapacity(),
+    // a.getVehicleValue(),
+    // a.getVehicleStatus(),
+    // a.getProperties().getDailyPricing(),
+    // a.getProperties().getWeeklyPricing(),
+    // a.getProperties().getMonthlyPricing(),
+    // a.getKm(),
+    // a.getWheelDriveType());
+    // }
 
 }

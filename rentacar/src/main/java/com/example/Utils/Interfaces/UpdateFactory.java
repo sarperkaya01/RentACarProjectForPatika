@@ -16,7 +16,7 @@ import com.example.Utils.Global;
 
 import com.example.Utils.Action.MenuAction;
 
-public interface UpdateController<T, S> extends DynamicController {
+public interface UpdateFactory<T, S> extends DynamicController {
 
     S getUpdateService();
 

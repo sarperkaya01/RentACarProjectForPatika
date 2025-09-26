@@ -1,5 +1,3 @@
-
-
 -- Users table create
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
@@ -11,7 +9,7 @@ CREATE TABLE users (
 -- Customers table create
 CREATE TABLE customers (
     customer_id SERIAL PRIMARY KEY,
-    user_id INT not NULL,
+    user_id INT not NULL UNIQUE,
     customer_name VARCHAR(20) not null,
     customer_surname VARCHAR(30) not null,
     customer_age SMALLINT not null,
@@ -20,9 +18,8 @@ CREATE TABLE customers (
     CONSTRAINT fk_customer_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
-
 CREATE TABLE vehicle_properties (
-    prop_id SERIAL PRIMARY KEY,   
+    prop_id SERIAL PRIMARY KEY,
     daily_pricing DECIMAL(6, 2) not null,
     weekly_pricing DECIMAL(6, 2) not null,
     monthly_pricing DECIMAL(6, 2) not null
@@ -35,6 +32,9 @@ CREATE TABLE vehicles (
     brand_name VARCHAR(30) NOT NULL,
     model_name VARCHAR(30) NOT NULL,
     model_year INT NOT NULL,
+    plate_or_tailnumber VARCHAR(15) NOT NULL UNIQUE,
+    current_fuel NUMERIC(6, 2) NOT NULL,
+    max_fuel_capacity NUMERIC(6, 2) NOT NULL,
     vehicle_value INT NOT NULL,
     vehicle_status VARCHAR(20) NOT NULL,
     CONSTRAINT fk_vehicle_properties FOREIGN KEY (prop_id) REFERENCES vehicle_properties (prop_id)
@@ -68,35 +68,24 @@ CREATE TABLE rentals (
     CONSTRAINT fk_rental_checkout FOREIGN KEY (checkout_id) REFERENCES checkout (checkout_id) ON DELETE CASCADE
 );
 
-
-
 CREATE TABLE automobiles (
     auto_id INT PRIMARY KEY,
-    plate VARCHAR(15) NOT NULL UNIQUE,
     km NUMERIC(12, 2) NOT NULL,
-    current_fuel NUMERIC(6, 2) NOT NULL,
-    max_fuel_capacity NUMERIC(6, 2) NOT NULL,
     wheel_drive_type VARCHAR(20) NOT NULL,
     CONSTRAINT fk_auto_vehicle FOREIGN KEY (auto_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );
 
 CREATE TABLE motorcycles (
-    motor_id INT PRIMARY KEY,
-    plate VARCHAR(15) NOT NULL UNIQUE,
+    motor_id INT PRIMARY KEY,    
     km NUMERIC(12, 2) NOT NULL,
-    current_fuel NUMERIC(6, 2) NOT NULL,
-    max_fuel_capacity NUMERIC(6, 2) NOT NULL,
     engine_cc INT NOT NULL,
     mobility_type VARCHAR(20) NOT NULL,
     CONSTRAINT fk_motor_vehicle FOREIGN KEY (motor_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );
 
 CREATE TABLE helicopters (
-    heli_id INT PRIMARY KEY,
-    tail_number VARCHAR(15) NOT NULL UNIQUE,
+    heli_id INT PRIMARY KEY,   
     flight_hours NUMERIC(12, 2) NOT NULL,
-    current_fuel NUMERIC(8, 2) NOT NULL,
-    max_fuel_capacity NUMERIC(8, 2) NOT NULL,
     speciality VARCHAR(20) NOT NULL,
     CONSTRAINT fk_heli_vehicle FOREIGN KEY (heli_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );

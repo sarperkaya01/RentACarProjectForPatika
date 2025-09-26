@@ -4,46 +4,42 @@ import com.example.Utils.Abstracts.VehicleDetailDto;
 import com.example.Utils.Enums.MotorcycleMobility;
 import com.example.Utils.Enums.VehicleStatus;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class MotorcycleDto  extends VehicleDetailDto {
 
-    // --- SADECE MOTOSİKLETE ÖZGÜ ALANLAR ---
-    private final String plate;
+   private final BigDecimal km;
     private final Integer engineCC;
     private final MotorcycleMobility mobilityType;
 
     public MotorcycleDto(
-            // Ortak alanlar (super constructor için)
             Integer vehicleId, String brandName, String modelName, Integer modelYear,
+            String plateOrTailNumber, BigDecimal currentFuel, BigDecimal maxFuelCapacity,
             Integer vehicleValue, VehicleStatus vehicleStatus,
             BigDecimal dailyPricing, BigDecimal weeklyPricing, BigDecimal monthlyPricing,
-            
-            // Motosiklete özgü alanlar
-            String plate, Integer engineCC, MotorcycleMobility mobilityType) {
-        
-        // 1. Adım: Ortak alanları doldurması için üst sınıfın constructor'ını çağır.
-        super(vehicleId, brandName, modelName, modelYear, vehicleValue, vehicleStatus,
+            BigDecimal km, Integer engineCC, MotorcycleMobility mobilityType) {
+
+        super(vehicleId, brandName, modelName, modelYear, plateOrTailNumber,
+              currentFuel, maxFuelCapacity, vehicleValue, vehicleStatus,
               dailyPricing, weeklyPricing, monthlyPricing);
-        
-        // 2. Adım: Sadece bu sınıfa özgü alanları doldur.
-        this.plate = plate;
+
+        this.km = km;
         this.engineCC = engineCC;
         this.mobilityType = mobilityType;
     }
 
-    /**
-     * Üst sınıftan gelen ve doldurulması ZORUNLU olan soyut metot.
-     * Sadece motosiklete özgü detayları formatlar.
-     */
     @Override
     public String getSpecificDetails() {
+        NumberFormat numberFormatter = NumberFormat.getNumberInstance(Locale.US);
+        String kmStr = km != null ? numberFormatter.format(km) + " km" : "N/A";
+        
         return String.format(
-            " Plate             : %s\n" +
-            " Engine Capacity   : %d cc\n" +
-            " Mobility Type     : %s\n",
-            this.plate,
-            this.engineCC,
-            this.mobilityType
-        );
+                " Odometer          : %s\n" +
+                " Engine Capacity   : %d cc\n" +
+                " Mobility Type     : %s\n",
+                kmStr,
+                this.engineCC,
+                this.mobilityType);
     }
 }

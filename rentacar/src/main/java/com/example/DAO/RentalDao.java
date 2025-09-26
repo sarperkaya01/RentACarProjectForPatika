@@ -20,12 +20,12 @@ public interface RentalDao extends JpaRepository<Rental, Integer> {
            "r.rentalId, " +
            "v.brandName, " +
            "v.modelName, " +
-           "COALESCE(TREAT(v AS Automobile).plate, TREAT(v AS Motorcycle).plate, TREAT(v AS Helicopter).tailNumber), " +
-           "r.rentDate, c.actualDropoffDate, c.checkoutAmount, r.rentalStatus) " +
-           "FROM Rental r " +
-           "JOIN r.vehicle v " +
-           "JOIN r.checkout c " +
-           "WHERE r.customer.customerId = :customerId " +
-           "ORDER BY r.rentDate DESC")
+           "v.plateOrTailNumber, " + 
+           "r.rentDate, " +
+           "c.actualDropoffDate, " +
+           "c.checkoutAmount, " +
+           "r.rentalStatus) " +
+           "FROM Rental r JOIN r.vehicle v JOIN r.checkout c " +
+           "WHERE r.customer.customerId = :customerId ORDER BY r.rentDate DESC")
     List<RentalHistoryDto> findRentalHistoryByCustomerId(@Param("customerId") Integer customerId);
 }

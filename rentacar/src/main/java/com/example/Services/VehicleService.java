@@ -2,14 +2,12 @@ package com.example.Services;
 
 
 import com.example.DAO.VehicleDao;
-import com.example.DTO.AutomobileDto;
-import com.example.DTO.HelicopterDto;
-import com.example.DTO.MotorcycleDto;
+
 
 import com.example.DTO.VehicleListDto;
 
 import com.example.Entities.DbModels.Vehicles.Vehicle;
-
+import com.example.Utils.Enums.VehicleStatus;
 
 import java.util.List;
 
@@ -22,69 +20,59 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class VehicleService {
 
-    private final VehicleDao vehicleDao;
-
+   private final VehicleDao vehicleDao;
 
     @Autowired
     public VehicleService(VehicleDao vehicleDao) {
         this.vehicleDao = vehicleDao;
-       
     }
 
-    @Transactional
-    public Vehicle saveNewVehicle(Vehicle vehicle) {
-        return vehicleDao.save(vehicle);
+    // --- GENEL DTO DÖNDÜREN METOTLAR ---
+
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getAllVehiclesAsDto() {
+        return vehicleDao.findAllAsVehicleListDto();
+    }
+    
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getVehiclesByBrandNameAsDto(String brandName) {
+        return vehicleDao.findByBrandNameAsDto(brandName);
     }
 
-    @Transactional
-    public Vehicle updateVehicle(Vehicle vehicleToUpdate) {
-
-        Vehicle existingVehicle = getVehicleById(vehicleToUpdate.getId());   
-        
-        if (vehicleToUpdate.getId() == null) {
-            throw new IllegalArgumentException("Id can not be null for update.");
-        }
-
-        if (!vehicleDao.existsById(vehicleToUpdate.getId())) {
-            throw new IllegalStateException(
-                    "Update failed. Propertiy not found. ID: " + vehicleToUpdate.getId());
-        }
-
-        return vehicleDao.save(existingVehicle);
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getVehiclesByModelNameAsDto(String modelName) {
+        return vehicleDao.findByModelNameAsDto(modelName);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getVehiclesByModelYearAsDto(Integer modelYear) {
+        return vehicleDao.findByModelYearAsDto(modelYear);
     }
 
-    @Transactional
-    public void deleteVehicle(Integer vehicleId) {
-        if (!vehicleDao.existsById(vehicleId)) {
-            throw new IllegalStateException("Vehicle not found. ID: " + vehicleId);
-        }
-        vehicleDao.deleteById(vehicleId);
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getVehiclesByStatusAsDto(VehicleStatus status) {
+        return vehicleDao.findByVehicleStatusAsDto(status);
     }
 
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getVehiclesByValueBetweenAsDto(Integer minValue, Integer maxValue) {
+        return vehicleDao.findByVehicleValueBetweenAsDto(minValue, maxValue);
+    }
+
+    // --- GENEL ENTITY İŞLEMLERİ ---
+    
     @Transactional(readOnly = true)
     public Vehicle getVehicleById(Integer id) {
         return vehicleDao.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Vehicle not found with ID: " + id));
     }
 
-    @Transactional(readOnly = true)
-    public List<VehicleListDto> getAllVehiclesAsDto() {
-        return vehicleDao.findAllAsVehicleListDto();
-    }
-
-     @Transactional(readOnly = true)
-    public List<AutomobileDto> getAllAutomobilesAsDto() {
-        return vehicleDao.findAllAutomobilesAsDto();
-    }
-
-    @Transactional(readOnly = true)
-    public List<MotorcycleDto> getAllMotorcyclesAsDto() {
-        return vehicleDao.findAllMotorcyclesAsDto();
-    }
-
-    @Transactional(readOnly = true)
-    public List<HelicopterDto> getAllHelicoptersAsDto() {
-        return vehicleDao.findAllHelicoptersAsDto();
+    @Transactional
+    public void deleteVehicle(Integer vehicleId) {
+        if (!vehicleDao.existsById(vehicleId)) {
+            throw new IllegalStateException("Vehicle to delete not found with ID: " + vehicleId);
+        }
+        vehicleDao.deleteById(vehicleId);
     }
 
 

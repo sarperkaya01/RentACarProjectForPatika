@@ -43,7 +43,7 @@ public interface DynamicController {
      * Eğer tip bir Enum ise, kullanıcıdan gelen sayısal seçimi (örn: "1")
      * doğru Enum sabitine (örn: AVAILABLE) çevirir.
      */
-    @SuppressWarnings("unchecked") // Enum.valueOf için güvenli cast
+    @SuppressWarnings({ "unchecked", "rawtypes" }) // Enum.valueOf için güvenli cast
     public static Object convertInput(String input, Class<?> targetType) {
         if (targetType.isEnum()) {
             try {

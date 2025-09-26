@@ -15,33 +15,37 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AutomobileDao extends JpaRepository<Automobile, Integer> {
 
-    Optional<Automobile> findByPlate(String plate);
+       @Query("SELECT a FROM Automobile a WHERE a.plateOrTailNumber = :identifier")
+       Optional<Automobile> findByPlateOrTailNumber(@Param("identifier") String identifier);
 
+       // DTO constructor'ının doğru sırasını burada bir kez tanımlıyoruz.
+       String DTO_CONSTRUCTOR_QUERY = "new com.example.DTO.AutomobileDto(" +
+                     "a.id, a.brandName, a.modelName, a.modelYear, a.plateOrTailNumber, " +
+                     "a.currentFuel, a.maxFuelCapacity, a.vehicleValue, a.vehicleStatus, " +
+                     "p.dailyPricing, p.weeklyPricing, p.monthlyPricing, " +
+                     "a.km, a.wheelDriveType)";
 
-    @Query("SELECT new com.example.DTO.AutomobileDto(" +
-           "a.id, a.brandName, a.modelName, a.modelYear, a.vehicleValue, a.vehicleStatus, " +
-           "p.dailyPricing, p.weeklyPricing, p.monthlyPricing, " +
-           "a.plate, a.km, a.currentFuel, a.maxFuelCapacity, a.wheelDriveType) " +
-           "FROM Automobile a JOIN a.properties p WHERE a.plate = :plate")
-    Optional<AutomobileDto> findByPlateAsDto(@Param("plate") String plate);
+       @Query("SELECT " + DTO_CONSTRUCTOR_QUERY + " FROM Automobile a JOIN a.properties p")
+       List<AutomobileDto> findAllAutomobileAsDto();
 
-    @Query("SELECT new com.example.DTO.AutomobileDto(" +
-           "a.id, a.brandName, a.modelName, a.modelYear, a.vehicleValue, a.vehicleStatus, " +
-           "p.dailyPricing, p.weeklyPricing, p.monthlyPricing, " +
-           "a.plate, a.km, a.currentFuel, a.maxFuelCapacity, a.wheelDriveType) " +
-           "FROM Automobile a JOIN a.properties p")
-    List<AutomobileDto> findAllAutomobileAsDto();
+       @Query("SELECT " + DTO_CONSTRUCTOR_QUERY
+                     + " FROM Automobile a JOIN a.properties p WHERE a.plateOrTailNumber = :identifier")
+       Optional<AutomobileDto> findByPlateOrTailNumberAsDto(@Param("identifier") String identifier);
 
-    @Query("SELECT a FROM Automobile a WHERE a.brandName = :brandName")
-    List<Automobile> findByBrandName(@Param("brandName") String brandName);
-    
-    @Query("SELECT a FROM Automobile a WHERE a.modelName = :modelName")
-    List<Automobile> findByModelName(@Param("modelName") String modelName);
-    
-    @Query("SELECT a FROM Automobile a WHERE a.modelYear = :modelYear")
-    List<Automobile> findByModelYear(@Param("modelYear") Integer modelYear);
+       @Query("SELECT " + DTO_CONSTRUCTOR_QUERY
+                     + " FROM Automobile a JOIN a.properties p WHERE a.brandName = :brandName")
+       List<AutomobileDto> findByBrandNameAsDto(@Param("brandName") String brandName);
 
-    @Query("SELECT a FROM Automobile a WHERE a.wheelDriveType = :wheelDriveType")
-    List<Automobile> findByWheelDriveType(@Param("wheelDriveType") WheelDriveType wheelDriveType);
+       @Query("SELECT " + DTO_CONSTRUCTOR_QUERY
+                     + " FROM Automobile a JOIN a.properties p WHERE a.modelName = :modelName")
+       List<AutomobileDto> findByModelNameAsDto(@Param("modelName") String modelName);
+
+       @Query("SELECT " + DTO_CONSTRUCTOR_QUERY
+                     + " FROM Automobile a JOIN a.properties p WHERE a.modelYear = :modelYear")
+       List<AutomobileDto> findByModelYearAsDto(@Param("modelYear") Integer modelYear);
+
+       @Query("SELECT " + DTO_CONSTRUCTOR_QUERY
+                     + " FROM Automobile a JOIN a.properties p WHERE a.wheelDriveType = :wheelDriveType")
+       List<AutomobileDto> findByWheelDriveTypeAsDto(@Param("wheelDriveType") WheelDriveType wheelDriveType);
 
 }

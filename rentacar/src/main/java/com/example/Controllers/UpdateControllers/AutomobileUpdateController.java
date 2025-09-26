@@ -1,4 +1,4 @@
-package com.example.Controllers;
+package com.example.Controllers.UpdateControllers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 
 import com.example.Entities.DbModels.Vehicles.Automobile;
 import com.example.Services.AutomobileServices;
-import com.example.Utils.Interfaces.UpdateController;
+import com.example.Utils.Interfaces.UpdateFactory;
 
 @Component
-public class AutomobileUpdateController implements UpdateController<Automobile, AutomobileServices> {
+public class AutomobileUpdateController implements UpdateFactory<Automobile, AutomobileServices> {
 
     private final AutomobileServices automobileServices;
 

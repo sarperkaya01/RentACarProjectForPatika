@@ -38,13 +38,7 @@ public class VehicleOperationsController implements Controller {
     public List<String> getMenuTitles() {
         List<String> menuCases = new ArrayList<>(Arrays.asList("Automobile", "Motorcycle", "Helicopter"));
 
-        // if (Global.currentUser != null) {
-        //     if (Global.currentUser.getRole() == UserRoles.ADMIN) {
-        //         menuCases.add("Insert Vehicle");
-        //         menuCases.add("Update Vehicle");
-        //         menuCases.add("Delete Vehicle");
-        //     }
-        // }
+      
 
         menuCases.add("Exit");
 
