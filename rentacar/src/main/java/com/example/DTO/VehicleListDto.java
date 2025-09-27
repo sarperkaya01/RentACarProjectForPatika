@@ -1,41 +1,50 @@
 package com.example.DTO;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import com.example.Utils.Enums.VehicleStatus;
 import com.example.Utils.Enums.VehicleTypes;
 
 public class VehicleListDto {
-     private final Integer vehicleId;
+    private final Integer vehicleId;
     private final VehicleTypes type;
-    private final String brandAndModel;
-    private final String identifier; // Plaka veya Kuyruk Numarası
+    private final String brandName;
+    private final String modelName;
+    private final String plateOrTailNumber;
     private final VehicleStatus status;
-    private final String dailyPrice;
+    private final BigDecimal dailyPricing;
 
-    // Constructor, artık JPQL'den gelen ham verileri alıp DTO içinde işleyecek.
-    public VehicleListDto(Integer vehicleId, String vehicleType, String brandName, String modelName, 
-                          String identifier, VehicleStatus status, BigDecimal dailyPrice) {
+    public VehicleListDto(Integer vehicleId, String vehicleType, String brandName, String modelName,
+            String plateOrTailNumber, VehicleStatus status, BigDecimal dailyPricing) {
         this.vehicleId = vehicleId;
-        this.type = VehicleTypes.valueOf(vehicleType); // String'i Enum'a çeviriyoruz.
-        this.brandAndModel = brandName + " " + modelName; // Marka ve modeli birleştiriyoruz.
-        this.identifier = identifier;
+        this.type = VehicleTypes.valueOf(vehicleType);
+        this.brandName = brandName;
+        this.modelName = modelName;
+        this.plateOrTailNumber = plateOrTailNumber;
         this.status = status;
-        this.dailyPrice = String.format("$%.2f/day", dailyPrice); // Fiyatı formatlıyoruz.
+        this.dailyPricing = dailyPricing;
     }
-    
-    // toString() metodun, istediğin formatta BİREBİR AYNI KALACAK.
+
+    public VehicleTypes getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.US);
+        String formattedPrice = (dailyPricing != null) ? currencyFormatter.format(dailyPricing) + "/day" : "N/A";
+
         return String.format(
-            "ID: %-4d | Type: %-12s | Name: %-25s | Identifier: %-12s | Status: %-12s | Price: %s",
-            vehicleId,
-            type,
-            brandAndModel,
-            identifier,
-            status,
-            dailyPrice
-        );
+                "ID: %-4d | Type: %-12s | Brand: %-15s | Model: %-20s | Identifier: %-12s | Status: %-12s | Daily Price: %s",
+                this.vehicleId,
+                this.type,
+                this.brandName,
+                this.modelName,
+                this.plateOrTailNumber,
+                this.status,
+                formattedPrice);
     }
 
 }

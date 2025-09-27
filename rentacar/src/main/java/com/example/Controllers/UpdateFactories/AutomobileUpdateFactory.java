@@ -1,4 +1,4 @@
-package com.example.Controllers.UpdateControllers;
+package com.example.Controllers.UpdateFactories;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,11 +10,11 @@ import com.example.Services.AutomobileServices;
 import com.example.Utils.Interfaces.UpdateFactory;
 
 @Component
-public class AutomobileUpdateController implements UpdateFactory<Automobile, AutomobileServices> {
+public class AutomobileUpdateFactory implements UpdateFactory<Automobile, AutomobileServices> {
 
     private final AutomobileServices automobileServices;
 
-    public AutomobileUpdateController(AutomobileServices automobileServices) {
+    public AutomobileUpdateFactory(AutomobileServices automobileServices) {
         this.automobileServices = automobileServices;
     }
 

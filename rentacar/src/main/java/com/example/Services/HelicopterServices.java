@@ -1,6 +1,7 @@
 package com.example.Services;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,23 +10,35 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DAO.HelicopterDao;
+import com.example.DAO.VehicleDao;
 import com.example.DTO.HelicopterDto;
+import com.example.DTO.VehicleListDto;
 import com.example.Entities.DbModels.Vehicles.Helicopter;
 import com.example.Utils.Enums.HeliSpeciality;
 import com.example.Utils.Enums.VehicleStatus;
+import com.example.Utils.Enums.VehicleTypes;
 
 @Service
 public class HelicopterServices {
     private final HelicopterDao helicopterDao;
+    private final VehicleDao vehicleDao;
     private final VehiclePropertiesServices vehiclePropertiesServices;
 
     @Autowired
-    public HelicopterServices(HelicopterDao helicopterDao, VehiclePropertiesServices vehiclePropertiesServices) {
+    public HelicopterServices(HelicopterDao helicopterDao, VehicleDao vehicleDao,
+            VehiclePropertiesServices vehiclePropertiesServices) {
         this.helicopterDao = helicopterDao;
+        this.vehicleDao = vehicleDao;
         this.vehiclePropertiesServices = vehiclePropertiesServices;
     }
 
-    // --- Public Methods Returning DTOs (for Controllers/Views) ---
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getAllHelicoptersAsSummaryDto() {
+        return vehicleDao.findAllAsVehicleListDto()
+                .stream()
+                .filter(dto -> dto.getType() == VehicleTypes.HELICOPTER)
+                .toList();
+    }
 
     @Transactional(readOnly = true)
     public List<HelicopterDto> getAllHelicoptersAsDto() {
@@ -35,6 +48,13 @@ public class HelicopterServices {
     @Transactional(readOnly = true)
     public Optional<HelicopterDto> getHelicopterByPlateOrTailNumberAsDto(String identifier) {
         return helicopterDao.findByPlateOrTailNumberAsDto(identifier);
+    }
+
+    @Transactional(readOnly = true)
+    public List<HelicopterDto> getHelicoptersByPlateOrTailNumberAsDto(String identifier) {
+        return helicopterDao.findByPlateOrTailNumberAsDto(identifier)
+                .map(Collections::singletonList)
+                .orElse(Collections.emptyList());
     }
 
     @Transactional(readOnly = true)
@@ -62,8 +82,6 @@ public class HelicopterServices {
         return helicopterDao.findBySpecialityAsDto(speciality);
     }
 
-    // --- Entity-Level Operations (for internal use, updates, deletes) ---
-
     public Helicopter getHelicopterById(Integer id) {
         return helicopterDao.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Helicopter not found with ID: " + id));
@@ -81,13 +99,15 @@ public class HelicopterServices {
 
     @Transactional
     public void deleteHelicopter(Integer id) {
-        if (!helicopterDao.existsById(id)) {
-            throw new IllegalStateException("Helicopter to delete not found with ID: " + id);
-        }
-        helicopterDao.deleteById(id);
-    }
+        Helicopter helicopterToDelete = getHelicopterById(id);
 
-    // --- Dynamic Update Methods ---
+        if (helicopterToDelete.getVehicleStatus() == VehicleStatus.RENTED) {
+            throw new IllegalStateException(
+                    "Cannot delete helicopter with ID " + id + " because it is currently rented.");
+        }
+
+        helicopterDao.delete(helicopterToDelete);
+    }
 
     @Transactional
     public Helicopter updateBrandName(Integer helicopterId, String newBrandName) {

@@ -1,4 +1,3 @@
--- Users table create
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     email VARCHAR(254) NOT NULL UNIQUE,
@@ -6,7 +5,6 @@ CREATE TABLE users (
     user_role VARCHAR(10) NOT NULL DEFAULT 'ADMIN'
 );
 
--- Customers table create
 CREATE TABLE customers (
     customer_id SERIAL PRIMARY KEY,
     user_id INT not NULL UNIQUE,
@@ -52,8 +50,6 @@ CREATE TABLE checkout (
     checkout_status VARCHAR(10) NOT NULL
     -- Foreign Key constraints
 );
-
--- Rental table create
 
 CREATE TABLE rentals (
     rental_id SERIAL PRIMARY KEY,

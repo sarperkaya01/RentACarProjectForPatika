@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import com.example.Utils.Abstracts.VehicleDetailDto;
 import com.example.Utils.Enums.VehicleStatus;
 import com.example.Utils.Enums.WheelDriveType;
 

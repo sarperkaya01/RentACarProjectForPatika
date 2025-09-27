@@ -9,28 +9,40 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DAO.MotorcycleDao;
+import com.example.DAO.VehicleDao;
 import com.example.DTO.MotorcycleDto;
+import com.example.DTO.VehicleListDto;
 import com.example.Entities.DbModels.Vehicles.Motorcycle;
 import com.example.Utils.Enums.MotorcycleMobility;
 import com.example.Utils.Enums.VehicleStatus;
+import com.example.Utils.Enums.VehicleTypes;
 
 @Service
 public class MotorcycleServices {
 
     private final MotorcycleDao motorcycleDao;
+    private final VehicleDao vehicleDao;
     private final VehiclePropertiesServices vehiclePropertiesServices;
 
     @Autowired
-    public MotorcycleServices(MotorcycleDao motorcycleDao, VehiclePropertiesServices vehiclePropertiesServices) {
+    public MotorcycleServices(MotorcycleDao motorcycleDao, VehicleDao vehicleDao,
+            VehiclePropertiesServices vehiclePropertiesServices) {
         this.motorcycleDao = motorcycleDao;
+        this.vehicleDao = vehicleDao;
         this.vehiclePropertiesServices = vehiclePropertiesServices;
     }
-
-    // --- Public Methods Returning DTOs (for Controllers/Views) ---
 
     @Transactional(readOnly = true)
     public List<MotorcycleDto> getAllMotorcyclesAsDto() {
         return motorcycleDao.findAllMotorcyclesAsDto();
+    }
+
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getAllMotorcyclesAsSummaryDto() {
+        return vehicleDao.findAllAsVehicleListDto()
+                .stream()
+                .filter(dto -> dto.getType() == VehicleTypes.MOTORCYCLE)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -63,8 +75,6 @@ public class MotorcycleServices {
         return motorcycleDao.findByMobilityTypeAsDto(mobilityType);
     }
 
-    // --- Entity-Level Operations (for internal use, updates, deletes) ---
-
     public Motorcycle getMotorcycleById(Integer id) {
         return motorcycleDao.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Motorcycle not found with ID: " + id));
@@ -82,13 +92,18 @@ public class MotorcycleServices {
 
     @Transactional
     public void deleteMotorcycle(Integer id) {
-        if (!motorcycleDao.existsById(id)) {
-            throw new IllegalStateException("Motorcycle to delete not found with ID: " + id);
-        }
-        motorcycleDao.deleteById(id);
-    }
+        // Önce silinecek motosikleti tam olarak al
+        Motorcycle motorcycleToDelete = getMotorcycleById(id);
 
-    // --- Dynamic Update Methods (unchanged, they need the full entity) ---
+        // Kiralı olup olmadığını kontrol et
+        if (motorcycleToDelete.getVehicleStatus() == VehicleStatus.RENTED) {
+            throw new IllegalStateException(
+                    "Cannot delete motorcycle with ID " + id + " because it is currently rented.");
+        }
+
+        // Güvenliyse sil
+        motorcycleDao.delete(motorcycleToDelete);
+    }
 
     @Transactional
     public Motorcycle updateBrandName(Integer motorcycleId, String newBrandName) {
@@ -111,21 +126,21 @@ public class MotorcycleServices {
         return motorcycleDao.save(motorcycle);
     }
 
-   @Transactional
-public Motorcycle updatePlateOrTailNumber(Integer motorcycleId, String newIdentifier) {
-    if (newIdentifier == null || newIdentifier.trim().isEmpty()) {
-        throw new IllegalArgumentException("Identifier cannot be null or empty.");
-    }
-    Motorcycle motorcycle = getMotorcycleById(motorcycleId);
+    @Transactional
+    public Motorcycle updatePlateOrTailNumber(Integer motorcycleId, String newIdentifier) {
+        if (newIdentifier == null || newIdentifier.trim().isEmpty()) {
+            throw new IllegalArgumentException("Identifier cannot be null or empty.");
+        }
+        Motorcycle motorcycle = getMotorcycleById(motorcycleId);
 
-    if (!motorcycle.getPlateOrTailNumber().equalsIgnoreCase(newIdentifier)
-            && motorcycleDao.findByPlateOrTailNumber(newIdentifier).isPresent()) {
-        throw new IllegalStateException("Identifier " + newIdentifier + " is already in use by another vehicle.");
-    }
+        if (!motorcycle.getPlateOrTailNumber().equalsIgnoreCase(newIdentifier)
+                && motorcycleDao.findByPlateOrTailNumber(newIdentifier).isPresent()) {
+            throw new IllegalStateException("Identifier " + newIdentifier + " is already in use by another vehicle.");
+        }
 
-    motorcycle.setPlateOrTailNumber(newIdentifier);
-    return motorcycleDao.save(motorcycle);
-}
+        motorcycle.setPlateOrTailNumber(newIdentifier);
+        return motorcycleDao.save(motorcycle);
+    }
 
     @Transactional
     public Motorcycle updateCurrentFuel(Integer motorcycleId, BigDecimal newCurrentFuel) {

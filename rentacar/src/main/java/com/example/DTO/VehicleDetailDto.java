@@ -1,4 +1,4 @@
-package com.example.Utils.Abstracts;
+package com.example.DTO;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;

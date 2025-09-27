@@ -1,60 +1,76 @@
 package com.example.Services;
 
-
-import java.util.List;
-
+import com.example.DAO.UserDao;
+import com.example.Entities.DbModels.People.User;
+import com.example.Utils.Enums.UserRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.DAO.UserDao;
+import java.util.Optional;
 
-import com.example.Entities.DbModels.People.User;
 @Service
 public class UserServices {
 
     private final UserDao userDao;
 
     @Autowired
-    public UserServices(UserDao ud) {
-        this.userDao = ud;
+    public UserServices(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    // --- ENTITY İŞLEMLERİ ---
+
+    public User getUserById(Integer id) {
+        return userDao.findById(id)
+                .orElseThrow(() -> new IllegalStateException("User not found with ID: " + id));
+    }
+
+    public Optional<User> getUserByEmail(String email) {
+        return userDao.findByEmail(email);
     }
 
     @Transactional
-    public User newUser(User newUser) {
-        if (userDao.findByEmail(newUser.getEmail()).isPresent()) {
-            throw new IllegalStateException("Email taken already");
+    public User saveNewUser(User user) {
+        userDao.findByEmail(user.getEmail())
+                .ifPresent(u -> {
+                    throw new IllegalStateException("Email " + user.getEmail() + " is already in use.");
+                });
+        return userDao.save(user);
+    }
+
+    // ProfileController'da kullanılan genel updateUser metodu
+    @Transactional
+    public User updateUser(User user) {
+        if (user.getUserId() == null || !userDao.existsById(user.getUserId())) {
+            throw new IllegalStateException("User to update does not exist.");
         }
-        return userDao.save(newUser);
+        return userDao.save(user);
     }
 
-    public User getUserByEmail(String email) {
-        return userDao.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("User not found : " + email));
-    }
+    // --- UPDATE METOTLARI (UpdateFactory için) ---
 
     @Transactional
-    public User updateUser(User userToUpdate) {
-
-        if (userToUpdate.getUserId() == null) {
-            throw new IllegalArgumentException("Id can not be null.");
+    public User updateEmail(Integer userId, String newEmail) {
+        User user = getUserById(userId);
+        if (!user.getEmail().equalsIgnoreCase(newEmail) && userDao.findByEmail(newEmail).isPresent()) {
+            throw new IllegalStateException("Email " + newEmail + " is already in use.");
         }
-
-        userDao.findById(userToUpdate.getUserId())
-                .orElseThrow(() -> new IllegalStateException("User not found: " + userToUpdate.getUserId()));
-
-        return userDao.save(userToUpdate);
-    }
-
-    public List<User> getAllUsers() {
-
-        return userDao.findAll();
+        user.setEmail(newEmail);
+        return userDao.save(user);
     }
 
     @Transactional
-    public void deleteUser(int id) {
-
-        userDao.deleteById(id);
+    public User updatePasswd(Integer userId, byte[] newPasswordHash) {
+        User user = getUserById(userId);
+        user.setPasswd(newPasswordHash);
+        return userDao.save(user);
     }
 
+    @Transactional
+    public User updateRole(Integer userId, UserRoles newRole) {
+        User user = getUserById(userId);
+        user.setRole(newRole);
+        return userDao.save(user);
+    }
 }

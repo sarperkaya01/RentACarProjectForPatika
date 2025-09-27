@@ -1,20 +1,17 @@
 package com.example.Controllers;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.example.Entities.DbModels.People.User;
 import com.example.Services.UserServices;
 import com.example.Utils.Global;
 import com.example.Utils.HashUtil;
-import com.example.Utils.Interfaces.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 @Component
-public class LoginController implements Controller {
+public class LoginController {
 
     private final UserServices userServices;
     private final MainMenuController mainMenuController;
@@ -25,52 +22,47 @@ public class LoginController implements Controller {
         this.mainMenuController = mainMenuController;
     }
 
-    @Override
     public void start() {
-        runMenuLoop("Log In");
-        System.out.println("Email:");
-        String email = Global.scanner.nextLine();
-        System.out.println("Password:");
-        String passwd = Global.scanner.nextLine();
+        System.out.println("\n--- Welcome to the Rent-A-Car System ---");
+        System.out.println("Please log in to continue.");
 
-        User u;
+        while (true) {
+            System.out.print("Email: ");
+            String email = Global.scanner.nextLine();
+            System.out.print("Password: ");
+            String password = Global.scanner.nextLine();
 
-        do {
-            u = login(email, passwd);
+            Optional<User> loggedInUser = attemptLogin(email, password);
 
-            if (u == null) {
-                System.out.println("Email or password is wrong ! Please try again...");
+            if (loggedInUser.isPresent()) {
+
+                Global.currentUser = loggedInUser.get();
+                System.out.println("\nLogin successful! Welcome, " + Global.currentUser.getEmail());
+                mainMenuController.start();
+                break;
+            } else {
+
+                System.out.println("Email or password is wrong! Please try again...");
             }
-
-        } while (u == null);
-        Global.currentUser = u;
-
-        mainMenuController.start();
-
+        }
     }
 
-    @Override
-    public void exit() {
-        System.out.println("");
-    }
+    private Optional<User> attemptLogin(String email, String password) {
 
-    @Override
-    public List<String> getMenuTitles() {
-        return Collections.emptyList();
-    }
+        Optional<User> userOptional = userServices.getUserByEmail(email);
 
-    public User login(String email, String password) {
-
-        User checkUser = userServices.getUserByEmail(email);
-        if (checkUser == null) {
-            return null;
+        if (userOptional.isEmpty()) {
+            return Optional.empty();
         }
 
-        byte[] storedHash = checkUser.getPasswd();
+        User foundUser = userOptional.get();
+        byte[] storedHash = foundUser.getPasswd();
         byte[] inputHash = HashUtil.sha256(password);
 
-        return Arrays.equals(storedHash, inputHash) ? checkUser : null;
-
+        if (Arrays.equals(storedHash, inputHash)) {
+            return Optional.of(foundUser);
+        } else {
+            return Optional.empty();
+        }
     }
-
 }

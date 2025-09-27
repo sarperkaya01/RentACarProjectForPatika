@@ -5,24 +5,51 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.DTO.CustomerInfoDto;
+import com.example.DTO.CustomerListDto;
 import com.example.Entities.DbModels.People.Customer;
+import com.example.Utils.Enums.UserRoles;
 
 public interface CustomerDao extends JpaRepository<Customer, Integer> {
-    Optional<Customer> findByUser_UserId(Integer userId);
+        Optional<Customer> findByUser_UserId(Integer userId);
 
-    List<Customer> findByCustomerName(String customerName);
+        Optional<Customer> findByCompanyName(String companyName);
 
-    List<Customer> findByCustomerSurname(String customerSurname);
+        String LIST_DTO_CONSTRUCTOR = "new com.example.DTO.CustomerListDto(" +
+                        "c.customerId, c.customerName, c.customerSurname, c.companyName, u.email, u.role)";
 
-    List<Customer> findByAge(Integer age);
+        @Query("SELECT " + LIST_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u ORDER BY c.customerName")
+        List<CustomerListDto> findAllAsListDto();
 
-    Optional<Customer> findByCompanyName(String companyName);
+        @Query("SELECT " + LIST_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u WHERE c.customerName = :name")
+        List<CustomerListDto> findByCustomerNameAsListDto(@Param("name") String name);
 
-    @Query("SELECT new com.example.DTO.CustomerInfoDto(" +
-            "c.customerName, c.customerSurname, c.companyName, u.email, u.role) " +
-            "FROM Customer c JOIN c.user u " +
-            "ORDER BY c.customerName")
-    List<CustomerInfoDto> findAllCustomerInfo();
+        @Query("SELECT " + LIST_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u WHERE c.customerSurname = :surname")
+        List<CustomerListDto> findByCustomerSurnameAsListDto(@Param("surname") String surname);
+
+        @Query("SELECT " + LIST_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u WHERE c.companyName = :companyName")
+        List<CustomerListDto> findByCompanyNameAsListDto(@Param("companyName") String companyName);
+
+        @Query("SELECT " + LIST_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u WHERE u.email = :email")
+        List<CustomerListDto> findByEmailAsListDto(@Param("email") String email);
+
+        @Query("SELECT " + LIST_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u WHERE c.age = :age")
+        List<CustomerListDto> findByAgeAsListDto(@Param("age") Integer age);
+
+        @Query("SELECT " + LIST_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u WHERE u.role = :role")
+        List<CustomerListDto> findByRoleAsListDto(@Param("role") UserRoles role);
+
+        String INFO_DTO_CONSTRUCTOR = "new com.example.DTO.CustomerInfoDto(" +
+                        "c.customerId, c.customerName, c.customerSurname, c.age, c.companyName, u.userId, u.email, u.role)";
+
+        @Query("SELECT " + INFO_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u")
+        List<CustomerInfoDto> findAllAsInfoDto();
+
+        @Query("SELECT " + INFO_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u WHERE c.customerId = :customerId")
+        Optional<CustomerInfoDto> findByIdAsInfoDto(@Param("customerId") Integer customerId);
+
+        @Query("SELECT " + INFO_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u WHERE u.email = :email")
+        Optional<CustomerInfoDto> findByUserEmailAsInfoDto(@Param("email") String email);
 }

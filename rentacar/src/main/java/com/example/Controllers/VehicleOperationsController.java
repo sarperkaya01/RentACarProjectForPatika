@@ -8,21 +8,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-
 import com.example.Utils.Interfaces.Controller;
 
 @Component
 public class VehicleOperationsController implements Controller {
     private final AutomobileController automobileController;
+    private final MotorcycleController motorcycleController;
+    private final HelicopterController helicopterController;
 
     @Lazy
     @Autowired
-    public VehicleOperationsController(AutomobileController automobileController) {
+    public VehicleOperationsController(AutomobileController automobileController,
+            MotorcycleController motorcycleController, HelicopterController helicopterController) {
         this.automobileController = automobileController;
+        this.motorcycleController = motorcycleController;
+        this.helicopterController = helicopterController;
     }
-
-    
-   
 
     @Override
     public void start() {
@@ -38,28 +39,22 @@ public class VehicleOperationsController implements Controller {
     public List<String> getMenuTitles() {
         List<String> menuCases = new ArrayList<>(Arrays.asList("Automobile", "Motorcycle", "Helicopter"));
 
-      
-
         menuCases.add("Exit");
 
         return menuCases;
     }
 
-    @SuppressWarnings("unused")
     public void automobile() {
         automobileController.start();
 
     }
 
-    @SuppressWarnings("unused")
     public void motorcycle() {
-
+        motorcycleController.start();
     }
 
-    @SuppressWarnings("unused")
     public void helicopter() {
-
+        helicopterController.start();
     }
-
 
 }

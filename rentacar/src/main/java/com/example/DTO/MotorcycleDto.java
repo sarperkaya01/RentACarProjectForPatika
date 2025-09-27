@@ -1,6 +1,5 @@
 package com.example.DTO;
 
-import com.example.Utils.Abstracts.VehicleDetailDto;
 import com.example.Utils.Enums.MotorcycleMobility;
 import com.example.Utils.Enums.VehicleStatus;
 import java.math.BigDecimal;

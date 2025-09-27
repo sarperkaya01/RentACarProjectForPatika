@@ -4,20 +4,20 @@ import java.math.BigDecimal;
 
 import com.example.Utils.Enums.VehicleStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -31,8 +31,8 @@ public abstract class Vehicle {
     @Column(name = "vehicle_id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY) // Performans için LAZY kullanmak genellikle daha iyidir.
-    @JoinColumn(name = "prop_id", nullable = false)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "prop_id", referencedColumnName = "prop_id")
     private VehicleProperties properties;
 
     @Column(name = "brand_name", nullable = false, length = 30)
