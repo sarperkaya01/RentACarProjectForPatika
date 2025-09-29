@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "helicopters")
 @DiscriminatorValue("HELICOPTER") // Discriminator sütununa yazılacak değer
-@PrimaryKeyJoinColumn(name = "heli_id")
+@PrimaryKeyJoinColumn(name = "heli_id", referencedColumnName = "vehicle_id")
 
 public class Helicopter extends Vehicle implements AirVehicle {
 
@@ -27,7 +27,6 @@ public class Helicopter extends Vehicle implements AirVehicle {
     @Enumerated(EnumType.STRING)
     @Column(name = "speciality", nullable = false, length = 20)
     private HeliSpeciality speciality;
-
    
 
     public BigDecimal getFlightHours() {

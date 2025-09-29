@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import com.example.Utils.Global;
@@ -19,9 +20,10 @@ public interface SelectFactory<T, D, S> extends DynamicController {
         return new ArrayList<>();
     }
 
-    //@SuppressWarnings("unchecked")
+   // @SuppressWarnings("rawtypes")
     default void runSelectMenu(Class<T> entityType) {
-        Map<String, Function<Object, List<D>>> fieldSelectors = generateFieldSelectors(entityType);
+        // Selector fonksiyonu artık genel bir Object döndürecek (List veya Optional)
+        Map<String, Function<Object, Object>> fieldSelectors = generateFieldSelectors(entityType);
         List<MenuAction> menuActions = generateSelectActions(entityType, fieldSelectors);
 
         while (true) {
@@ -51,15 +53,13 @@ public interface SelectFactory<T, D, S> extends DynamicController {
         }
     }
 
-    private List<MenuAction> generateSelectActions(Class<T> entityType, Map<String, Function<Object, List<D>>> fieldSelectors) {
+    private List<MenuAction> generateSelectActions(Class<T> entityType, Map<String, Function<Object, Object>> fieldSelectors) {
         List<MenuAction> actions = new ArrayList<>();
-        Map<String, Field> allFieldsMap = new HashMap<>();
-        DynamicController.getAllFields(entityType).forEach(field -> allFieldsMap.put(field.getName(), field));
-
         for (Field field : DynamicController.getAllFields(entityType)) {
             String fieldName = field.getName();
             if (fieldSelectors.containsKey(fieldName)) {
                 String displayName = DynamicController.formatFieldName(fieldName);
+                // createSelectAction artık yeni selector tipiyle çalışacak
                 Runnable action = createSelectAction(field, fieldSelectors.get(fieldName));
                 actions.add(new MenuAction(displayName, action));
             }
@@ -67,7 +67,7 @@ public interface SelectFactory<T, D, S> extends DynamicController {
         return actions;
     }
 
-    private Runnable createSelectAction(Field field, Function<Object, List<D>> selector) {
+    private Runnable createSelectAction(Field field, Function<Object, Object> selector) {
         return () -> {
             try {
                 if (field.getType().isEnum()) {
@@ -85,12 +85,25 @@ public interface SelectFactory<T, D, S> extends DynamicController {
                 Object convertedValue = DynamicController.convertInput(input, field.getType());
                 
                 System.out.println("\n--- Search Results ---");
-                List<D> results = selector.apply(convertedValue);
+                // Sonuç artık bir Object, tipini kontrol etmemiz gerekiyor.
+                Object result = selector.apply(convertedValue);
 
-                if (results.isEmpty()) {
-                    System.out.println("No records found matching your criteria.");
+                // Gelen sonucun tipine göre farklı yazdırma işlemi yap
+                if (result instanceof List) {
+                    List<?> results = (List<?>) result;
+                    if (results.isEmpty()) {
+                        System.out.println("No records found matching your criteria.");
+                    } else {
+                        results.forEach(System.out::println);
+                    }
+                } else if (result instanceof Optional) {
+                    Optional<?> optionalResult = (Optional<?>) result;
+                    optionalResult.ifPresentOrElse(
+                        System.out::println, // Optional doluysa içindekini yazdır
+                        () -> System.out.println("No record found matching your criteria.") // Optional boşsa bu mesajı yazdır
+                    );
                 } else {
-                    results.forEach(System.out::println);
+                     System.out.println("Unsupported result type from service method.");
                 }
 
             } catch (Exception e) {
@@ -99,10 +112,10 @@ public interface SelectFactory<T, D, S> extends DynamicController {
         };
     }
 
-    @SuppressWarnings("unchecked")
-    default Map<String, Function<Object, List<D>>> generateFieldSelectors(Class<T> entityType) {
+    //@SuppressWarnings("unchecked")
+    default Map<String, Function<Object, Object>> generateFieldSelectors(Class<T> entityType) {
         S service = getSelectService();
-        Map<String, Function<Object, List<D>>> selectors = new HashMap<>();
+        Map<String, Function<Object, Object>> selectors = new HashMap<>();
         Map<String, Class<?>> allFieldTypes = new HashMap<>();
         DynamicController.getAllFields(entityType).forEach(field -> allFieldTypes.put(field.getName(), field.getType()));
 
@@ -110,24 +123,41 @@ public interface SelectFactory<T, D, S> extends DynamicController {
             Class<?> fieldType = allFieldTypes.get(fieldName);
             if (fieldType == null) continue;
 
-            try {
-                // KURAL: Servis metodunun adı `get...By[FieldName]AsDto` formatında olmalı.
-                // Örnek: getAutomobilesByBrandNameAsDto
-                String capitalizedField = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-                String methodName = "get" + entityType.getSimpleName() + "sBy" + capitalizedField + "AsDto";
-                
-                Method selectMethod = service.getClass().getMethod(methodName, fieldType);
+            String capitalizedField = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+            String entityName = entityType.getSimpleName();
 
-                Function<Object, List<D>> selector = (value) -> {
+            // İSİMLENDİRME KURALI 1: Tekil sonuç (...AsInfoDto)
+            String infoMethodName = "get" + entityName + "sBy" + capitalizedField + "AsInfoDto";
+            // İSİMLENDİRME KURALI 2: Liste sonuç (...AsListDto)
+            String listMethodName = "get" + entityName + "sBy" + capitalizedField + "AsListDto";
+
+            try {
+                // Önce InfoDto döndüren metodu ara
+                Method selectMethod = service.getClass().getMethod(infoMethodName, fieldType);
+                Function<Object, Object> selector = (value) -> {
                     try {
-                        return (List<D>) selectMethod.invoke(service, value);
+                        return selectMethod.invoke(service, value);
                     } catch (Exception e) {
-                        throw new RuntimeException("Error executing select method: " + methodName, e);
+                        throw new RuntimeException("Optional-Error executing select method: " + infoMethodName, e);
                     }
                 };
                 selectors.put(fieldName, selector);
+
             } catch (NoSuchMethodException e) {
-                // Metot bulunamadıysa sessizce geç. Bu alan arama kriteri değildir.
+                // InfoDto metodu bulunamadıysa, ListDto döndüren metodu ara
+                try {
+                    Method selectMethod = service.getClass().getMethod(listMethodName, fieldType);
+                    Function<Object, Object> selector = (value) -> {
+                        try {
+                            return selectMethod.invoke(service, value);
+                        } catch (Exception ex) {
+                            throw new RuntimeException("List-Error executing select method: " + listMethodName, ex);
+                        }
+                    };
+                    selectors.put(fieldName, selector);
+                } catch (NoSuchMethodException ex) {
+                    // İki metot da bulunamadıysa bu alan aranabilir değildir, sessizce geç.
+                }
             }
         }
         return selectors;

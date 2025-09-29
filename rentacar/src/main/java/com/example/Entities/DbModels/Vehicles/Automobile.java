@@ -20,7 +20,8 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "automobiles")
 @DiscriminatorValue("AUTOMOBILE") // Discriminator sütununa yazılacak değer
-@PrimaryKeyJoinColumn(name = "auto_id")
+
+@PrimaryKeyJoinColumn(name = "auto_id", referencedColumnName = "vehicle_id")
 public class Automobile extends Vehicle implements LandVehicle {
 
    

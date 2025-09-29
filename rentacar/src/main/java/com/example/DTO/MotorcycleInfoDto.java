@@ -6,13 +6,13 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class MotorcycleDto  extends VehicleDetailDto {
+public class MotorcycleInfoDto  extends VehicleDetailDto {
 
-   private final BigDecimal km;
+  private final BigDecimal km;
     private final Integer engineCC;
     private final MotorcycleMobility mobilityType;
 
-    public MotorcycleDto(
+    public MotorcycleInfoDto(
             Integer vehicleId, String brandName, String modelName, Integer modelYear,
             String plateOrTailNumber, BigDecimal currentFuel, BigDecimal maxFuelCapacity,
             Integer vehicleValue, VehicleStatus vehicleStatus,
@@ -31,14 +31,19 @@ public class MotorcycleDto  extends VehicleDetailDto {
     @Override
     public String getSpecificDetails() {
         NumberFormat numberFormatter = NumberFormat.getNumberInstance(Locale.US);
+        numberFormatter.setMaximumFractionDigits(2);
+
         String kmStr = km != null ? numberFormatter.format(km) + " km" : "N/A";
-        
+        String engineStr = engineCC != null ? engineCC + " cc" : "N/A";
+        String mobilityStr = mobilityType != null ? mobilityType.toString() : "N/A";
+
         return String.format(
-                " Odometer          : %s\n" +
-                " Engine Capacity   : %d cc\n" +
-                " Mobility Type     : %s\n",
+                " Odometer          : %s%n" +
+                " Engine Capacity   : %s%n" +
+                " Mobility Type     : %s%n",
                 kmStr,
-                this.engineCC,
-                this.mobilityType);
+                engineStr,
+                mobilityStr
+        );
     }
 }

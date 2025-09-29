@@ -6,7 +6,7 @@ import com.example.DTO.CustomerListDto;
 import com.example.Services.CustomerServices;
 import com.example.Utils.Global;
 import com.example.Utils.Interfaces.Controller;
-import com.example.Utils.Interfaces.SummarizableController; // <-- DOĞRU İSİM
+import com.example.Utils.Interfaces.SummarizableController; 
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @Component
-public class UserController implements Controller, SummarizableController<CustomerListDto> {
+public class CustomerController implements Controller, SummarizableController<CustomerListDto> {
 
     private final CustomerServices customerServices;
     private final CustomerSelectFactory customerSelectFactory;
     private final CustomerUpdateFactory customerUpdateFactory;
 
-    public UserController(CustomerServices customerServices,
+    public CustomerController(CustomerServices customerServices,
             CustomerSelectFactory customerSelectFactory,
             CustomerUpdateFactory customerUpdateFactory) {
         this.customerServices = customerServices;
@@ -48,7 +48,7 @@ public class UserController implements Controller, SummarizableController<Custom
                 "Exit");
     }
 
-     @Override
+    @Override
     public Supplier<List<CustomerListDto>> getSummaryDtoListSupplier() {
         return () -> customerServices.getAllCustomersAsListDto();
     }

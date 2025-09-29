@@ -1,7 +1,7 @@
 package com.example.Services;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DAO.AutomobileDao;
 import com.example.DAO.VehicleDao;
-import com.example.DTO.AutomobileDto;
+import com.example.DTO.AutomobileInfoDto;
+
 import com.example.DTO.VehicleListDto;
 import com.example.Entities.DbModels.Vehicles.Automobile;
 import com.example.Utils.Enums.VehicleStatus;
@@ -32,7 +33,7 @@ public class AutomobileServices {
         this.vehiclePropertiesServices = vehiclePropertiesServices;
     }
 
-    @Transactional
+     @Transactional
     public Automobile saveNewAutomobile(Automobile newAutomobile) {
         if (automobileDao.findByPlateOrTailNumber(newAutomobile.getPlateOrTailNumber()).isPresent()) {
             throw new IllegalStateException("Plate " + newAutomobile.getPlateOrTailNumber() + " is already taken.");
@@ -45,27 +46,66 @@ public class AutomobileServices {
                 .orElseThrow(() -> new IllegalStateException("Automobile not found with ID: " + id));
     }
 
-    @Transactional(readOnly = true)
-    public Optional<AutomobileDto> getAutomobileByPlateOrTailNumberAsDto(String plate) {
-
-        return automobileDao.findByPlateOrTailNumberAsDto(plate);
+   @Transactional(readOnly = true)
+    public Optional<AutomobileInfoDto> getAutomobilesByIdAsInfoDto(Integer automobileId) {
+        return automobileDao.findById(automobileId).map(this::convertToDto);
+    }
+    private AutomobileInfoDto convertToDto(Automobile a) {
+        return new AutomobileInfoDto(
+            a.getId(), a.getBrandName(), a.getModelName(), a.getModelYear(), a.getPlateOrTailNumber(),
+            a.getCurrentFuel(), a.getMaxFuelCapacity(), a.getVehicleValue(), a.getVehicleStatus(),
+            a.getProperties().getDailyPricing(), a.getProperties().getWeeklyPricing(), a.getProperties().getMonthlyPricing(),
+            a.getKm(), a.getWheelDriveType()
+        );
     }
 
+  
+    @Transactional(readOnly = true)
+    public Optional<AutomobileInfoDto> getAutomobilesByPlateOrTailNumberAsInfoDto(String plate) {
+        return automobileDao.findByPlateOrTailNumberAsInfoDto(plate);
+    }
+
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getAutomobilesByBrandNameAsListDto(String brandName) {
+        return automobileDao.findByBrandNameAsListDto(brandName);
+    }
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getAutomobilesByModelNameAsListDto(String modelName) {
+        return automobileDao.findByModelNameAsListDto(modelName);
+    }
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getAutomobilesByModelYearAsListDto(Integer modelYear) {
+        return automobileDao.findByModelYearAsListDto(modelYear);
+    }
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getAutomobilesByWheelDriveTypeAsListDto(WheelDriveType wheelDriveType) {
+        return automobileDao.findByWheelDriveTypeAsListDto(wheelDriveType);
+    }
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getAllAutomobilesAsListDto() {
+        return automobileDao.findAllAsListDto();
+    }
+    
+    @Transactional(readOnly = true)
+    public List<VehicleListDto> getAllAutomobilesAsSummaryDto() {
+        return vehicleDao.findAllAsVehicleListDto()
+                .stream()
+                .filter(dto -> dto.getType() == com.example.Utils.Enums.VehicleTypes.AUTOMOBILE)
+                .toList();
+    }
+
+  
     @Transactional
     public void deleteAutomobile(Integer id) {
-
         Automobile automobileToDelete = getAutomobileById(id);
-
         if (automobileToDelete.getVehicleStatus() == VehicleStatus.RENTED) {
-
             throw new IllegalStateException(
                     "Cannot delete automobile with ID " + id + " because it is currently rented.");
         }
-
         automobileDao.delete(automobileToDelete);
     }
 
-    @Transactional
+   @Transactional
     public Automobile updateBrandName(Integer automobileId, String newBrandName) {
         Automobile automobile = getAutomobileById(automobileId);
         automobile.setBrandName(newBrandName);
@@ -140,7 +180,6 @@ public class AutomobileServices {
     @Transactional
     public Automobile updateDailyPricing(Integer automobileId, BigDecimal newDailyPricing) {
         Automobile automobile = getAutomobileById(automobileId);
-
         vehiclePropertiesServices.updateDailyPricing(automobile.getProperties().getPropId(), newDailyPricing);
         return automobile;
     }
@@ -157,47 +196,6 @@ public class AutomobileServices {
         Automobile automobile = getAutomobileById(automobileId);
         vehiclePropertiesServices.updateMonthlyPricing(automobile.getProperties().getPropId(), newMonthlyPricing);
         return automobile;
-    }
-
-    @Transactional(readOnly = true)
-    public List<VehicleListDto> getAllAutomobilesAsSummaryDto() {
-        return vehicleDao.findAllAsVehicleListDto()
-                .stream()
-                .filter(dto -> dto.getType() == com.example.Utils.Enums.VehicleTypes.AUTOMOBILE)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<AutomobileDto> getAllAutomobilesAsDto() {
-        return automobileDao.findAllAutomobileAsDto();
-    }
-
-    @Transactional(readOnly = true)
-    public List<AutomobileDto> getAutomobilesByPlateOrTailNumberAsDto(String identifier) {
-
-        Optional<AutomobileDto> dtoOptional = automobileDao.findByPlateOrTailNumberAsDto(identifier);
-
-        return dtoOptional.map(Collections::singletonList).orElse(Collections.emptyList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<AutomobileDto> getAutomobilesByBrandNameAsDto(String brandName) {
-        return automobileDao.findByBrandNameAsDto(brandName);
-    }
-
-    @Transactional(readOnly = true)
-    public List<AutomobileDto> getAutomobilesByModelNameAsDto(String modelName) {
-        return automobileDao.findByModelNameAsDto(modelName);
-    }
-
-    @Transactional(readOnly = true)
-    public List<AutomobileDto> getAutomobilesByModelYearAsDto(Integer modelYear) {
-        return automobileDao.findByModelYearAsDto(modelYear);
-    }
-
-    @Transactional(readOnly = true)
-    public List<AutomobileDto> getAutomobilesByWheelDriveTypeAsDto(WheelDriveType wheelDriveType) {
-        return automobileDao.findByWheelDriveTypeAsDto(wheelDriveType);
     }
 
 }

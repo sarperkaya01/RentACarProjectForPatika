@@ -3,6 +3,7 @@ package com.example.Services;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.DAO.CustomerDao;
 import com.example.DAO.RentalDao;
 import com.example.DAO.VehicleDao;
+import com.example.DTO.RentalInfoDto;
+import com.example.DTO.RentalListDto;
 import com.example.Entities.DbModels.People.Customer;
 import com.example.Entities.DbModels.Vehicles.Vehicle;
 import com.example.Entities.Renting.Checkout;
@@ -66,11 +69,6 @@ public class RentalServices {
         return rentalDao.save(newRental);
     }
 
-    public Rental getRentalById(Integer id) {
-        return rentalDao.findById(id)
-                .orElseThrow(() -> new IllegalStateException("Rental recoird not found. ID: " + id));
-    }
-
     public List<Rental> getAllRentals() {
         return rentalDao.findAll();
     }
@@ -83,20 +81,37 @@ public class RentalServices {
         return rentalDao.save(rentalToUpdate);
     }
 
+    @Transactional(readOnly = true)
+    public List<RentalListDto> getAllRentalsAsListDto() {
+        return rentalDao.findAllAsListDto();
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<RentalInfoDto> getRentalByIdAsInfoDto(Integer id) {
+        return rentalDao.findByIdAsInfoDto(id);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<RentalListDto> getRentalsByCustomerAsListDto(Customer customer) {
+        return rentalDao.findByCustomerAsListDto(customer);
+    }
+
+    public Rental getRentalById(Integer id) {
+        return rentalDao.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Rental record not found. ID: " + id));
+    }
+
+    // --- CRUD: DELETE ---
+
     @Transactional
     public void deleteRental(Integer id) {
-        if (!rentalDao.existsById(id)) {
-            throw new IllegalStateException("Silme başarısız. Kiralama kaydı bulunamadı. ID: " + id);
+        Rental rentalToDelete = getRentalById(id);
+        
+        if (rentalToDelete.getRentalStatus() == RentalStatus.INACTIVE) {
+            throw new IllegalStateException("Cannot delete an active rental. It must be completed or canceled first.");
         }
+        
         rentalDao.deleteById(id);
-    }
-
-    public List<Rental> getRentalsByVehicleId(Integer vehicleId) {
-        return rentalDao.findByVehicle_Id(vehicleId);
-    }
-
-    public List<Rental> getRentalsByCustomerId(Integer customerId) {
-        return rentalDao.findByCustomer_CustomerId(customerId);
     }
 
 }

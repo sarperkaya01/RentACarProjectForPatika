@@ -26,8 +26,7 @@ public class CustomerInsertFactory implements InsertFactory<Customer, CustomerIn
 
     @Override
     public Optional<CustomerInfoDto> getDtoByIdentifier(String identifier) {
-        // Müşterileri email ile bulmak daha mantıklı, bu yüzden email'i identifier olarak kullanacağız.
-        return customerServices.getCustomerByUserEmailAsInfoDto(identifier);
+        return customerServices.getCustomersByUserEmailAsInfoDto(identifier);
     }
 
     @Override
@@ -56,8 +55,19 @@ public class CustomerInsertFactory implements InsertFactory<Customer, CustomerIn
         String name = Global.scanner.nextLine();
         System.out.print("Enter your surname: ");
         String surname = Global.scanner.nextLine();
-        System.out.print("Enter your age: ");
-        int age = Integer.parseInt(Global.scanner.nextLine());
+        int age = -1; // Geçerli bir değer girilene kadar -1
+        while (age < 0) {
+            System.out.print("Enter your age: ");
+            String input = Global.scanner.nextLine();
+            try {
+                age = Integer.parseInt(input);
+                if (age < 0) {
+                    System.out.println("Age cannot be negative. Please try again.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        }
         System.out.print("Enter your company name (leave blank if individual): ");
         String companyName = Global.scanner.nextLine();
 
@@ -82,7 +92,7 @@ public class CustomerInsertFactory implements InsertFactory<Customer, CustomerIn
         // Son olarak Customer'ı kaydet
         return customerServices.saveNewCustomer(newCustomer);
     }
-    
+
     public void start() {
         runInsertMenu();
     }

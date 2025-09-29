@@ -1,7 +1,7 @@
 package com.example.Services;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DAO.HelicopterDao;
 import com.example.DAO.VehicleDao;
-import com.example.DTO.HelicopterDto;
+import com.example.DTO.HelicopterInfoDto;
 import com.example.DTO.VehicleListDto;
 import com.example.Entities.DbModels.Vehicles.Helicopter;
 import com.example.Utils.Enums.HeliSpeciality;
@@ -25,12 +25,15 @@ public class HelicopterServices {
     private final VehiclePropertiesServices vehiclePropertiesServices;
 
     @Autowired
-    public HelicopterServices(HelicopterDao helicopterDao, VehicleDao vehicleDao,
-            VehiclePropertiesServices vehiclePropertiesServices) {
+    public HelicopterServices(HelicopterDao helicopterDao,
+                              VehicleDao vehicleDao,
+                              VehiclePropertiesServices vehiclePropertiesServices) {
         this.helicopterDao = helicopterDao;
         this.vehicleDao = vehicleDao;
         this.vehiclePropertiesServices = vehiclePropertiesServices;
     }
+
+    // --- SELECT METHODS ---
 
     @Transactional(readOnly = true)
     public List<VehicleListDto> getAllHelicoptersAsSummaryDto() {
@@ -41,46 +44,41 @@ public class HelicopterServices {
     }
 
     @Transactional(readOnly = true)
-    public List<HelicopterDto> getAllHelicoptersAsDto() {
-        return helicopterDao.findAllHelicoptersAsDto();
+    public List<VehicleListDto> getAllHelicoptersAsListDto() {
+        return helicopterDao.findAllAsListDto();
     }
 
     @Transactional(readOnly = true)
-    public Optional<HelicopterDto> getHelicopterByPlateOrTailNumberAsDto(String identifier) {
-        return helicopterDao.findByPlateOrTailNumberAsDto(identifier);
+    public Optional<HelicopterInfoDto> getHelicopterByPlateOrTailNumberAsInfoDto(String identifier) {
+        return helicopterDao.findByPlateOrTailNumberAsInfoDto(identifier);
     }
 
     @Transactional(readOnly = true)
-    public List<HelicopterDto> getHelicoptersByPlateOrTailNumberAsDto(String identifier) {
-        return helicopterDao.findByPlateOrTailNumberAsDto(identifier)
-                .map(Collections::singletonList)
-                .orElse(Collections.emptyList());
+    public List<HelicopterInfoDto> getHelicoptersByBrandNameAsInfoDto(String brandName) {
+        return helicopterDao.findByBrandNameAsInfoDto(brandName);
     }
 
     @Transactional(readOnly = true)
-    public List<HelicopterDto> getHelicoptersByBrandNameAsDto(String brandName) {
-        return helicopterDao.findByBrandNameAsDto(brandName);
+    public List<HelicopterInfoDto> getHelicoptersByModelNameAsInfoDto(String modelName) {
+        return helicopterDao.findByModelNameAsInfoDto(modelName);
     }
 
     @Transactional(readOnly = true)
-    public List<HelicopterDto> getHelicoptersByModelNameAsDto(String modelName) {
-        return helicopterDao.findByModelNameAsDto(modelName);
+    public List<HelicopterInfoDto> getHelicoptersByModelYearAsInfoDto(Integer modelYear) {
+        return helicopterDao.findByModelYearAsInfoDto(modelYear);
     }
 
     @Transactional(readOnly = true)
-    public List<HelicopterDto> getHelicoptersByModelYearAsDto(Integer modelYear) {
-        return helicopterDao.findByModelYearAsDto(modelYear);
+    public List<HelicopterInfoDto> getHelicoptersByFlightHoursGreaterThanAsInfoDto(BigDecimal hours) {
+        return helicopterDao.findByFlightHoursGreaterThanAsInfoDto(hours);
     }
 
     @Transactional(readOnly = true)
-    public List<HelicopterDto> getHelicoptersByFlightHoursGreaterThanAsDto(BigDecimal hours) {
-        return helicopterDao.findByFlightHoursGreaterThanAsDto(hours);
+    public List<HelicopterInfoDto> getHelicoptersBySpecialityAsInfoDto(HeliSpeciality speciality) {
+        return helicopterDao.findBySpecialityAsInfoDto(speciality);
     }
 
-    @Transactional(readOnly = true)
-    public List<HelicopterDto> getHelicoptersBySpecialityAsDto(HeliSpeciality speciality) {
-        return helicopterDao.findBySpecialityAsDto(speciality);
-    }
+    // --- BASIC CRUD ---
 
     public Helicopter getHelicopterById(Integer id) {
         return helicopterDao.findById(id)
@@ -108,6 +106,8 @@ public class HelicopterServices {
 
         helicopterDao.delete(helicopterToDelete);
     }
+
+    // --- UPDATE METHODS ---
 
     @Transactional
     public Helicopter updateBrandName(Integer helicopterId, String newBrandName) {

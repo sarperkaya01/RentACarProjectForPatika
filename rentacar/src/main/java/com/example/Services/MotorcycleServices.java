@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DAO.MotorcycleDao;
 import com.example.DAO.VehicleDao;
-import com.example.DTO.MotorcycleDto;
+import com.example.DTO.MotorcycleInfoDto;
 import com.example.DTO.VehicleListDto;
 import com.example.Entities.DbModels.Vehicles.Motorcycle;
 import com.example.Utils.Enums.MotorcycleMobility;
@@ -33,7 +33,7 @@ public class MotorcycleServices {
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleDto> getAllMotorcyclesAsDto() {
+    public List<MotorcycleInfoDto> getAllMotorcyclesAsDto() {
         return motorcycleDao.findAllMotorcyclesAsDto();
     }
 
@@ -46,32 +46,32 @@ public class MotorcycleServices {
     }
 
     @Transactional(readOnly = true)
-    public Optional<MotorcycleDto> getMotorcycleByPlateOrTailNumberAsDto(String identifier) {
+    public Optional<MotorcycleInfoDto> getMotorcycleByPlateOrTailNumberAsDto(String identifier) {
         return motorcycleDao.findByPlateOrTailNumberAsDto(identifier);
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleDto> getMotorcyclesByBrandNameAsDto(String brandName) {
+    public List<MotorcycleInfoDto> getMotorcyclesByBrandNameAsDto(String brandName) {
         return motorcycleDao.findByBrandNameAsDto(brandName);
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleDto> getMotorcyclesByModelNameAsDto(String modelName) {
+    public List<MotorcycleInfoDto> getMotorcyclesByModelNameAsDto(String modelName) {
         return motorcycleDao.findByModelNameAsDto(modelName);
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleDto> getMotorcyclesByModelYearAsDto(Integer modelYear) {
+    public List<MotorcycleInfoDto> getMotorcyclesByModelYearAsDto(Integer modelYear) {
         return motorcycleDao.findByModelYearAsDto(modelYear);
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleDto> getMotorcyclesByEngineCCGreaterThanAsDto(Integer cc) {
+    public List<MotorcycleInfoDto> getMotorcyclesByEngineCCGreaterThanAsDto(Integer cc) {
         return motorcycleDao.findByEngineCCGreaterThanAsDto(cc);
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleDto> getMotorcyclesByMobilityTypeAsDto(MotorcycleMobility mobilityType) {
+    public List<MotorcycleInfoDto> getMotorcyclesByMobilityTypeAsDto(MotorcycleMobility mobilityType) {
         return motorcycleDao.findByMobilityTypeAsDto(mobilityType);
     }
 

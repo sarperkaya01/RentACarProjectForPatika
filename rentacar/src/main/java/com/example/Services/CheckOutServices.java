@@ -18,6 +18,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CheckoutServices {
@@ -31,7 +32,7 @@ public class CheckoutServices {
         this.rentalDao = rentalDao;
     }
 
-    // --- READ İşlemleri ---
+    // --- CRUD: READ ---
 
     @Transactional(readOnly = true)
     public List<Checkout> getAllCheckouts() {
@@ -48,7 +49,7 @@ public class CheckoutServices {
                 .orElseThrow(() -> new IllegalStateException("Checkout not found for rental id: " + rentalId));
     }
 
-    // --- UPDATE İşlemi ---
+    // --- CRUD: UPDATE ---
 
     @Transactional
     public Checkout finalizeRental(Integer rentalId, LocalDateTime actualDropoffDate, BigDecimal repairFee) {
@@ -62,15 +63,14 @@ public class CheckoutServices {
         Checkout checkout = rental.getCheckout();
         Vehicle vehicle = rental.getVehicle();
 
-        BigDecimal lateFee = calculateLateFee(checkout.getPlannedDropoffDate(), actualDropoffDate,
-                vehicle.getProperties());
-
+        BigDecimal lateFee = calculateLateFee(checkout.getPlannedDropoffDate(), actualDropoffDate, vehicle.getProperties());
+        BigDecimal finalRepairFee = Objects.requireNonNullElse(repairFee, BigDecimal.ZERO);
         BigDecimal totalAmount = checkout.getPlannedPrice()
                 .add(lateFee)
-                .add(repairFee == null ? BigDecimal.ZERO : repairFee);
+                .add(finalRepairFee);
 
         checkout.setActualDropoffDate(actualDropoffDate);
-        checkout.setRepairFee(repairFee);
+        checkout.setRepairFee(finalRepairFee);
         checkout.setLateFee(lateFee);
         checkout.setCheckoutAmount(totalAmount);
         checkout.setCheckoutStatus(CheckoutStatus.PAID);
@@ -78,18 +78,16 @@ public class CheckoutServices {
         rental.setRentalStatus(RentalStatus.COMPLETED);
         vehicle.setVehicleStatus(VehicleStatus.AVAILABLE);
 
-        return rentalDao.save(rental).getCheckout();
+        rentalDao.save(rental);
+
+        return checkout;
     }
 
-    // --- Private Helper Metot ---
-
-    private BigDecimal calculateLateFee(LocalDateTime planned, LocalDateTime actual,
-            VehicleProperties vehicleProperties) {
+    private BigDecimal calculateLateFee(LocalDateTime planned, LocalDateTime actual, VehicleProperties vehicleProperties) {
         if (actual != null && planned != null && actual.isAfter(planned)) {
             long lateHours = ChronoUnit.HOURS.between(planned, actual);
             if (lateHours > 0) {
-                BigDecimal hourlyRate = vehicleProperties.getDailyPricing().divide(new BigDecimal(24), 2,
-                        RoundingMode.HALF_UP);
+                BigDecimal hourlyRate = vehicleProperties.getDailyPricing().divide(new BigDecimal(24), 2, RoundingMode.HALF_UP);
                 return hourlyRate.multiply(new BigDecimal(lateHours));
             }
         }

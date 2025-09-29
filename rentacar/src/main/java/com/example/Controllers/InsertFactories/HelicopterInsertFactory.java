@@ -1,6 +1,6 @@
 package com.example.Controllers.InsertFactories;
 
-import com.example.DTO.HelicopterDto;
+import com.example.DTO.HelicopterInfoDto;
 import com.example.Entities.DbModels.Vehicles.Helicopter;
 import com.example.Entities.DbModels.Vehicles.VehicleProperties;
 import com.example.Services.HelicopterServices;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @Component
-public class HelicopterInsertFactory implements InsertFactory<Helicopter, HelicopterDto> {
+public class HelicopterInsertFactory implements InsertFactory<Helicopter, HelicopterInfoDto> {
 
     private final HelicopterServices helicopterServices;
     private final VehiclePropertiesServices vehiclePropertiesServices;
@@ -25,9 +25,9 @@ public class HelicopterInsertFactory implements InsertFactory<Helicopter, Helico
         this.vehiclePropertiesServices = vehiclePropertiesServices;
     }
 
-    @Override
-    public Optional<HelicopterDto> getDtoByIdentifier(String identifier) {
-        return helicopterServices.getHelicopterByPlateOrTailNumberAsDto(identifier);
+   @Override
+    public Optional<HelicopterInfoDto> getDtoByIdentifier(String identifier) {
+        return helicopterServices.getHelicopterByPlateOrTailNumberAsInfoDto(identifier);
     }
 
     @Override

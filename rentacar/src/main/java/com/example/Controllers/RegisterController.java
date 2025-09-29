@@ -35,7 +35,7 @@ public class RegisterController implements Controller {
 
     @Override
     public List<String> getMenuTitles() {
-        return Arrays.asList("Create New Account", "Back to Main Menu");
+        return Arrays.asList("Create New Account", "Exit");
     }
 
     @SuppressWarnings("unused")
@@ -46,5 +46,6 @@ public class RegisterController implements Controller {
         System.out.println("\nReturning to the main menu...");
         exit();
     }
+
 
 }

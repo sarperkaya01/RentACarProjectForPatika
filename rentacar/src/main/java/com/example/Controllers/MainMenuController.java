@@ -15,14 +15,14 @@ public class MainMenuController implements Controller {
     private final VehicleOperationsController vehicleMenuController;
     private final RentalsController rentalsController;
     private final ProfileController profileController;
-    private final UserController userController;
+    private final CustomerController customerController;
 
     public MainMenuController(VehicleOperationsController vehicleMenuController, RentalsController rentalsController,
-            ProfileController profileController, UserController userController) {
+            ProfileController profileController, CustomerController customerController) {
         this.vehicleMenuController = vehicleMenuController;
         this.rentalsController = rentalsController;
         this.profileController = profileController;
-        this.userController = userController;
+        this.customerController = customerController;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class MainMenuController implements Controller {
 
     @SuppressWarnings("unused")
     private void users() {
-        userController.start();
+        customerController.start();
 
     }
 

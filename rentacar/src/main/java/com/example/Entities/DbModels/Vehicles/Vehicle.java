@@ -3,6 +3,7 @@ package com.example.Entities.DbModels.Vehicles;
 import java.math.BigDecimal;
 
 import com.example.Utils.Enums.VehicleStatus;
+import com.example.Utils.Enums.VehicleTypes;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,6 +32,10 @@ public abstract class Vehicle {
     @Column(name = "vehicle_id")
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "vehicle_type", insertable = false, updatable = false)
+    private VehicleTypes vehicleType;
+    
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "prop_id", referencedColumnName = "prop_id")
     private VehicleProperties properties;
@@ -67,6 +72,17 @@ public abstract class Vehicle {
     public void setId(Integer id) {
         this.id = id;
     }
+
+
+
+    public VehicleTypes getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(VehicleTypes vehicleType) {
+        this.vehicleType = vehicleType;
+    }
+
 
     public VehicleProperties getProperties() {
         return properties;

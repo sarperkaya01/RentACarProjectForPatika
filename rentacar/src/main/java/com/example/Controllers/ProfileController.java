@@ -43,7 +43,7 @@ public class ProfileController implements Controller {
     private void showMyInfo() {
 
         Optional<CustomerInfoDto> customerDtoOpt = customerServices
-                .getCustomerByUserEmailAsInfoDto(Global.currentUser.getEmail());
+                .getCustomersByUserEmailAsInfoDto(Global.currentUser.getEmail());
 
         if (customerDtoOpt.isPresent()) {
             System.out.println(customerDtoOpt.get());

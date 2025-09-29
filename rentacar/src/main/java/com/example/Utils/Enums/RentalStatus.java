@@ -3,5 +3,6 @@ package com.example.Utils.Enums;
 public enum RentalStatus {
     
     RENTED,        
-    COMPLETED
+    COMPLETED,
+    INACTIVE
 }

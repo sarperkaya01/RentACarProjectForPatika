@@ -1,13 +1,13 @@
 package com.example.Controllers.SelectFactories;
 
-import com.example.DTO.MotorcycleDto;
+import com.example.DTO.MotorcycleInfoDto;
 import com.example.Entities.DbModels.Vehicles.Motorcycle;
 import com.example.Services.MotorcycleServices;
 import com.example.Utils.Interfaces.SelectFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MotorcycleSelectFactory implements SelectFactory<Motorcycle, MotorcycleDto, MotorcycleServices> {
+public class MotorcycleSelectFactory implements SelectFactory<Motorcycle, MotorcycleInfoDto, MotorcycleServices> {
 
     private final MotorcycleServices motorcycleServices;
 

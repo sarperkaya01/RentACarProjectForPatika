@@ -7,12 +7,12 @@ import java.util.Locale;
 import com.example.Utils.Enums.VehicleStatus;
 import com.example.Utils.Enums.WheelDriveType;
 
-public class AutomobileDto extends VehicleDetailDto {
+public class AutomobileInfoDto extends VehicleDetailDto {
 
     private final BigDecimal km;
     private final WheelDriveType wheelDriveType;
 
-    public AutomobileDto(
+    public AutomobileInfoDto(
             Integer vehicleId, String brandName, String modelName, Integer modelYear,
             String plateOrTailNumber, BigDecimal currentFuel, BigDecimal maxFuelCapacity,
             Integer vehicleValue, VehicleStatus vehicleStatus,

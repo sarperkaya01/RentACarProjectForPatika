@@ -6,12 +6,12 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class HelicopterDto extends VehicleDetailDto {
+public class HelicopterInfoDto extends VehicleDetailDto {
 
-    private final BigDecimal flightHours;
+     private final BigDecimal flightHours;
     private final HeliSpeciality speciality;
 
-    public HelicopterDto(
+    public HelicopterInfoDto(
             Integer vehicleId, String brandName, String modelName, Integer modelYear,
             String plateOrTailNumber, BigDecimal currentFuel, BigDecimal maxFuelCapacity,
             Integer vehicleValue, VehicleStatus vehicleStatus,
@@ -19,8 +19,8 @@ public class HelicopterDto extends VehicleDetailDto {
             BigDecimal flightHours, HeliSpeciality speciality) {
 
         super(vehicleId, brandName, modelName, modelYear, plateOrTailNumber,
-                currentFuel, maxFuelCapacity, vehicleValue, vehicleStatus,
-                dailyPricing, weeklyPricing, monthlyPricing);
+              currentFuel, maxFuelCapacity, vehicleValue, vehicleStatus,
+              dailyPricing, weeklyPricing, monthlyPricing);
 
         this.flightHours = flightHours;
         this.speciality = speciality;
@@ -29,12 +29,20 @@ public class HelicopterDto extends VehicleDetailDto {
     @Override
     public String getSpecificDetails() {
         NumberFormat numberFormatter = NumberFormat.getNumberInstance(Locale.US);
-        String flightHoursStr = flightHours != null ? numberFormatter.format(flightHours) + " hours" : "N/A";
+        numberFormatter.setMaximumFractionDigits(2);
+
+        String flightHoursStr = flightHours != null
+                ? numberFormatter.format(flightHours) + " hours"
+                : "N/A";
+        String specialityStr = speciality != null
+                ? speciality.toString()
+                : "N/A";
 
         return String.format(
-                " Flight Hours      : %s\n" +
-                " Speciality        : %s\n",
+                " Flight Hours      : %s%n" +
+                " Speciality        : %s%n",
                 flightHoursStr,
-                this.speciality);
+                specialityStr
+        );
     }
 }

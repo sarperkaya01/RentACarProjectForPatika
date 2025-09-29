@@ -1,13 +1,13 @@
 package com.example.Controllers.SelectFactories;
 
-import com.example.DTO.HelicopterDto;
+import com.example.DTO.HelicopterInfoDto;
 import com.example.Entities.DbModels.Vehicles.Helicopter;
 import com.example.Services.HelicopterServices;
 import com.example.Utils.Interfaces.SelectFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HelicopterSelectFactory implements SelectFactory<Helicopter, HelicopterDto, HelicopterServices> {
+public class HelicopterSelectFactory implements SelectFactory<Helicopter, HelicopterInfoDto, HelicopterServices> {
 
     private final HelicopterServices helicopterServices;
 
