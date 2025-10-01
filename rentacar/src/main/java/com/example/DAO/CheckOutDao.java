@@ -10,7 +10,7 @@ import com.example.Entities.Renting.Checkout;
 
 
 public interface CheckoutDao extends JpaRepository<Checkout,Integer>{
-    Optional<Checkout> findByRental_RentalId(Integer rentalId);
+    //Optional<Checkout> findByRental_RentalId(Integer rentalId);
     
 
 }

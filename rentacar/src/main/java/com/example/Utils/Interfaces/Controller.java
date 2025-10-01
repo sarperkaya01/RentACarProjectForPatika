@@ -57,48 +57,61 @@ public interface Controller {
                 });
             } catch (NoSuchMethodException e) {
                 System.out.println("Warning: No method found for menu title '" + title + "'. " +
-                                   "Please create a '" + methodName + "()' method.");
+                        "Please create a '" + methodName + "()' method.");
                 actions.add(() -> System.out.println("Action for '" + title + "' is not implemented."));
             }
         }
         return actions;
     }
-     private String toCamelCase(String title) {
+
+    private String toCamelCase(String title) {
         String[] parts = title.split("\\s+"); // Başlığı boşluklardan ayır
         StringBuilder camelCaseString = new StringBuilder(parts[0].toLowerCase()); // İlk kelime küçük harfle başlar
 
         for (int i = 1; i < parts.length; i++) {
-            // Sonraki her kelimenin ilk harfini büyük, geri kalanını küçük yap ve birleştir.
+            // Sonraki her kelimenin ilk harfini büyük, geri kalanını küçük yap ve
+            // birleştir.
             camelCaseString.append(parts[i].substring(0, 1).toUpperCase())
-                           .append(parts[i].substring(1).toLowerCase());
+                    .append(parts[i].substring(1).toLowerCase());
         }
 
         return camelCaseString.toString();
     }
 
     default void runMenuLoop(String menuTitle) {
-         if (getMenuTitles() == null || getMenuTitles().isEmpty()) {
-        return;
-    }
+        if (getMenuTitles() == null || getMenuTitles().isEmpty()) {
+            return;
+        }
         boolean continueLoop = true;
         while (continueLoop) {
-            pageTitle(menuTitle); // Bu artık printMenu() metodunu da çağırıyor.
+            pageTitle(menuTitle);
 
             List<Runnable> actions = buildActionsFromMenuTitles();
 
             System.out.print("Please enter your choice: ");
-            int choice = Global.scanner.nextInt();
-            Global.scanner.nextLine();
+            int choice = -1;
+            try {
 
-            // Eğer seçim, listenin son elemanı olan 'Exit' ise, döngüyü kır.
+                String input = Global.scanner.nextLine();
+
+                choice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+
+                System.out.println("Invalid input! Please enter a number.");
+            }
+
             if (choice == actions.size()) {
                 continueLoop = false;
             }
 
-            // Seçilen aksiyonu çalıştır.
-            // Bu, 'exit()' metodunu da içerir, böylece "Exiting..." mesajı yazdırılır.
-            menuCases(choice, actions);
+            if (choice > 0 && choice <= actions.size()) {
+                menuCases(choice, actions);
+            } else if (continueLoop) {
+
+                if (choice != -1) {
+                    System.out.println("Invalid choice. Please try again.");
+                }
+            }
         }
     }
-
 }

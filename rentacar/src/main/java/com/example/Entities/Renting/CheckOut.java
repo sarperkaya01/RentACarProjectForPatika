@@ -13,7 +13,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import jakarta.persistence.OneToOne;
+
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,8 +25,8 @@ public class Checkout {
     @Column(name = "checkout_id")
     private Integer checkoutId;
 
-    @OneToOne(mappedBy = "checkout")
-    private Rental rental;    
+    // @OneToOne(mappedBy = "checkout")
+    // private Rental rental;    
 
     @Column(name = "planned_dropoff_date")
     private LocalDateTime plannedDropoffDate;

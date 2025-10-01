@@ -1,8 +1,7 @@
 package com.example.Controllers.InsertFactories;
 
-import com.example.Entities.DbModels.People.Customer;
 import com.example.Entities.DbModels.Vehicles.Automobile;
-import com.example.Services.AutomobileServices;
+
 import com.example.Services.VehicleRegistrationService;
 import com.example.Utils.Interfaces.InsertFactory;
 

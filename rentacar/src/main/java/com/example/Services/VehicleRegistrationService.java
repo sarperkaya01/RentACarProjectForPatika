@@ -35,7 +35,7 @@ public class VehicleRegistrationService {
 
         // 2. Fiyatlandırma profilini, kaydedilecek olan araç nesnesine bağla.
         automobile.setPricing(pricingProfile);
-        automobile.setVehicleType(VehicleTypes.AUTO);
+        automobile.setVehicleType(VehicleTypes.AUTOMOBILE);
 
         // 3. Hazırlanmış nesneyi kaydet. JPA, kalıtım sayesinde doğru tablolara
         // (hem vehicle hem automobile) kayıt yapacaktır.
@@ -51,17 +51,17 @@ public class VehicleRegistrationService {
      * @return Veritabanına kaydedilmiş, ID'si atanmış Motorcycle nesnesi.
      */
     @Transactional
-    public Motorcycle registerNewMotorcycle(Motorcycle motorcycle, Integer pricingId) {
-        VehiclePricing pricingProfile = vehiclePricingServices.getVehiclePricingById(pricingId);
+    public Motorcycle registerNewMotorcycle(Motorcycle motorcycle) {
+        VehiclePricing pricingProfile = vehiclePricingServices.findBySpeciality(motorcycle.getMobilityType().name());
         motorcycle.setPricing(pricingProfile);
         motorcycle.setVehicleType(VehicleTypes.MOTORCYCLE);
         return vehicleDao.save(motorcycle);
     }
 
     @Transactional
-    public Helicopter registerNewHelicopter(Helicopter helicopter, Integer pricingId) {
+    public Helicopter registerNewHelicopter(Helicopter helicopter) {
 
-        VehiclePricing pricingProfile = vehiclePricingServices.getVehiclePricingById(pricingId);
+        VehiclePricing pricingProfile = vehiclePricingServices.findBySpeciality(helicopter.getSpeciality().name());
 
         helicopter.setPricing(pricingProfile);
         helicopter.setVehicleType(VehicleTypes.HELICOPTER);

@@ -2,14 +2,15 @@ com/example/DAO/CheckoutDao.class
 com/example/Entities/Renting/Checkout.class
 com/example/Utils/Enums/VehicleTypes.class
 com/example/Entities/DbModels/Vehicles/Motorcycle.class
+com/example/Services/VehiclePricingServices.class
 com/example/DTO/HelicopterInfoDto.class
 com/example/Entities/Renting/Rental.class
 com/example/Controllers/MainMenuController.class
 com/example/DAO/AutomobileDao.class
 com/example/Utils/Enums/HeliSpeciality.class
-com/example/Entities/DbModels/Vehicles/VehiclePricing.class
 com/example/Controllers/InsertFactories/AutomobileInsertFactory.class
 com/example/Utils/Interfaces/Controller.class
+com/example/Controllers/InsertFactories/UserInsertFactory.class
 com/example/Utils/Enums/WheelDriveType.class
 com/example/Controllers/MainController.class
 com/example/Controllers/ProfileController.class
@@ -19,12 +20,15 @@ com/example/Services/CustomerServices.class
 com/example/Utils/Annotations/VehiclesTransactional.class
 com/example/Utils/Global.class
 com/example/Controllers/UpdateFactories/CustomerUpdateFactory.class
+com/example/DAO/VehiclePricingDao.class
 com/example/DTO/VehicleDetailDto.class
 com/example/Utils/Enums/MotorcycleMobility.class
+com/example/Entities/DbModels/Vehicles/VehiclePricing.class
 com/example/DTO/CustomerListDto.class
 com/example/Controllers/RentalsController.class
 com/example/Controllers/SelectFactories/AutomobileSelectFactory.class
 com/example/DTO/VehicleListDto.class
+com/example/Services/VehicleRegistrationService.class
 com/example/Services/AutomobileServices.class
 com/example/Utils/Interfaces/LandVehicle.class
 com/example/Controllers/UpdateFactories/AutomobileUpdateFactory.class
@@ -34,7 +38,6 @@ com/example/Utils/Logics/PricingLogic.class
 com/example/Utils/Interfaces/UpdateFactory.class
 com/example/Utils/Logics/RentalFlowLogic.class
 com/example/Controllers/HelicopterController.class
-com/example/Services/vehiclePricingServices.class
 com/example/Entities/DbModels/Vehicles/Helicopter.class
 com/example/Entities/DbModels/People/Customer.class
 com/example/Utils/Action/MenuAction.class
@@ -47,7 +50,6 @@ com/example/Services/CheckoutServices.class
 com/example/Utils/Logics/PermissionLogic.class
 com/example/Services/UserServices.class
 com/example/Utils/Interfaces/SelectFactory.class
-com/example/DAO/vehiclePricingDao.class
 com/example/Controllers/VehicleOperationsController.class
 com/example/Controllers/InsertFactories/MotorcycleInsertFactory.class
 com/example/DAO/HelicopterDao.class
@@ -89,5 +91,6 @@ com/example/Services/RentalServices.class
 com/example/DTO/RentalListDto.class
 com/example/Utils/DoubleTableResult.class
 com/example/Controllers/CustomerController.class
+com/example/Services/RegisterService.class
 com/example/Controllers/LoginController.class
 com/example/Controllers/SelectFactories/MotorcycleSelectFactory.class

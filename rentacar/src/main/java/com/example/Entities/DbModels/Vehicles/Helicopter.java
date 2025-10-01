@@ -10,11 +10,12 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 
 
 @Entity
-
-@DiscriminatorValue("HELICOPTER") // Discriminator sütununa yazılacak değer
+@Table(name = "helicopters")
+@DiscriminatorValue("HELICOPTER") 
 
 
 public class Helicopter extends Vehicle implements AirVehicle {

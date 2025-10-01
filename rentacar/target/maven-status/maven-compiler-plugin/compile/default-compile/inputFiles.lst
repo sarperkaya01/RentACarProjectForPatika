@@ -7,16 +7,16 @@
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Services/VehicleService.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Controllers/AutomobileController.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Logics/PermissionLogic.java
+/Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Services/RegisterService.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Main.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Services/HelicopterServices.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Controllers/MainMenuController.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Controllers/SelectFactories/HelicopterSelectFactory.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Entities/DbModels/People/User.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Logics/VehicleLogic.java
-/Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Services/vehiclePricingServices.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Controllers/UpdateFactories/HelicopterUpdateFactory.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Services/RentalServices.java
-/Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/DAO/vehiclePricingDao.java
+/Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Entities/DbModels/Vehicles/VehiclePricing.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Interfaces/SummarizableController.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Enums/HeliSpeciality.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Annotations/VehiclesTransactional.java
@@ -33,6 +33,7 @@
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Controllers/CustomerController.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Services/CheckoutServices.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/DTO/CustomerInfoDto.java
+/Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Services/VehicleRegistrationService.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Enums/VehicleTypes.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Controllers/ProfileController.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Entities/DbModels/Vehicles/Helicopter.java
@@ -64,10 +65,11 @@
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Entities/Renting/Checkout.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/DoubleTableResult.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Logics/PricingLogic.java
+/Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Controllers/InsertFactories/UserInsertFactory.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Interfaces/DynamicController.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Controllers/VehicleOperationsController.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Interfaces/Controller.java
-/Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Entities/DbModels/Vehicles/VehiclePricing.java
+/Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/DAO/VehiclePricingDao.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/DAO/MotorcycleDao.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Enums/VehicleStatus.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Services/UserServices.java
@@ -84,6 +86,7 @@
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Entities/DbModels/Vehicles/Vehicle.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Enums/DamageType.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/DAO/CustomerDao.java
+/Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Services/VehiclePricingServices.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/Utils/Interfaces/AirVehicle.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/DTO/RentalHistoryDto.java
 /Users/sarperkaya/Desktop/RentACarProjectForPatika/rentacar/src/main/java/com/example/DTO/RentalInfoDto.java

@@ -9,17 +9,25 @@ import java.util.Locale;
 import com.example.Utils.Enums.RentalStatus;
 
 public class RentalListDto {
-     private final Integer rentalId;
-    private final String customerFullName;
-    private final String vehicleIdentifier;
+    private final Integer rentalId;
+    private final String customerName;
+    private final String customerSurname;
+    private final String brandName;
+    private final String modelName;
     private final BigDecimal checkoutAmount;
     private final LocalDateTime rentDate;
     private final RentalStatus rentalStatus;
 
-    public RentalListDto(Integer rentalId, String customerName, String customerSurname, String vehicleBrand, String vehicleModel, BigDecimal checkoutAmount, LocalDateTime rentDate, RentalStatus rentalStatus) {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    public RentalListDto(Integer rentalId, String customerName, String customerSurname,
+            String brandName, String modelName, BigDecimal checkoutAmount,
+            LocalDateTime rentDate, RentalStatus rentalStatus) {
         this.rentalId = rentalId;
-        this.customerFullName = customerName + " " + customerSurname;
-        this.vehicleIdentifier = vehicleBrand + " " + vehicleModel;
+        this.customerName = customerName;
+        this.customerSurname = customerSurname;
+        this.brandName = brandName;
+        this.modelName = modelName;
         this.checkoutAmount = checkoutAmount;
         this.rentDate = rentDate;
         this.rentalStatus = rentalStatus;
@@ -27,21 +35,18 @@ public class RentalListDto {
 
     @Override
     public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.US);
-
-        String formattedDate = rentDate != null ? rentDate.format(formatter) : "N/A";
-        String formattedAmount = checkoutAmount != null ? currencyFormatter.format(checkoutAmount) : "N/A";
+        String customerFullName = this.customerName + " " + this.customerSurname;
+        String vehicleDescription = this.brandName + " " + this.modelName;
+        String amountDisplay = (this.checkoutAmount != null) ? String.format("%.2f", this.checkoutAmount) : "N/A";
 
         return String.format(
-                "ID: %-5d | Customer: %-25s | Vehicle: %-30s | Rent Date: %-16s | Status: %-10s | Amount: %s",
-                rentalId,
+                "ID: %-6d | Customer: %-25s | Vehicle: %-25s | Rent Date: %-18s | Status: %-12s | Amount: %s",
+                this.rentalId,
                 customerFullName,
-                vehicleIdentifier,
-                formattedDate,
-                rentalStatus,
-                formattedAmount
-        );
+                vehicleDescription,
+                this.rentDate.format(formatter),
+                this.rentalStatus,
+                amountDisplay);
     }
 
 }

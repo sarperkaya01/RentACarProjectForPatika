@@ -12,10 +12,11 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.Table;
 
 
 @Entity
-
+@Table(name = "motorcycles")
 @DiscriminatorValue("MOTORCYCLE") 
 
 public class Motorcycle extends Vehicle implements LandVehicle {

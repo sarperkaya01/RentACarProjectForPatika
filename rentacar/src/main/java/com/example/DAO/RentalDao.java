@@ -12,6 +12,7 @@ import com.example.DTO.RentalInfoDto;
 import com.example.DTO.RentalListDto;
 import com.example.Entities.DbModels.People.Customer;
 import com.example.Entities.Renting.Rental;
+import com.example.Utils.Enums.RentalStatus;
 
 @Repository
 public interface RentalDao extends JpaRepository<Rental, Integer> {
@@ -35,7 +36,7 @@ public interface RentalDao extends JpaRepository<Rental, Integer> {
             " FROM Rental r " +
             " JOIN r.customer c " +
             " JOIN r.vehicle v " +
-            " JOIN r.checkout co " +
+            " LEFT JOIN r.checkout co " +
             " ORDER BY r.rentDate DESC")
     List<RentalListDto> findAllAsListDto();
 
@@ -52,4 +53,10 @@ public interface RentalDao extends JpaRepository<Rental, Integer> {
             " FROM Rental r JOIN r.customer c JOIN r.vehicle v JOIN r.checkout co " +
             " WHERE r.customer = :customer ORDER BY r.rentDate DESC")
     List<RentalListDto> findByCustomerAsListDto(@Param("customer") Customer customer);
+
+    @Query("SELECT " + LIST_DTO_CONSTRUCTOR +
+            " FROM Rental r JOIN r.customer c JOIN r.vehicle v LEFT JOIN r.checkout co " +
+            " WHERE r.rentalStatus = :status ORDER BY r.rentDate DESC")
+    List<RentalListDto> findByRentalStatusAsListDto(@Param("status") RentalStatus status);
+    
 }

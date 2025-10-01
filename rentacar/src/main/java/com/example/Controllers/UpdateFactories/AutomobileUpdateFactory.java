@@ -31,7 +31,7 @@ public class AutomobileUpdateFactory implements UpdateFactory<Automobile, Automo
 
     @Override
     public List<String> getAdditionalUpdatableFields() { // <-- İSİM DÜZELTİLDİ
-        return Arrays.asList("dailyPricing", "weeklyPricing", "monthlyPricing");
+        return null;//Arrays.asList("dailyPricing", "weeklyPricing", "monthlyPricing");
     }
 
 }

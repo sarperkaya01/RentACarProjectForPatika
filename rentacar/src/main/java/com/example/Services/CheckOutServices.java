@@ -44,10 +44,6 @@ public class CheckoutServices {
                 .orElseThrow(() -> new IllegalStateException("Checkout not found with id: " + checkoutId));
     }
 
-    public Checkout getCheckoutByRentalId(Integer rentalId) {
-        return checkoutDao.findByRental_RentalId(rentalId)
-                .orElseThrow(() -> new IllegalStateException("Checkout not found for rental id: " + rentalId));
-    }
 
     // --- CRUD: UPDATE ---
 

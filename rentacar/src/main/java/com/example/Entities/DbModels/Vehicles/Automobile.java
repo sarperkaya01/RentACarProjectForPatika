@@ -19,7 +19,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "automobiles")
-//@DiscriminatorValue("AUTOMOBILE") // Discriminator sütununa yazılacak değer
+@DiscriminatorValue("AUTOMOBILE") 
 
 
 public class Automobile extends Vehicle implements LandVehicle {
