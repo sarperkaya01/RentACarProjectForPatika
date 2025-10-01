@@ -10,13 +10,12 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
+
 
 @Entity
-@Table(name = "helicopters")
+
 @DiscriminatorValue("HELICOPTER") // Discriminator sütununa yazılacak değer
-@PrimaryKeyJoinColumn(name = "heli_id", referencedColumnName = "vehicle_id")
+
 
 public class Helicopter extends Vehicle implements AirVehicle {
 

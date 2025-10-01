@@ -19,24 +19,24 @@ public class PermissionLogic {
         RENTABLE_VEHICLES_BY_ROLE = Map.of(
             // BİREYSEL kullanıcılar sadece otomobil ve motosiklet kiralayabilir.
             UserRoles.INDIVIDUAL,
-            Set.of(VehicleTypes.AUTOMOBILE, VehicleTypes.MOTORCYCLE),
+            Set.of(VehicleTypes.AUTO, VehicleTypes.MOTORCYCLE),
             
             //PERSONEL INDIRIMI EKLENECEK
             UserRoles.EMPLOYEE,
-            Set.of(VehicleTypes.AUTOMOBILE, VehicleTypes.MOTORCYCLE),
+            Set.of(VehicleTypes.AUTO, VehicleTypes.MOTORCYCLE),
 
             // KURUMSAL kullanıcılar her şeyi kiralayabilir.
             UserRoles.CORPORATE,
-            Set.of(VehicleTypes.AUTOMOBILE, VehicleTypes.MOTORCYCLE, VehicleTypes.HELICOPTER),
+            Set.of(VehicleTypes.AUTO, VehicleTypes.MOTORCYCLE, VehicleTypes.HELICOPTER),
 
             // ADMIN kullanıcılar (genellikle test veya yönetim için) her şeyi kiralayabilir.
             UserRoles.ADMIN,
-            Set.of(VehicleTypes.AUTOMOBILE, VehicleTypes.MOTORCYCLE, VehicleTypes.HELICOPTER));
+            Set.of(VehicleTypes.AUTO, VehicleTypes.MOTORCYCLE, VehicleTypes.HELICOPTER));
 
             DISCOUNT_RATES_BY_ROLE = Map.of(
             // Sadece EMPLOYEE rolü için bir indirim haritası tanımlıyoruz.
             UserRoles.EMPLOYEE, Map.of(
-                VehicleTypes.AUTOMOBILE, new BigDecimal("0.10"), // Otomobilde %10 indirim
+                VehicleTypes.AUTO, new BigDecimal("0.10"), // Otomobilde %10 indirim
                 VehicleTypes.MOTORCYCLE, new BigDecimal("0.15")  // Motosiklette %15 indirim
             )
             // Diğer rollerin indirimi olmadığı için buraya eklemeye gerek yok.

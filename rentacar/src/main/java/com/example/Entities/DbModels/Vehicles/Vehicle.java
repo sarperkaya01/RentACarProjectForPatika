@@ -37,8 +37,8 @@ public abstract class Vehicle {
     private VehicleTypes vehicleType;
     
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "prop_id", referencedColumnName = "prop_id")
-    private VehicleProperties properties;
+    @JoinColumn(name = "price_id", referencedColumnName = "price_id")
+    private VehiclePricing pricing;
 
     @Column(name = "brand_name", nullable = false, length = 30)
     private String brandName;
@@ -84,12 +84,12 @@ public abstract class Vehicle {
     }
 
 
-    public VehicleProperties getProperties() {
-        return properties;
+    public VehiclePricing getPricing() {
+        return pricing;
     }
 
-    public void setProperties(VehicleProperties properties) {
-        this.properties = properties;
+    public void setPricing(VehiclePricing pricing) {
+        this.pricing = pricing;
     }
 
     public String getBrandName() {

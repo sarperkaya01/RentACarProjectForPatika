@@ -16,10 +16,10 @@ public class VehicleListDto {
     private final VehicleStatus status;
     private final BigDecimal dailyPricing;
 
-    public VehicleListDto(Integer vehicleId, String vehicleType, String brandName, String modelName,
+    public VehicleListDto(Integer vehicleId, VehicleTypes vehicleType, String brandName, String modelName,
             String plateOrTailNumber, VehicleStatus status, BigDecimal dailyPricing) {
         this.vehicleId = vehicleId;
-        this.type = VehicleTypes.valueOf(vehicleType);
+        this.type = vehicleType;
         this.brandName = brandName;
         this.modelName = modelName;
         this.plateOrTailNumber = plateOrTailNumber;

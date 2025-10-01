@@ -7,18 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.example.Controllers.InsertFactories.CustomerInsertFactory;
 
+import com.example.Controllers.InsertFactories.UserInsertFactory;
 import com.example.Utils.Interfaces.Controller;
 
 @Component
 public class RegisterController implements Controller {
-    private final CustomerInsertFactory customerInsertFactory;
+    private final UserInsertFactory userInsertFactory;
     private final MainController mainController;
 
     @Autowired
-    public RegisterController(CustomerInsertFactory customerInsertFactory, @Lazy MainController mainController) {
-        this.customerInsertFactory = customerInsertFactory;
+    public RegisterController(UserInsertFactory userInsertFactory, @Lazy MainController mainController) {
+        this.userInsertFactory = userInsertFactory;
         this.mainController = mainController;
     }
 
@@ -41,7 +41,7 @@ public class RegisterController implements Controller {
     @SuppressWarnings("unused")
     private void createNewAccount() {
 
-        customerInsertFactory.start();
+        userInsertFactory.start();
 
         System.out.println("\nReturning to the main menu...");
         exit();

@@ -1,99 +1,58 @@
 package com.example.Controllers.InsertFactories;
 
-import com.example.DTO.CustomerInfoDto;
 import com.example.Entities.DbModels.People.Customer;
 import com.example.Entities.DbModels.People.User;
 import com.example.Services.CustomerServices;
-import com.example.Services.UserServices;
-import com.example.Utils.Enums.UserRoles;
-import com.example.Utils.Global;
-import com.example.Utils.HashUtil;
+import com.example.Services.RegisterService;
 import com.example.Utils.Interfaces.InsertFactory;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
-public class CustomerInsertFactory implements InsertFactory<Customer, CustomerInfoDto> {
+public class CustomerInsertFactory implements InsertFactory<Customer, RegisterService> {
 
-    private final CustomerServices customerServices;
-    private final UserServices userServices;
+    // private final CustomerServices customerServices;
+    private final RegisterService registerService;
 
-    public CustomerInsertFactory(CustomerServices customerServices, UserServices userServices) {
-        this.customerServices = customerServices;
-        this.userServices = userServices;
+    public CustomerInsertFactory(RegisterService registerService) {
+
+        this.registerService = registerService;
+
     }
 
     @Override
-    public Optional<CustomerInfoDto> getDtoByIdentifier(String identifier) {
-        return customerServices.getCustomersByUserEmailAsInfoDto(identifier);
+    public RegisterService getSavingService() {
+        return this.registerService;
     }
 
     @Override
-    public Customer performInsertionProcess() throws Exception {
-        // Step 1: User bilgileri (Hesap oluşturma)
-        System.out.println("Step 1: Account Creation");
-        System.out.print("Enter email address: ");
-        String email = Global.scanner.nextLine();
+    public String getSaveMethodName(Class<Customer> entityType) {
 
-        System.out.print("Enter password: ");
-        String password = Global.scanner.nextLine();
-        System.out.print("Enter password again to confirm: ");
-        String passwordConfirm = Global.scanner.nextLine();
-        if (!password.equals(passwordConfirm)) {
-            throw new IllegalArgumentException("Passwords do not match");
-        }
-
-        User newUser = new User();
-        newUser.setEmail(email);
-        newUser.setPasswd(HashUtil.sha256(password));
-        // Rol, müşteri bilgileri girildikten sonra belirlenecek.
-
-        // Step 2: Customer bilgileri (Profil oluşturma)
-        System.out.println("\nStep 2: Profile Information");
-        System.out.print("Enter your name: ");
-        String name = Global.scanner.nextLine();
-        System.out.print("Enter your surname: ");
-        String surname = Global.scanner.nextLine();
-        int age = -1; // Geçerli bir değer girilene kadar -1
-        while (age < 0) {
-            System.out.print("Enter your age: ");
-            String input = Global.scanner.nextLine();
-            try {
-                age = Integer.parseInt(input);
-                if (age < 0) {
-                    System.out.println("Age cannot be negative. Please try again.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
-            }
-        }
-        System.out.print("Enter your company name (leave blank if individual): ");
-        String companyName = Global.scanner.nextLine();
-
-        // Rolü belirle
-        if (companyName.isBlank()) {
-            newUser.setRole(UserRoles.INDIVIDUAL);
-        } else {
-            newUser.setRole(UserRoles.CORPORATE);
-        }
-
-        // Önce User'ı kaydet
-        User savedUser = userServices.saveNewUser(newUser);
-
-        // Şimdi Customer'ı oluştur ve User'ı bağla
-        Customer newCustomer = new Customer();
-        newCustomer.setUser(savedUser);
-        newCustomer.setCustomerName(name);
-        newCustomer.setCustomerSurname(surname);
-        newCustomer.setAge(age);
-        newCustomer.setCompanyName(companyName.isBlank() ? "-" : companyName);
-
-        // Son olarak Customer'ı kaydet
-        return customerServices.saveNewCustomer(newCustomer);
+        return "-";
     }
 
-    public void start() {
-        runInsertMenu();
+    @Override
+    public List<String> getFieldsToSkip() {
+        return Arrays.asList("customerId", "user");
     }
+
+    public void start(User u) {
+
+        Customer r = runDynamicInsertMenu(Customer.class);//
+
+        try {
+            // Tek bir metot çağrısıyla tüm işlemi transaction güvencesiyle başlat.
+            registerService.registerNewCustomer(u, r);
+            System.out.println("Customer successfully registered!");
+        } catch (Exception e) {
+            System.out.println("Registration failed: " + e.getMessage());
+            // Burada hata olduğunda, veritabanına hiçbir şey yazılmadığından emin
+            // olabilirsin.
+        }
+
+    }
+
 }

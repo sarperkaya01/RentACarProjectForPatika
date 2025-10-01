@@ -14,14 +14,14 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+
 
 @Entity
 @Table(name = "automobiles")
-@DiscriminatorValue("AUTOMOBILE") // Discriminator sütununa yazılacak değer
+//@DiscriminatorValue("AUTOMOBILE") // Discriminator sütununa yazılacak değer
 
-@PrimaryKeyJoinColumn(name = "auto_id", referencedColumnName = "vehicle_id")
+
 public class Automobile extends Vehicle implements LandVehicle {
 
    

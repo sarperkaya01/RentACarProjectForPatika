@@ -3,7 +3,7 @@ package com.example.Services;
 import com.example.DAO.CheckoutDao;
 import com.example.DAO.RentalDao;
 import com.example.Entities.DbModels.Vehicles.Vehicle;
-import com.example.Entities.DbModels.Vehicles.VehicleProperties;
+import com.example.Entities.DbModels.Vehicles.VehiclePricing;
 import com.example.Entities.Renting.Checkout;
 import com.example.Entities.Renting.Rental;
 import com.example.Utils.Enums.CheckoutStatus;
@@ -63,7 +63,7 @@ public class CheckoutServices {
         Checkout checkout = rental.getCheckout();
         Vehicle vehicle = rental.getVehicle();
 
-        BigDecimal lateFee = calculateLateFee(checkout.getPlannedDropoffDate(), actualDropoffDate, vehicle.getProperties());
+        BigDecimal lateFee = calculateLateFee(checkout.getPlannedDropoffDate(), actualDropoffDate, vehicle.getPricing());
         BigDecimal finalRepairFee = Objects.requireNonNullElse(repairFee, BigDecimal.ZERO);
         BigDecimal totalAmount = checkout.getPlannedPrice()
                 .add(lateFee)
@@ -83,11 +83,11 @@ public class CheckoutServices {
         return checkout;
     }
 
-    private BigDecimal calculateLateFee(LocalDateTime planned, LocalDateTime actual, VehicleProperties vehicleProperties) {
+    private BigDecimal calculateLateFee(LocalDateTime planned, LocalDateTime actual, VehiclePricing vehiclepricing) {
         if (actual != null && planned != null && actual.isAfter(planned)) {
             long lateHours = ChronoUnit.HOURS.between(planned, actual);
             if (lateHours > 0) {
-                BigDecimal hourlyRate = vehicleProperties.getDailyPricing().divide(new BigDecimal(24), 2, RoundingMode.HALF_UP);
+                BigDecimal hourlyRate = vehiclepricing.getDailyPricing().divide(new BigDecimal(24), 2, RoundingMode.HALF_UP);
                 return hourlyRate.multiply(new BigDecimal(lateHours));
             }
         }

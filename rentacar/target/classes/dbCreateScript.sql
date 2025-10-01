@@ -16,8 +16,9 @@ CREATE TABLE customers (
     CONSTRAINT fk_customer_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE vehicle_properties (
-    prop_id SERIAL PRIMARY KEY,
+CREATE TABLE vehicle_priceing (
+    price_id SERIAL PRIMARY KEY,
+    vehicle_speciality VARCHAR(15) not null,
     daily_pricing DECIMAL(6, 2) not null,
     weekly_pricing DECIMAL(6, 2) not null,
     monthly_pricing DECIMAL(6, 2) not null
@@ -26,7 +27,7 @@ CREATE TABLE vehicle_properties (
 CREATE TABLE vehicles (
     vehicle_id SERIAL PRIMARY KEY,
     vehicle_type VARCHAR(31) NOT NULL,
-    prop_id INT NOT NULL,
+    price_id INT NOT NULL,
     brand_name VARCHAR(30) NOT NULL,
     model_name VARCHAR(30) NOT NULL,
     model_year INT NOT NULL,
@@ -35,7 +36,7 @@ CREATE TABLE vehicles (
     max_fuel_capacity NUMERIC(6, 2) NOT NULL,
     vehicle_value INT NOT NULL,
     vehicle_status VARCHAR(20) NOT NULL,
-    CONSTRAINT fk_vehicle_properties FOREIGN KEY (prop_id) REFERENCES vehicle_properties (prop_id)
+    CONSTRAINT fk_vehicle_properties FOREIGN KEY (price_id) REFERENCES vehicle_properties (price_id)
 );
 
 CREATE TABLE checkout (

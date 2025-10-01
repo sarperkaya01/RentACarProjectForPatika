@@ -9,70 +9,73 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DAO.MotorcycleDao;
-import com.example.DAO.VehicleDao;
+
 import com.example.DTO.MotorcycleInfoDto;
 import com.example.DTO.VehicleListDto;
 import com.example.Entities.DbModels.Vehicles.Motorcycle;
 import com.example.Utils.Enums.MotorcycleMobility;
 import com.example.Utils.Enums.VehicleStatus;
-import com.example.Utils.Enums.VehicleTypes;
+
 
 @Service
 public class MotorcycleServices {
 
-    private final MotorcycleDao motorcycleDao;
-    private final VehicleDao vehicleDao;
-    private final VehiclePropertiesServices vehiclePropertiesServices;
+     private final MotorcycleDao motorcycleDao;
+    private final VehiclePricingServices vehiclePricingServices;
 
     @Autowired
-    public MotorcycleServices(MotorcycleDao motorcycleDao, VehicleDao vehicleDao,
-            VehiclePropertiesServices vehiclePropertiesServices) {
+    public MotorcycleServices(MotorcycleDao motorcycleDao, VehiclePricingServices vehiclePricingServices) {
         this.motorcycleDao = motorcycleDao;
-        this.vehicleDao = vehicleDao;
-        this.vehiclePropertiesServices = vehiclePropertiesServices;
+        this.vehiclePricingServices = vehiclePricingServices;
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleInfoDto> getAllMotorcyclesAsDto() {
-        return motorcycleDao.findAllMotorcyclesAsDto();
+    public List<VehicleListDto> getAllMotorcyclesAsListDto() {
+        return motorcycleDao.findAllAsListDto();
+    }
+    
+    @Transactional(readOnly = true)
+    public Optional<MotorcycleInfoDto> getMotorcyclesByIdAsInfoDto(Integer motorcycleId) {
+        return motorcycleDao.findById(motorcycleId).map(this::convertToDto);
+    }
+
+    private MotorcycleInfoDto convertToDto(Motorcycle m) {
+        return new MotorcycleInfoDto(
+            m.getId(), m.getBrandName(), m.getModelName(), m.getModelYear(), m.getPlateOrTailNumber(),
+            m.getCurrentFuel(), m.getMaxFuelCapacity(), m.getVehicleValue(), m.getVehicleStatus(),
+            m.getPricing().getDailyPricing(), m.getPricing().getWeeklyPricing(), m.getPricing().getMonthlyPricing(),
+            m.getKm(), m.getEngineCC(), m.getMobilityType()
+        );
+    }
+    
+    @Transactional(readOnly = true)
+    public Optional<MotorcycleInfoDto> getMotorcyclesByPlateOrTailNumberAsInfoDto(String identifier) {
+        return motorcycleDao.findByPlateOrTailNumberAsInfoDto(identifier);
     }
 
     @Transactional(readOnly = true)
-    public List<VehicleListDto> getAllMotorcyclesAsSummaryDto() {
-        return vehicleDao.findAllAsVehicleListDto()
-                .stream()
-                .filter(dto -> dto.getType() == VehicleTypes.MOTORCYCLE)
-                .toList();
+    public List<VehicleListDto> getMotorcyclesByBrandNameAsListDto(String brandName) {
+        return motorcycleDao.findByBrandNameAsListDto(brandName);
     }
 
     @Transactional(readOnly = true)
-    public Optional<MotorcycleInfoDto> getMotorcycleByPlateOrTailNumberAsDto(String identifier) {
-        return motorcycleDao.findByPlateOrTailNumberAsDto(identifier);
+    public List<VehicleListDto> getMotorcyclesByModelNameAsListDto(String modelName) {
+        return motorcycleDao.findByModelNameAsListDto(modelName);
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleInfoDto> getMotorcyclesByBrandNameAsDto(String brandName) {
-        return motorcycleDao.findByBrandNameAsDto(brandName);
+    public List<VehicleListDto> getMotorcyclesByModelYearAsListDto(Integer modelYear) {
+        return motorcycleDao.findByModelYearAsListDto(modelYear);
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleInfoDto> getMotorcyclesByModelNameAsDto(String modelName) {
-        return motorcycleDao.findByModelNameAsDto(modelName);
+    public List<VehicleListDto> getMotorcyclesByEngineCCGreaterThanAsListDto(Integer cc) {
+        return motorcycleDao.findByEngineCCGreaterThanAsListDto(cc);
     }
 
     @Transactional(readOnly = true)
-    public List<MotorcycleInfoDto> getMotorcyclesByModelYearAsDto(Integer modelYear) {
-        return motorcycleDao.findByModelYearAsDto(modelYear);
-    }
-
-    @Transactional(readOnly = true)
-    public List<MotorcycleInfoDto> getMotorcyclesByEngineCCGreaterThanAsDto(Integer cc) {
-        return motorcycleDao.findByEngineCCGreaterThanAsDto(cc);
-    }
-
-    @Transactional(readOnly = true)
-    public List<MotorcycleInfoDto> getMotorcyclesByMobilityTypeAsDto(MotorcycleMobility mobilityType) {
-        return motorcycleDao.findByMobilityTypeAsDto(mobilityType);
+    public List<VehicleListDto> getMotorcyclesByMobilityTypeAsListDto(MotorcycleMobility mobilityType) {
+        return motorcycleDao.findByMobilityTypeAsListDto(mobilityType);
     }
 
     public Motorcycle getMotorcycleById(Integer id) {
@@ -92,16 +95,11 @@ public class MotorcycleServices {
 
     @Transactional
     public void deleteMotorcycle(Integer id) {
-        // Önce silinecek motosikleti tam olarak al
         Motorcycle motorcycleToDelete = getMotorcycleById(id);
-
-        // Kiralı olup olmadığını kontrol et
         if (motorcycleToDelete.getVehicleStatus() == VehicleStatus.RENTED) {
             throw new IllegalStateException(
                     "Cannot delete motorcycle with ID " + id + " because it is currently rented.");
         }
-
-        // Güvenliyse sil
         motorcycleDao.delete(motorcycleToDelete);
     }
 
@@ -128,17 +126,33 @@ public class MotorcycleServices {
 
     @Transactional
     public Motorcycle updatePlateOrTailNumber(Integer motorcycleId, String newIdentifier) {
-        if (newIdentifier == null || newIdentifier.trim().isEmpty()) {
-            throw new IllegalArgumentException("Identifier cannot be null or empty.");
-        }
         Motorcycle motorcycle = getMotorcycleById(motorcycleId);
-
         if (!motorcycle.getPlateOrTailNumber().equalsIgnoreCase(newIdentifier)
                 && motorcycleDao.findByPlateOrTailNumber(newIdentifier).isPresent()) {
             throw new IllegalStateException("Identifier " + newIdentifier + " is already in use by another vehicle.");
         }
-
         motorcycle.setPlateOrTailNumber(newIdentifier);
+        return motorcycleDao.save(motorcycle);
+    }
+
+    @Transactional
+    public Motorcycle updateKm(Integer motorcycleId, BigDecimal newKm) {
+        Motorcycle motorcycle = getMotorcycleById(motorcycleId);
+        motorcycle.setKm(newKm);
+        return motorcycleDao.save(motorcycle);
+    }
+
+    @Transactional
+    public Motorcycle updateEngineCC(Integer motorcycleId, Integer newEngineCC) {
+        Motorcycle motorcycle = getMotorcycleById(motorcycleId);
+        motorcycle.setEngineCC(newEngineCC);
+        return motorcycleDao.save(motorcycle);
+    }
+
+    @Transactional
+    public Motorcycle updateMobilityType(Integer motorcycleId, MotorcycleMobility newMobilityType) {
+        Motorcycle motorcycle = getMotorcycleById(motorcycleId);
+        motorcycle.setMobilityType(newMobilityType);
         return motorcycleDao.save(motorcycle);
     }
 
@@ -171,44 +185,23 @@ public class MotorcycleServices {
     }
 
     @Transactional
-    public Motorcycle updateKm(Integer motorcycleId, BigDecimal newKm) {
-        Motorcycle motorcycle = getMotorcycleById(motorcycleId);
-        motorcycle.setKm(newKm);
-        return motorcycleDao.save(motorcycle);
-    }
-
-    @Transactional
-    public Motorcycle updateEngineCC(Integer motorcycleId, Integer newEngineCC) {
-        Motorcycle motorcycle = getMotorcycleById(motorcycleId);
-        motorcycle.setEngineCC(newEngineCC);
-        return motorcycleDao.save(motorcycle);
-    }
-
-    @Transactional
-    public Motorcycle updateMobilityType(Integer motorcycleId, MotorcycleMobility newMobilityType) {
-        Motorcycle motorcycle = getMotorcycleById(motorcycleId);
-        motorcycle.setMobilityType(newMobilityType);
-        return motorcycleDao.save(motorcycle);
-    }
-
-    @Transactional
     public Motorcycle updateDailyPricing(Integer motorcycleId, BigDecimal newDailyPricing) {
         Motorcycle motorcycle = getMotorcycleById(motorcycleId);
-        vehiclePropertiesServices.updateDailyPricing(motorcycle.getProperties().getPropId(), newDailyPricing);
+        vehiclePricingServices.updateDailyPricing(motorcycle.getPricing().getPriceId(), newDailyPricing);
         return motorcycle;
     }
 
     @Transactional
     public Motorcycle updateWeeklyPricing(Integer motorcycleId, BigDecimal newWeeklyPricing) {
         Motorcycle motorcycle = getMotorcycleById(motorcycleId);
-        vehiclePropertiesServices.updateWeeklyPricing(motorcycle.getProperties().getPropId(), newWeeklyPricing);
+        vehiclePricingServices.updateWeeklyPricing(motorcycle.getPricing().getPriceId(), newWeeklyPricing);
         return motorcycle;
     }
 
     @Transactional
     public Motorcycle updateMonthlyPricing(Integer motorcycleId, BigDecimal newMonthlyPricing) {
         Motorcycle motorcycle = getMotorcycleById(motorcycleId);
-        vehiclePropertiesServices.updateMonthlyPricing(motorcycle.getProperties().getPropId(), newMonthlyPricing);
+        vehiclePricingServices.updateMonthlyPricing(motorcycle.getPricing().getPriceId(), newMonthlyPricing);
         return motorcycle;
     }
 }

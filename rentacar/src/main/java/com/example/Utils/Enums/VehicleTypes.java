@@ -1,7 +1,7 @@
 package com.example.Utils.Enums;
 
 public enum VehicleTypes {
-    AUTOMOBILE(true),
+    AUTO(true),
     MOTORCYCLE(true),
     HELICOPTER(false); // hava araclarina ozel bir calisma yapilabilir...
 

@@ -60,7 +60,7 @@ public class HelicopterController implements Controller, SummarizableController<
 
     @Override
     public Supplier<List<VehicleListDto>> getSummaryDtoListSupplier() {
-        return () -> helicopterServices.getAllHelicoptersAsSummaryDto();
+        return () -> helicopterServices.getAllHelicoptersAsListDto();
     }
 
     @Override

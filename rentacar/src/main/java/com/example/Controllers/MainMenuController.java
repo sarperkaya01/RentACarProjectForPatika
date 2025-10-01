@@ -12,14 +12,14 @@ import com.example.Utils.Interfaces.Controller;
 
 @Component
 public class MainMenuController implements Controller {
-    private final VehicleOperationsController vehicleMenuController;
+    private final VehicleOperationsController vehicleOpertionsController;
     private final RentalsController rentalsController;
     private final ProfileController profileController;
     private final CustomerController customerController;
 
-    public MainMenuController(VehicleOperationsController vehicleMenuController, RentalsController rentalsController,
+    public MainMenuController(VehicleOperationsController vehicleOpertionsController, RentalsController rentalsController,
             ProfileController profileController, CustomerController customerController) {
-        this.vehicleMenuController = vehicleMenuController;
+        this.vehicleOpertionsController = vehicleOpertionsController;
         this.rentalsController = rentalsController;
         this.profileController = profileController;
         this.customerController = customerController;
@@ -54,7 +54,7 @@ public class MainMenuController implements Controller {
 
     @SuppressWarnings("unused")
     private void vehicles() {
-        vehicleMenuController.start();
+        vehicleOpertionsController.start();
 
     }
 

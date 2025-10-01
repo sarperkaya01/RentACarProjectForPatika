@@ -60,7 +60,7 @@ public class AutomobileController implements Controller, SummarizableController<
 
     @Override
     public Supplier<List<VehicleListDto>> getSummaryDtoListSupplier() {
-        return () -> automobileServices.getAllAutomobilesAsSummaryDto();
+        return () -> automobileServices.getAllAutomobilesAsListDto(); // <-- HIZLI METOT
     }
 
     @Override
@@ -83,10 +83,11 @@ public class AutomobileController implements Controller, SummarizableController<
     public void updateExistingAutomobile() {
         System.out.println("\n--- Update an Existing Automobile ---");
 
-        listAllSummary();
+        listAllSummary(); // Özet listeyi ekrana basar.
 
-        List<VehicleListDto> summaryList = automobileServices.getAllAutomobilesAsSummaryDto();
-        if (summaryList.isEmpty()) {
+        // Sistemde araç olup olmadığını kontrol etmek için yeni, hızlı metodu kullan.
+        List<VehicleListDto> vehicleList = automobileServices.getAllAutomobilesAsListDto();
+        if (vehicleList.isEmpty()) {
             System.out.println("There are no automobiles in the system to update.");
             return;
         }
@@ -104,10 +105,12 @@ public class AutomobileController implements Controller, SummarizableController<
 
     public void deleteAutomobile() {
         System.out.println("\n--- Delete an Existing Automobile ---");
-        listAllSummary();
 
-        List<VehicleListDto> summaryList = automobileServices.getAllAutomobilesAsSummaryDto();
-        if (summaryList.isEmpty()) {
+        listAllSummary(); // Özet listeyi ekrana basar.
+
+        // Sistemde araç olup olmadığını kontrol etmek için yeni, hızlı metodu kullan.
+        List<VehicleListDto> vehicleList = automobileServices.getAllAutomobilesAsListDto();
+        if (vehicleList.isEmpty()) {
             System.out.println("There are no automobiles in the system to delete.");
             return;
         }

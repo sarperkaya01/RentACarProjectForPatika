@@ -10,12 +10,7 @@ public enum MotorcycleMobility {
         "Reverse Trike",
         "Three-wheeled motorcycle with two wheels at the front and one at the back.",
         "Sport / Stability Focused"
-    ),
-    SIDE_CAR(
-        "Sidecar",
-        "Traditional motorcycle with an attached sidecar for an additional passenger.",
-        "Classic / Utility"
-    ),
+    ),    
     STANDARD(
         "Standard",
         "Two-wheeled traditional motorcycle type.",

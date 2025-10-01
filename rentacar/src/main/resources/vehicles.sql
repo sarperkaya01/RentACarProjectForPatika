@@ -1,7 +1,7 @@
 insert into
     vehicles (
         vehicle_type,
-        prop_id,
+        price_id,
         brand_name,
         model_name,
         model_year,
@@ -27,7 +27,7 @@ values (
 insert into
     vehicles (
         vehicle_type,
-        prop_id,
+        price_id,
         brand_name,
         model_name,
         model_year,
@@ -53,7 +53,7 @@ values (
 insert into
     vehicles (
         vehicle_type,
-        prop_id,
+        price_id,
         brand_name,
         model_name,
         model_year,
@@ -79,7 +79,7 @@ values (
 insert into
     vehicles (
         vehicle_type,
-        prop_id,
+        price_id,
         brand_name,
         model_name,
         model_year,
@@ -105,7 +105,7 @@ values (
 insert into
     vehicles (
         vehicle_type,
-        prop_id,
+        price_id,
         brand_name,
         model_name,
         model_year,

@@ -16,7 +16,7 @@ public final class VehicleLogic {
     
     static {
         VALID_STATUSES_FOR_TYPE = Map.of(
-            VehicleTypes.AUTOMOBILE, 
+            VehicleTypes.AUTO, 
             Set.of(VehicleStatus.AVAILABLE, VehicleStatus.RENTED, VehicleStatus.DAMAGED, VehicleStatus.UNDER_MAINTENANCE),
 
             VehicleTypes.MOTORCYCLE,

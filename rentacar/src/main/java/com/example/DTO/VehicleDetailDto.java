@@ -18,7 +18,7 @@ public abstract class VehicleDetailDto {
     protected final Integer vehicleValue;
     protected final VehicleStatus vehicleStatus;
 
-    // VehicleProperties entity'sinden gelenler (bunlar da her araçta var)
+    // Vehiclepricing entity'sinden gelenler (bunlar da her araçta var)
     protected final BigDecimal dailyPricing;
     protected final BigDecimal weeklyPricing;
     protected final BigDecimal monthlyPricing;

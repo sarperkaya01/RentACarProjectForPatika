@@ -11,7 +11,7 @@ import java.util.Map;
 
 import java.util.function.BiConsumer;
 
-import com.example.Entities.DbModels.Vehicles.VehicleProperties;
+import com.example.Entities.DbModels.Vehicles.VehiclePricing;
 import com.example.Utils.Global;
 
 import com.example.Utils.Action.MenuAction;
@@ -91,10 +91,8 @@ public interface UpdateFactory<T, S> extends DynamicController {
         for (Field field : DynamicController.getAllFields(entityType)) {
             allFieldsMap.put(field.getName(), field);
         }
-        // Sonra da VehicleProperties gibi genel olabilecek diğer entity'lerin
-        // alanları...
-        // Bu, tiplerini bulmak için gereklidir.
-        for (Field field : DynamicController.getAllFields(VehicleProperties.class)) {
+
+        for (Field field : DynamicController.getAllFields(VehiclePricing.class)) {
             allFieldsMap.putIfAbsent(field.getName(), field);
         }
 
@@ -168,50 +166,52 @@ public interface UpdateFactory<T, S> extends DynamicController {
      * @return Alan adları ve onları güncelleyecek fonksiyonları içeren bir Map.
      */
     default Map<String, BiConsumer<Integer, Object>> generateFieldUpdaters(Class<T> entityType) {
-    S service = getUpdateService();
-    Map<String, BiConsumer<Integer, Object>> updaters = new HashMap<>();
+        S service = getUpdateService();
+        Map<String, BiConsumer<Integer, Object>> updaters = new HashMap<>();
 
-    // --- Referans için tüm olası alanların tiplerini bir haritada toplayalım ---
-    Map<String, Class<?>> allFieldTypes = new HashMap<>();
-    for (Field field : DynamicController.getAllFields(entityType)) {
-        allFieldTypes.put(field.getName(), field.getType());
-    }
-    for (Field field : DynamicController.getAllFields(VehicleProperties.class)) {
-        allFieldTypes.putIfAbsent(field.getName(), field.getType());
-    }
-
-    // --- Şimdi tüm taranması gereken alan adlarını tek bir listede birleştirelim ---
-    List<String> allFieldNamesToScan = new ArrayList<>();
-    // Önce entity'nin kendi alan adları
-    for (Field field : DynamicController.getAllFields(entityType)) {
-        allFieldNamesToScan.add(field.getName());
-    }
-    // Sonra da "ek" alan adları
-    allFieldNamesToScan.addAll(getAdditionalUpdatableFields());
-
-    // --- Şimdi bu birleşik liste üzerinde dönelim ve metotları arayalım ---
-    for (String fieldName : allFieldNamesToScan) {
-        Class<?> fieldType = allFieldTypes.get(fieldName);
-        if (fieldType == null) continue; // Tipi bilinmeyen alanı atla
-
-        try {
-            String methodName = "update" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
-            Method updateMethod = service.getClass().getMethod(methodName, Integer.class, fieldType);
-
-            BiConsumer<Integer, Object> updater = (id, value) -> {
-                try {
-                    updateMethod.invoke(service, id, value);
-                } catch (Exception e) {
-                    throw new RuntimeException("Error executing update method: " + methodName, e);
-                }
-            };
-            updaters.put(fieldName, updater);
-        } catch (NoSuchMethodException e) {
-            // Metot bulunamadıysa sessizce geç
+        // --- Referans için tüm olası alanların tiplerini bir haritada toplayalım ---
+        Map<String, Class<?>> allFieldTypes = new HashMap<>();
+        for (Field field : DynamicController.getAllFields(entityType)) {
+            allFieldTypes.put(field.getName(), field.getType());
         }
+        for (Field field : DynamicController.getAllFields(VehiclePricing.class)) {
+            allFieldTypes.putIfAbsent(field.getName(), field.getType());
+        }
+
+        // --- Şimdi tüm taranması gereken alan adlarını tek bir listede birleştirelim
+        // ---
+        List<String> allFieldNamesToScan = new ArrayList<>();
+        // Önce entity'nin kendi alan adları
+        for (Field field : DynamicController.getAllFields(entityType)) {
+            allFieldNamesToScan.add(field.getName());
+        }
+        // Sonra da "ek" alan adları
+        allFieldNamesToScan.addAll(getAdditionalUpdatableFields());
+
+        // --- Şimdi bu birleşik liste üzerinde dönelim ve metotları arayalım ---
+        for (String fieldName : allFieldNamesToScan) {
+            Class<?> fieldType = allFieldTypes.get(fieldName);
+            if (fieldType == null)
+                continue; // Tipi bilinmeyen alanı atla
+
+            try {
+                String methodName = "update" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+                Method updateMethod = service.getClass().getMethod(methodName, Integer.class, fieldType);
+
+                BiConsumer<Integer, Object> updater = (id, value) -> {
+                    try {
+                        updateMethod.invoke(service, id, value);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error executing update method: " + methodName, e);
+                    }
+                };
+                updaters.put(fieldName, updater);
+            } catch (NoSuchMethodException e) {
+                // Metot bulunamadıysa sessizce geç
+            }
+        }
+
+        return updaters;
     }
-    
-    return updaters;
-}
 
 }

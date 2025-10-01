@@ -24,7 +24,7 @@ public class ProfileController implements Controller {
 
     @Override
     public void start() {
-       
+
         runMenuLoop("Profile Menu for " + Global.currentUser.getEmail());
     }
 
@@ -36,7 +36,7 @@ public class ProfileController implements Controller {
 
     @Override
     public List<String> getMenuTitles() {
-        return Arrays.asList("Show My Info", "Change Password",  "Exit");
+        return Arrays.asList("Show My Info", "Change Password", "Exit");
     }
 
     @SuppressWarnings("unused")
@@ -81,9 +81,7 @@ public class ProfileController implements Controller {
 
         try {
 
-            userServices.updatePasswd(Global.currentUser.getUserId(), HashUtil.sha256(newPassword));
-
-            Global.currentUser.setPasswd(HashUtil.sha256(newPassword));
+            Global.currentUser = userServices.updatePasswd(Global.currentUser.getUserId(), newPassword);
 
             System.out.println("Password has been changed successfully!");
         } catch (Exception e) {

@@ -10,38 +10,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DAO.HelicopterDao;
-import com.example.DAO.VehicleDao;
+
 import com.example.DTO.HelicopterInfoDto;
 import com.example.DTO.VehicleListDto;
 import com.example.Entities.DbModels.Vehicles.Helicopter;
 import com.example.Utils.Enums.HeliSpeciality;
 import com.example.Utils.Enums.VehicleStatus;
-import com.example.Utils.Enums.VehicleTypes;
 
 @Service
 public class HelicopterServices {
     private final HelicopterDao helicopterDao;
-    private final VehicleDao vehicleDao;
-    private final VehiclePropertiesServices vehiclePropertiesServices;
+
+    private final VehiclePricingServices vehiclePricingServices;
 
     @Autowired
-    public HelicopterServices(HelicopterDao helicopterDao,
-                              VehicleDao vehicleDao,
-                              VehiclePropertiesServices vehiclePropertiesServices) {
+    public HelicopterServices(HelicopterDao helicopterDao, VehiclePricingServices vehiclePricingServices) {
         this.helicopterDao = helicopterDao;
-        this.vehicleDao = vehicleDao;
-        this.vehiclePropertiesServices = vehiclePropertiesServices;
+        this.vehiclePricingServices = vehiclePricingServices;
     }
 
     // --- SELECT METHODS ---
-
-    @Transactional(readOnly = true)
-    public List<VehicleListDto> getAllHelicoptersAsSummaryDto() {
-        return vehicleDao.findAllAsVehicleListDto()
-                .stream()
-                .filter(dto -> dto.getType() == VehicleTypes.HELICOPTER)
-                .toList();
-    }
 
     @Transactional(readOnly = true)
     public List<VehicleListDto> getAllHelicoptersAsListDto() {
@@ -66,6 +54,7 @@ public class HelicopterServices {
     @Transactional(readOnly = true)
     public List<HelicopterInfoDto> getHelicoptersByModelYearAsInfoDto(Integer modelYear) {
         return helicopterDao.findByModelYearAsInfoDto(modelYear);
+
     }
 
     @Transactional(readOnly = true)
@@ -191,21 +180,21 @@ public class HelicopterServices {
     @Transactional
     public Helicopter updateDailyPricing(Integer helicopterId, BigDecimal newDailyPricing) {
         Helicopter helicopter = getHelicopterById(helicopterId);
-        vehiclePropertiesServices.updateDailyPricing(helicopter.getProperties().getPropId(), newDailyPricing);
+        vehiclePricingServices.updateDailyPricing(helicopter.getPricing().getPriceId(), newDailyPricing);
         return helicopter;
     }
 
     @Transactional
     public Helicopter updateWeeklyPricing(Integer helicopterId, BigDecimal newWeeklyPricing) {
         Helicopter helicopter = getHelicopterById(helicopterId);
-        vehiclePropertiesServices.updateWeeklyPricing(helicopter.getProperties().getPropId(), newWeeklyPricing);
+        vehiclePricingServices.updateWeeklyPricing(helicopter.getPricing().getPriceId(), newWeeklyPricing);
         return helicopter;
     }
 
     @Transactional
     public Helicopter updateMonthlyPricing(Integer helicopterId, BigDecimal newMonthlyPricing) {
         Helicopter helicopter = getHelicopterById(helicopterId);
-        vehiclePropertiesServices.updateMonthlyPricing(helicopter.getProperties().getPropId(), newMonthlyPricing);
+        vehiclePricingServices.updateMonthlyPricing(helicopter.getPricing().getPriceId(), newMonthlyPricing);
         return helicopter;
     }
 }

@@ -3,6 +3,7 @@ package com.example.Services;
 import com.example.DAO.UserDao;
 import com.example.Entities.DbModels.People.User;
 import com.example.Utils.Enums.UserRoles;
+import com.example.Utils.HashUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,24 @@ public class UserServices {
         this.userDao = userDao;
     }
 
-    // --- ENTITY İŞLEMLERİ ---
+    // --- CRUD: CREATE ---
+
+   
+    
+    
+   
+    @Transactional
+    public User saveNewUser(User user) {
+        userDao.findByEmail(user.getEmail())
+                .ifPresent(u -> {
+                    throw new IllegalStateException("Email " + user.getEmail() + " is already in use.");
+                });
+        
+        return userDao.save(user);
+    }
+
+
+    // --- CRUD: READ ---
 
     public User getUserById(Integer id) {
         return userDao.findById(id)
@@ -30,25 +48,7 @@ public class UserServices {
         return userDao.findByEmail(email);
     }
 
-    @Transactional
-    public User saveNewUser(User user) {
-        userDao.findByEmail(user.getEmail())
-                .ifPresent(u -> {
-                    throw new IllegalStateException("Email " + user.getEmail() + " is already in use.");
-                });
-        return userDao.save(user);
-    }
-
-    // ProfileController'da kullanılan genel updateUser metodu
-    @Transactional
-    public User updateUser(User user) {
-        if (user.getUserId() == null || !userDao.existsById(user.getUserId())) {
-            throw new IllegalStateException("User to update does not exist.");
-        }
-        return userDao.save(user);
-    }
-
-    // --- UPDATE METOTLARI (UpdateFactory için) ---
+    // --- CRUD: UPDATE ---
 
     @Transactional
     public User updateEmail(Integer userId, String newEmail) {
@@ -61,9 +61,9 @@ public class UserServices {
     }
 
     @Transactional
-    public User updatePasswd(Integer userId, byte[] newPasswordHash) {
+    public User updatePasswd(Integer userId, String newPassword) {
         User user = getUserById(userId);
-        user.setPasswd(newPasswordHash);
+        user.setPasswd(HashUtil.sha256(newPassword)); 
         return userDao.save(user);
     }
 

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.DAO.AutomobileDao;
-import com.example.DAO.VehicleDao;
+
 import com.example.DTO.AutomobileInfoDto;
 
 import com.example.DTO.VehicleListDto;
@@ -22,18 +22,15 @@ import com.example.Utils.Enums.WheelDriveType;
 public class AutomobileServices {
 
     private final AutomobileDao automobileDao;
-    private final VehicleDao vehicleDao;
-    private final VehiclePropertiesServices vehiclePropertiesServices;
+    private final VehiclePricingServices vehiclePricingServices;
 
     @Autowired
-    public AutomobileServices(AutomobileDao automobileDao, VehicleDao vehicleDao,
-            VehiclePropertiesServices vehiclePropertiesServices) {
+    public AutomobileServices(AutomobileDao automobileDao, VehiclePricingServices vehiclePricingServices) {
         this.automobileDao = automobileDao;
-        this.vehicleDao = vehicleDao;
-        this.vehiclePropertiesServices = vehiclePropertiesServices;
+        this.vehiclePricingServices = vehiclePricingServices;
     }
 
-     @Transactional
+    @Transactional
     public Automobile saveNewAutomobile(Automobile newAutomobile) {
         if (automobileDao.findByPlateOrTailNumber(newAutomobile.getPlateOrTailNumber()).isPresent()) {
             throw new IllegalStateException("Plate " + newAutomobile.getPlateOrTailNumber() + " is already taken.");
@@ -46,20 +43,20 @@ public class AutomobileServices {
                 .orElseThrow(() -> new IllegalStateException("Automobile not found with ID: " + id));
     }
 
-   @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public Optional<AutomobileInfoDto> getAutomobilesByIdAsInfoDto(Integer automobileId) {
         return automobileDao.findById(automobileId).map(this::convertToDto);
     }
+
     private AutomobileInfoDto convertToDto(Automobile a) {
         return new AutomobileInfoDto(
-            a.getId(), a.getBrandName(), a.getModelName(), a.getModelYear(), a.getPlateOrTailNumber(),
-            a.getCurrentFuel(), a.getMaxFuelCapacity(), a.getVehicleValue(), a.getVehicleStatus(),
-            a.getProperties().getDailyPricing(), a.getProperties().getWeeklyPricing(), a.getProperties().getMonthlyPricing(),
-            a.getKm(), a.getWheelDriveType()
-        );
+                a.getId(), a.getBrandName(), a.getModelName(), a.getModelYear(), a.getPlateOrTailNumber(),
+                a.getCurrentFuel(), a.getMaxFuelCapacity(), a.getVehicleValue(), a.getVehicleStatus(),
+                a.getPricing().getDailyPricing(), a.getPricing().getWeeklyPricing(),
+                a.getPricing().getMonthlyPricing(),
+                a.getKm(), a.getWheelDriveType());
     }
 
-  
     @Transactional(readOnly = true)
     public Optional<AutomobileInfoDto> getAutomobilesByPlateOrTailNumberAsInfoDto(String plate) {
         return automobileDao.findByPlateOrTailNumberAsInfoDto(plate);
@@ -69,32 +66,27 @@ public class AutomobileServices {
     public List<VehicleListDto> getAutomobilesByBrandNameAsListDto(String brandName) {
         return automobileDao.findByBrandNameAsListDto(brandName);
     }
+
     @Transactional(readOnly = true)
     public List<VehicleListDto> getAutomobilesByModelNameAsListDto(String modelName) {
         return automobileDao.findByModelNameAsListDto(modelName);
     }
+
     @Transactional(readOnly = true)
     public List<VehicleListDto> getAutomobilesByModelYearAsListDto(Integer modelYear) {
         return automobileDao.findByModelYearAsListDto(modelYear);
     }
+
     @Transactional(readOnly = true)
     public List<VehicleListDto> getAutomobilesByWheelDriveTypeAsListDto(WheelDriveType wheelDriveType) {
         return automobileDao.findByWheelDriveTypeAsListDto(wheelDriveType);
     }
+
     @Transactional(readOnly = true)
     public List<VehicleListDto> getAllAutomobilesAsListDto() {
         return automobileDao.findAllAsListDto();
     }
-    
-    @Transactional(readOnly = true)
-    public List<VehicleListDto> getAllAutomobilesAsSummaryDto() {
-        return vehicleDao.findAllAsVehicleListDto()
-                .stream()
-                .filter(dto -> dto.getType() == com.example.Utils.Enums.VehicleTypes.AUTOMOBILE)
-                .toList();
-    }
 
-  
     @Transactional
     public void deleteAutomobile(Integer id) {
         Automobile automobileToDelete = getAutomobileById(id);
@@ -105,7 +97,7 @@ public class AutomobileServices {
         automobileDao.delete(automobileToDelete);
     }
 
-   @Transactional
+    @Transactional
     public Automobile updateBrandName(Integer automobileId, String newBrandName) {
         Automobile automobile = getAutomobileById(automobileId);
         automobile.setBrandName(newBrandName);
@@ -180,21 +172,21 @@ public class AutomobileServices {
     @Transactional
     public Automobile updateDailyPricing(Integer automobileId, BigDecimal newDailyPricing) {
         Automobile automobile = getAutomobileById(automobileId);
-        vehiclePropertiesServices.updateDailyPricing(automobile.getProperties().getPropId(), newDailyPricing);
+        vehiclePricingServices.updateDailyPricing(automobile.getPricing().getPriceId(), newDailyPricing);
         return automobile;
     }
 
     @Transactional
     public Automobile updateWeeklyPricing(Integer automobileId, BigDecimal newWeeklyPricing) {
         Automobile automobile = getAutomobileById(automobileId);
-        vehiclePropertiesServices.updateWeeklyPricing(automobile.getProperties().getPropId(), newWeeklyPricing);
+        vehiclePricingServices.updateWeeklyPricing(automobile.getPricing().getPriceId(), newWeeklyPricing);
         return automobile;
     }
 
     @Transactional
     public Automobile updateMonthlyPricing(Integer automobileId, BigDecimal newMonthlyPricing) {
         Automobile automobile = getAutomobileById(automobileId);
-        vehiclePropertiesServices.updateMonthlyPricing(automobile.getProperties().getPropId(), newMonthlyPricing);
+        vehiclePricingServices.updateMonthlyPricing(automobile.getPricing().getPriceId(), newMonthlyPricing);
         return automobile;
     }
 

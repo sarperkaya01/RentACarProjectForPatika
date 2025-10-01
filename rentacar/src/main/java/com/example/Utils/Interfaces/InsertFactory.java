@@ -1,66 +1,138 @@
 package com.example.Utils.Interfaces;
 
+import com.example.Utils.Global;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Optional;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public interface InsertFactory<T, D> extends DynamicController {
-    /**
-     * Kullanıcıdan adım adım veri alıp, entity'yi oluşturup, servisi çağırarak
-     * veritabanına kaydeden ve kaydedilmiş entity'yi döndüren süreç.
-     * 
-     * @return Veritabanına kaydedilmiş olan yeni entity.
-     * @throws Exception Veri toplama veya kaydetme sırasında oluşabilecek hatalar.
-     */
-    T performInsertionProcess() throws Exception;
+public interface InsertFactory<T, S> extends DynamicController {
 
-    /**
-     * Kaydedilen entity'nin DTO'sunu bulmak için kullanılan metot.
-     * 
-     * @param identifier Genellikle plateOrTailNumber gibi tekil bir kimlik.
-     * @return İlgili DTO'yu içeren bir Optional.
-     */
-    Optional<D> getDtoByIdentifier(String identifier);
+    S getSavingService();
 
-    default void runInsertMenu() {
-        System.out.println("\n--- Inserting New " + getEntitySimpleName() + " ---");
+    default String getSaveMethodName(Class<T> entityType) {
+        return "saveNew" + entityType.getSimpleName();
+    }
+
+    default List<String> getFieldsToSkip() {
+        return new ArrayList<>();
+    }
+
+    default Map<String, Object> collectCustomFieldData() throws Exception {
+        return new HashMap<>();
+    }
+
+    default T runDynamicInsertMenu(Class<T> entityType) {
+        System.out.println("\n--- Create New " + entityType.getSimpleName() + " ---");
         try {
-            // Asıl veri toplama ve kaydetme sürecini başlat.
-            T savedEntity = performInsertionProcess();
-            
-            // Kaydedilen entity'den kimlik bilgisini (plaka vb.) al.
-            String identifier = getIdentifier(savedEntity);
+            // 1. Standart alanlar için verileri topla
+            Map<String, Object> fieldValues = collectFieldData(entityType);
 
-            System.out.println("\n--- SUCCESS ---");
-            System.out.println("New " + getEntitySimpleName() + " has been saved successfully!");
-            
-            // Kimlik bilgisiyle DTO'yu bul ve kullanıcıya göster.
-            Optional<D> dto = getDtoByIdentifier(identifier);
-            dto.ifPresent(System.out::println);
+            // 2. Özel alanlar için verileri topla ve standart olanlarla birleştir
+            fieldValues.putAll(collectCustomFieldData());
 
-        } catch (NumberFormatException e) {
-            System.out.println("\n--- ERROR --- \nInvalid number format. Please check your inputs. Operation cancelled.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("\n--- ERROR --- \nInvalid input. " + e.getMessage() + ". Operation cancelled.");
+            // 3. Nesneyi yarat ve doldur
+            T newInstance = createAndPopulateInstance(entityType, fieldValues);
+
+            // 4. Nesneyi kaydet
+            String methodName = getSaveMethodName(entityType);
+            if (methodName != "-") {
+                S service = getSavingService();
+                Method saveMethod = service.getClass().getMethod(methodName, entityType);
+
+                // Servis metodunun geri döndürdüğü (ID'si atanmış) nesneyi yakala
+                Object savedObject = saveMethod.invoke(service, newInstance);
+
+                System.out.println("\n--- SUCCESS ---");
+                System.out.println(entityType.getSimpleName() + " has been successfully created.");
+
+                // Kaydedilmiş ve son haliyle güncel olan nesneyi geri döndür
+                return entityType.cast(savedObject);
+            }
+
+            return newInstance;
+
         } catch (Exception e) {
-            System.out.println("\n--- ERROR --- \nAn unexpected error occurred: " + e.getMessage());
+            System.out.println("\n--- ERROR ---");
+            Throwable cause = e.getCause() != null ? e.getCause() : e;
+            System.out.println("An error occurred during creation: " + cause.getMessage());
+
+            // Hata durumunda null döndür
+            return null;
         }
     }
 
-    // 3. YARDIMCI METOTLAR: Arayüzün kendi içinde kullandığı özel metotlar.
+    private Map<String, Object> collectFieldData(Class<T> entityType) throws Exception {
+        Map<String, Object> fieldValues = new HashMap<>();
+        List<String> fieldsToSkip = getFieldsToSkip();
 
-    private String getEntitySimpleName() {
-        String className = this.getClass().getSimpleName().replace("InsertController", "");
-        return className;
-    }
+        for (Field field : DynamicController.getAllFields(entityType)) {
 
-    private String getIdentifier(T entity) throws Exception {
-        // Kaydedilen entity'den "plateOrTailNumber" alanını reflection ile okur.
-        try {
-            Field field = entity.getClass().getSuperclass().getDeclaredField("plateOrTailNumber");
-            field.setAccessible(true);
-            return (String) field.get(entity);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new Exception("Could not retrieve identifier from the saved entity.");
+            if (fieldsToSkip.contains(field.getName())) {
+                continue;
+            }
+            fieldValues.put(field.getName(), promptForField(field));
         }
+        return fieldValues;
     }
+
+    private T createAndPopulateInstance(Class<T> entityType, Map<String, Object> fieldValues) throws Exception {
+        Constructor<T> constructor = entityType.getDeclaredConstructor();
+        T instance = constructor.newInstance();
+
+        for (Map.Entry<String, Object> entry : fieldValues.entrySet()) {
+            String fieldName = entry.getKey();
+            Object value = entry.getValue();
+
+            try {
+                Field field = findField(entityType, fieldName); // Kalıtımı da arayan yardımcı metot
+                String setterName = "set" + Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
+                Method setter = entityType.getMethod(setterName, field.getType());
+                setter.invoke(instance, value);
+            } catch (NoSuchFieldException e) {
+                // Bu alanın entity'de karşılığı olmayabilir (örn: passwordConfirm),
+
+            }
+        }
+        return instance;
+    }
+
+    private Object promptForField(Field field) throws Exception {
+        // Alanın tipi Enum mu diye kontrol et
+        if (field.getType().isEnum()) {
+            System.out.println("Please select a value for " + DynamicController.formatFieldName(field.getName()) + ":");
+            // Enum'un tüm olası değerlerini al ve listele
+            Object[] enumConstants = field.getType().getEnumConstants();
+            for (int i = 0; i < enumConstants.length; i++) {
+                System.out.println((i + 1) + ". " + enumConstants[i].toString());
+            }
+            System.out.print("Enter your choice (number): ");
+        } else {
+            // Enum değilse, standart istemi göster
+            System.out.print("Enter " + DynamicController.formatFieldName(field.getName()) + ": ");
+        }
+
+        String input = Global.scanner.nextLine();
+        // convertInput metodu hem "Admin" gibi metinleri hem de "1" gibi sayısal
+        // seçimleri
+        // doğru Enum değerine çevirecek şekilde tasarlanmalıdır.
+        return DynamicController.convertInput(input, field.getType());
+    }
+
+    private Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        Class<?> current = clazz;
+        while (current != null) {
+            try {
+                return current.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                current = current.getSuperclass();
+            }
+        }
+        throw new NoSuchFieldException(
+                "No field named '" + fieldName + "' found in class " + clazz.getName() + " or its superclasses.");
+    }
+
 }

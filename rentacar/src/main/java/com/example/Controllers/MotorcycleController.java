@@ -58,7 +58,7 @@ public class MotorcycleController implements Controller, SummarizableController<
 
     @Override
     public Supplier<List<VehicleListDto>> getSummaryDtoListSupplier() {
-        return () -> motorcycleServices.getAllMotorcyclesAsSummaryDto();
+        return () -> motorcycleServices.getAllMotorcyclesAsListDto();
     }
 
     @Override

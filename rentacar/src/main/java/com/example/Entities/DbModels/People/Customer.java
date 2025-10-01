@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "customers")
 public class Customer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_id")
@@ -38,8 +39,7 @@ public class Customer {
     @Column(name = "company_name", nullable = false, unique = true, length = 20)
     private String companyName;
 
-    @OneToMany(mappedBy = "customer")
-    private List<Rental> rentals;
+    
 
     
 
@@ -91,13 +91,7 @@ public class Customer {
         this.companyName = companyName;
     }
 
-    public List<Rental> getRentals() {
-        return rentals;
-    }
-
-    public void setRentals(List<Rental> rentals) {
-        this.rentals = rentals;
-    }
+   
 
     public Customer() {
     }
