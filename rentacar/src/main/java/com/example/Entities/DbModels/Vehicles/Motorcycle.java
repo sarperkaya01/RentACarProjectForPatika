@@ -61,9 +61,5 @@ public class Motorcycle extends Vehicle implements LandVehicle {
     public void addKm(BigDecimal distance) {
         this.km = this.km.add(distance);
     }
-    @Override
-    public void addFuel(BigDecimal liter) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addFuel'");
-    }
+   
 }

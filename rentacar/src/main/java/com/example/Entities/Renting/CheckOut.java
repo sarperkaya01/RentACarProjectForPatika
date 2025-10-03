@@ -50,7 +50,7 @@ public class Checkout {
     private BigDecimal checkoutAmount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "checkout_status", nullable = false, length = 10)
+    @Column(name = "checkout_status", nullable = false, length = 20)
     private CheckoutStatus checkoutStatus;
 
 

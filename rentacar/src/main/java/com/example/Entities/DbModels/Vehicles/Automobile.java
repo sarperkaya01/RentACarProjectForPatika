@@ -54,11 +54,7 @@ public class Automobile extends Vehicle implements LandVehicle {
     // --- Arayüz Metotlarının Uygulanması ---
 
 
-    @Override
-    public void addFuel(BigDecimal liter) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addFuel'");
-    }
+   
     @Override
     public void addKm(BigDecimal distance) {
         this.km = this.km.add(distance);

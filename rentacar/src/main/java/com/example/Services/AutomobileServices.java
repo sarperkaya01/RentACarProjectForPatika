@@ -51,7 +51,7 @@ public class AutomobileServices {
     private AutomobileInfoDto convertToDto(Automobile a) {
         return new AutomobileInfoDto(
                 a.getId(), a.getBrandName(), a.getModelName(), a.getModelYear(), a.getPlateOrTailNumber(),
-                a.getCurrentFuel(), a.getMaxFuelCapacity(), a.getVehicleValue(), a.getVehicleStatus(),
+                a.getVehicleValue(), a.getVehicleStatus(),
                 a.getPricing().getDailyPricing(), a.getPricing().getWeeklyPricing(),
                 a.getPricing().getMonthlyPricing(),
                 a.getKm(), a.getWheelDriveType());
@@ -139,14 +139,7 @@ public class AutomobileServices {
         Automobile automobile = getAutomobileById(automobileId);
         automobile.setKm(newKm);
         return automobileDao.save(automobile);
-    }
-
-    @Transactional
-    public Automobile updateCurrentFuel(Integer automobileId, BigDecimal newCurrentFuel) {
-        Automobile automobile = getAutomobileById(automobileId);
-        automobile.setCurrentFuel(newCurrentFuel);
-        return automobileDao.save(automobile);
-    }
+    }   
 
     @Transactional
     public Automobile updateVehicleStatus(Integer automobileId, VehicleStatus newStatus) {
@@ -162,13 +155,7 @@ public class AutomobileServices {
         return automobileDao.save(automobile);
     }
 
-    @Transactional
-    public Automobile updateMaxFuelCapacity(Integer automobileId, BigDecimal newMaxCapacity) {
-        Automobile automobile = getAutomobileById(automobileId);
-        automobile.setMaxFuelCapacity(newMaxCapacity);
-        return automobileDao.save(automobile);
-    }
-
+   
     @Transactional
     public Automobile updateDailyPricing(Integer automobileId, BigDecimal newDailyPricing) {
         Automobile automobile = getAutomobileById(automobileId);

@@ -1,8 +1,6 @@
 package com.example.Entities.DbModels.People;
 
-
-
-
+import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,9 +37,8 @@ public class Customer {
     @Column(name = "company_name", nullable = false, unique = true, length = 20)
     private String companyName;
 
-    
-
-    
+    @Column(name = "budget", nullable = false)
+    private BigDecimal budget;
 
     public Integer getCustomerId() {
         return customerId;
@@ -51,7 +48,7 @@ public class Customer {
         this.customerId = customerId;
     }
 
-   public User getUser() {
+    public User getUser() {
         return user;
     }
 
@@ -91,7 +88,13 @@ public class Customer {
         this.companyName = companyName;
     }
 
-   
+    public BigDecimal getBudget() {
+        return budget;
+    }
+
+    public void setBudget(BigDecimal budget) {
+        this.budget = budget;
+    }
 
     public Customer() {
     }

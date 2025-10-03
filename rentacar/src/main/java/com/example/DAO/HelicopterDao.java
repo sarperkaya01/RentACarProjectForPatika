@@ -25,7 +25,7 @@ public interface HelicopterDao extends JpaRepository<Helicopter, Integer> {
 
         String INFO_DTO_CONSTRUCTOR = "new com.example.DTO.HelicopterInfoDto(" +
                         "h.id, h.brandName, h.modelName, h.modelYear, h.plateOrTailNumber, " +
-                        "h.currentFuel, h.maxFuelCapacity, h.vehicleValue, h.vehicleStatus, " +
+                        "h.vehicleValue, h.vehicleStatus, " +
                         "p.dailyPricing, p.weeklyPricing, p.monthlyPricing, " +
                         "h.flightHours, h.speciality)";
 

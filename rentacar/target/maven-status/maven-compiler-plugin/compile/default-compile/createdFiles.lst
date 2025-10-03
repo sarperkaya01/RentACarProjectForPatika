@@ -32,12 +32,14 @@ com/example/Services/VehicleRegistrationService.class
 com/example/Services/AutomobileServices.class
 com/example/Utils/Interfaces/LandVehicle.class
 com/example/Controllers/UpdateFactories/AutomobileUpdateFactory.class
+com/example/Controllers/SelectFactories/RentalSelectFactory.class
 com/example/Controllers/AutomobileController.class
 com/example/Utils/Enums/PermissionType.class
 com/example/Utils/Logics/PricingLogic.class
 com/example/Utils/Interfaces/UpdateFactory.class
 com/example/Utils/Logics/RentalFlowLogic.class
 com/example/Controllers/HelicopterController.class
+com/example/Services/CheckoutCalculatorService.class
 com/example/Entities/DbModels/Vehicles/Helicopter.class
 com/example/Entities/DbModels/People/Customer.class
 com/example/Utils/Action/MenuAction.class
@@ -49,12 +51,14 @@ com/example/Utils/Enums/UserRoles.class
 com/example/Services/CheckoutServices.class
 com/example/Utils/Logics/PermissionLogic.class
 com/example/Services/UserServices.class
+com/example/Utils/Enums/RentalPeriod.class
 com/example/Utils/Interfaces/SelectFactory.class
 com/example/Controllers/VehicleOperationsController.class
 com/example/Controllers/InsertFactories/MotorcycleInsertFactory.class
 com/example/DAO/HelicopterDao.class
 com/example/Utils/Interfaces/AirVehicle.class
 com/example/Utils/Interfaces/InsertFactory.class
+com/example/Services/CheckoutCalculatorService$1.class
 com/example/Controllers/SelectFactories/CustomerSelectFactory.class
 com/example/DAO/CustomerDao.class
 com/example/Utils/Exceptions/DuplicateEmailException.class
@@ -75,7 +79,6 @@ com/example/Utils/Interfaces/SummarizableController.class
 com/example/Entities/DbModels/Vehicles/Vehicle.class
 com/example/Utils/Logics/VehicleLogic.class
 com/example/Services/HelicopterServices.class
-com/example/Utils/Abstracts/FuelDriven.class
 com/example/DAO/UserDao.class
 com/example/Utils/Enums/DamageType.class
 com/example/Controllers/UpdateFactories/MotorcycleUpdateFactory.class

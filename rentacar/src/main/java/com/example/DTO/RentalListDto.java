@@ -1,10 +1,10 @@
 package com.example.DTO;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+
 
 import com.example.Utils.Enums.RentalStatus;
 

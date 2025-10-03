@@ -1,6 +1,6 @@
 package com.example.Entities.DbModels.Vehicles;
 
-import java.math.BigDecimal;
+
 
 import com.example.Utils.Enums.VehicleStatus;
 import com.example.Utils.Enums.VehicleTypes;
@@ -51,12 +51,7 @@ public abstract class Vehicle {
 
     @Column(name = "plate_or_tailnumber", nullable = false)
     private String plateOrTailNumber;
-
-    @Column(name = "current_fuel", nullable = false, precision = 6, scale = 2)
-    private BigDecimal currentFuel;
-
-    @Column(name = "max_fuel_capacity", nullable = false, precision = 6, scale = 2)
-    private BigDecimal maxFuelCapacity;
+   
 
     @Column(name = "vehicle_value", nullable = false)
     private Integer vehicleValue;
@@ -72,8 +67,6 @@ public abstract class Vehicle {
     public void setId(Integer id) {
         this.id = id;
     }
-
-
 
     public VehicleTypes getVehicleType() {
         return vehicleType;
@@ -124,21 +117,7 @@ public abstract class Vehicle {
         this.plateOrTailNumber = plateOrTailNumber;
     }
 
-    public BigDecimal getCurrentFuel() {
-        return currentFuel;
-    }
-
-    public void setCurrentFuel(BigDecimal currentFuel) {
-        this.currentFuel = currentFuel;
-    }
-
-    public BigDecimal getMaxFuelCapacity() {
-        return maxFuelCapacity;
-    }
-
-    public void setMaxFuelCapacity(BigDecimal maxFuelCapacity) {
-        this.maxFuelCapacity = maxFuelCapacity;
-    }
+  
 
     public Integer getVehicleValue() {
         return vehicleValue;

@@ -8,41 +8,39 @@ import java.util.Locale;
 
 public class HelicopterInfoDto extends VehicleDetailDto {
 
-     private final BigDecimal flightHours;
-    private final HeliSpeciality speciality;
+        private final BigDecimal flightHours;
+        private final HeliSpeciality speciality;
 
-    public HelicopterInfoDto(
-            Integer vehicleId, String brandName, String modelName, Integer modelYear,
-            String plateOrTailNumber, BigDecimal currentFuel, BigDecimal maxFuelCapacity,
-            Integer vehicleValue, VehicleStatus vehicleStatus,
-            BigDecimal dailyPricing, BigDecimal weeklyPricing, BigDecimal monthlyPricing,
-            BigDecimal flightHours, HeliSpeciality speciality) {
+        public HelicopterInfoDto(
+                        Integer vehicleId, String brandName, String modelName, Integer modelYear,
+                        String plateOrTailNumber, Integer vehicleValue, VehicleStatus vehicleStatus,
+                        BigDecimal dailyPricing, BigDecimal weeklyPricing, BigDecimal monthlyPricing,
+                        BigDecimal flightHours, HeliSpeciality speciality) {
 
-        super(vehicleId, brandName, modelName, modelYear, plateOrTailNumber,
-              currentFuel, maxFuelCapacity, vehicleValue, vehicleStatus,
-              dailyPricing, weeklyPricing, monthlyPricing);
+                super(vehicleId, brandName, modelName, modelYear, plateOrTailNumber,
+                                vehicleValue, vehicleStatus,
+                                dailyPricing, weeklyPricing, monthlyPricing);
 
-        this.flightHours = flightHours;
-        this.speciality = speciality;
-    }
+                this.flightHours = flightHours;
+                this.speciality = speciality;
+        }
 
-    @Override
-    public String getSpecificDetails() {
-        NumberFormat numberFormatter = NumberFormat.getNumberInstance(Locale.US);
-        numberFormatter.setMaximumFractionDigits(2);
+        @Override
+        public String getSpecificDetails() {
+                NumberFormat numberFormatter = NumberFormat.getNumberInstance(Locale.US);
+                numberFormatter.setMaximumFractionDigits(2);
 
-        String flightHoursStr = flightHours != null
-                ? numberFormatter.format(flightHours) + " hours"
-                : "N/A";
-        String specialityStr = speciality != null
-                ? speciality.toString()
-                : "N/A";
+                String flightHoursStr = flightHours != null
+                                ? numberFormatter.format(flightHours) + " hours"
+                                : "N/A";
+                String specialityStr = speciality != null
+                                ? speciality.toString()
+                                : "N/A";
 
-        return String.format(
-                " Flight Hours      : %s%n" +
-                " Speciality        : %s%n",
-                flightHoursStr,
-                specialityStr
-        );
-    }
+                return String.format(
+                                " Flight Hours      : %s%n" +
+                                                " Speciality        : %s%n",
+                                flightHoursStr,
+                                specialityStr);
+        }
 }

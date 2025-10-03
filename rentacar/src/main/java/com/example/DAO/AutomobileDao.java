@@ -24,7 +24,7 @@ public interface AutomobileDao extends JpaRepository<Automobile, Integer> {
 
        String INFO_DTO_CONSTRUCTOR = "new com.example.DTO.AutomobileInfoDto(" +
                      "a.id, a.brandName, a.modelName, a.modelYear, a.plateOrTailNumber, " +
-                     "a.currentFuel, a.maxFuelCapacity, a.vehicleValue, a.vehicleStatus, " +
+                     "a.vehicleValue, a.vehicleStatus, " +
                      "p.dailyPricing, p.weeklyPricing, p.monthlyPricing, " +
                      "a.km, a.wheelDriveType)";
 
@@ -36,7 +36,7 @@ public interface AutomobileDao extends JpaRepository<Automobile, Integer> {
 
        // --- VehicleListDto için ---
 
-     @Query("SELECT " + LIST_DTO_CONSTRUCTOR
+       @Query("SELECT " + LIST_DTO_CONSTRUCTOR
                      + " FROM Automobile a JOIN a.pricing p ORDER BY a.brandName, a.modelName")
        List<VehicleListDto> findAllAsListDto();
 

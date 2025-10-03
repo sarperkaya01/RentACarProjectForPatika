@@ -16,11 +16,10 @@ import com.example.Entities.DbModels.Vehicles.Motorcycle;
 import com.example.Utils.Enums.MotorcycleMobility;
 import com.example.Utils.Enums.VehicleStatus;
 
-
 @Service
 public class MotorcycleServices {
 
-     private final MotorcycleDao motorcycleDao;
+    private final MotorcycleDao motorcycleDao;
     private final VehiclePricingServices vehiclePricingServices;
 
     @Autowired
@@ -33,7 +32,7 @@ public class MotorcycleServices {
     public List<VehicleListDto> getAllMotorcyclesAsListDto() {
         return motorcycleDao.findAllAsListDto();
     }
-    
+
     @Transactional(readOnly = true)
     public Optional<MotorcycleInfoDto> getMotorcyclesByIdAsInfoDto(Integer motorcycleId) {
         return motorcycleDao.findById(motorcycleId).map(this::convertToDto);
@@ -41,13 +40,12 @@ public class MotorcycleServices {
 
     private MotorcycleInfoDto convertToDto(Motorcycle m) {
         return new MotorcycleInfoDto(
-            m.getId(), m.getBrandName(), m.getModelName(), m.getModelYear(), m.getPlateOrTailNumber(),
-            m.getCurrentFuel(), m.getMaxFuelCapacity(), m.getVehicleValue(), m.getVehicleStatus(),
-            m.getPricing().getDailyPricing(), m.getPricing().getWeeklyPricing(), m.getPricing().getMonthlyPricing(),
-            m.getKm(), m.getEngineCC(), m.getMobilityType()
-        );
+                m.getId(), m.getBrandName(), m.getModelName(), m.getModelYear(), m.getPlateOrTailNumber(),
+                m.getVehicleValue(), m.getVehicleStatus(),
+                m.getPricing().getDailyPricing(), m.getPricing().getWeeklyPricing(), m.getPricing().getMonthlyPricing(),
+                m.getKm(), m.getEngineCC(), m.getMobilityType());
     }
-    
+
     @Transactional(readOnly = true)
     public Optional<MotorcycleInfoDto> getMotorcyclesByPlateOrTailNumberAsInfoDto(String identifier) {
         return motorcycleDao.findByPlateOrTailNumberAsInfoDto(identifier);
@@ -153,20 +151,6 @@ public class MotorcycleServices {
     public Motorcycle updateMobilityType(Integer motorcycleId, MotorcycleMobility newMobilityType) {
         Motorcycle motorcycle = getMotorcycleById(motorcycleId);
         motorcycle.setMobilityType(newMobilityType);
-        return motorcycleDao.save(motorcycle);
-    }
-
-    @Transactional
-    public Motorcycle updateCurrentFuel(Integer motorcycleId, BigDecimal newCurrentFuel) {
-        Motorcycle motorcycle = getMotorcycleById(motorcycleId);
-        motorcycle.setCurrentFuel(newCurrentFuel);
-        return motorcycleDao.save(motorcycle);
-    }
-
-    @Transactional
-    public Motorcycle updateMaxFuelCapacity(Integer motorcycleId, BigDecimal newMaxCapacity) {
-        Motorcycle motorcycle = getMotorcycleById(motorcycleId);
-        motorcycle.setMaxFuelCapacity(newMaxCapacity);
         return motorcycleDao.save(motorcycle);
     }
 

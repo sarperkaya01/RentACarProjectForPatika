@@ -13,8 +13,6 @@ public abstract class VehicleDetailDto {
     protected final String modelName;
     protected final Integer modelYear;
     private final String platOrTailNumber;
-    private final BigDecimal currentFuel;
-    private final BigDecimal maxFuelCapacity;
     protected final Integer vehicleValue;
     protected final VehicleStatus vehicleStatus;
 
@@ -29,15 +27,13 @@ public abstract class VehicleDetailDto {
      */
 
     public VehicleDetailDto(Integer vehicleId, String brandName, String modelName, Integer modelYear,
-            String platOrTailNumber, BigDecimal currentFuel, BigDecimal maxFuelCapacity, Integer vehicleValue,
-            VehicleStatus vehicleStatus, BigDecimal dailyPricing, BigDecimal weeklyPricing, BigDecimal monthlyPricing) {
+            String platOrTailNumber, Integer vehicleValue, VehicleStatus vehicleStatus, BigDecimal dailyPricing,
+            BigDecimal weeklyPricing, BigDecimal monthlyPricing) {
         this.vehicleId = vehicleId;
         this.brandName = brandName;
         this.modelName = modelName;
         this.modelYear = modelYear;
         this.platOrTailNumber = platOrTailNumber;
-        this.currentFuel = currentFuel;
-        this.maxFuelCapacity = maxFuelCapacity;
         this.vehicleValue = vehicleValue;
         this.vehicleStatus = vehicleStatus;
         this.dailyPricing = dailyPricing;
@@ -65,8 +61,7 @@ public abstract class VehicleDetailDto {
         String dailyPriceStr = dailyPricing != null ? currencyFormatter.format(dailyPricing) : "N/A";
         String weeklyPriceStr = weeklyPricing != null ? currencyFormatter.format(weeklyPricing) : "N/A";
         String monthlyPriceStr = monthlyPricing != null ? currencyFormatter.format(monthlyPricing) : "N/A";
-        String fuelLevel = currentFuel + " / " + maxFuelCapacity;
-
+       
         // getClass().getSimpleName() -> "AutomobileDto" gibi bir isim verir.
         // replace("Dto", "") -> "Automobile" yapar.
         // toUpperCase() -> "AUTOMOBILE" yapar.
@@ -83,7 +78,6 @@ public abstract class VehicleDetailDto {
                         " SPECIFIC DETAILS\n" +
                         "--------------------------------------------------\n" +
                         " Plate             : %s\n" +                        
-                        " Fuel Level        : %s\n" +
                         "%s" + // Buraya araca özgü detaylar (plaka, km vb.) gelecek
                         "--------------------------------------------------\n" +
                         " PRICING (per period)\n" +
@@ -97,8 +91,7 @@ public abstract class VehicleDetailDto {
                 this.brandName, this.modelName, this.modelYear,
                 this.vehicleStatus,
                 valueStr,
-                platOrTailNumber,
-                fuelLevel,
+                platOrTailNumber,                
                 getSpecificDetails(), // Soyut metodu burada çağırıyoruz
                 dailyPriceStr,
                 weeklyPriceStr,

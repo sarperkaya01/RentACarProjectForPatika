@@ -1,5 +1,6 @@
 package com.example.Services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,9 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.DAO.CustomerDao;
 import com.example.DAO.RentalDao;
-import com.example.DAO.VehicleDao;
+
 import com.example.DTO.RentalInfoDto;
 import com.example.DTO.RentalListDto;
 import com.example.Entities.DbModels.People.Customer;
@@ -23,14 +23,10 @@ import com.example.Utils.Enums.VehicleStatus;
 @Service
 public class RentalServices {
     private final RentalDao rentalDao;
-    private final VehicleDao vehicleDao;
-    private final CustomerDao customerDao;
 
     @Autowired
-    public RentalServices(RentalDao rentalDao, VehicleDao vehicleDao, CustomerDao customerDao) {
+    public RentalServices(RentalDao rentalDao) {
         this.rentalDao = rentalDao;
-        this.vehicleDao = vehicleDao;
-        this.customerDao = customerDao;
 
     }
 
@@ -76,6 +72,8 @@ public class RentalServices {
         newRental.setCustomer(customer);
         newRental.setCheckout(checkout);
         newRental.setVehicle(vehicle);
+        newRental.setRentDate(LocalDateTime.now());
+        newRental.setRentalStatus(RentalStatus.RENTED);
 
         return rentalDao.save(newRental);
     }

@@ -37,6 +37,25 @@ public class HelicopterServices {
     }
 
     @Transactional(readOnly = true)
+    public Optional<HelicopterInfoDto> getHelicoptersByIdAsInfoDto(Integer helicopterId) {
+       
+        return helicopterDao.findById(helicopterId).map(this::convertToDto);
+    }
+
+    /**
+     * Helicopter entity'sini HelicopterInfoDto'ya dönüştüren özel yardımcı metot.
+     */
+    private HelicopterInfoDto convertToDto(Helicopter h) {
+
+        return new HelicopterInfoDto(
+                h.getId(), h.getBrandName(), h.getModelName(), h.getModelYear(), h.getPlateOrTailNumber(),
+                h.getVehicleValue(), h.getVehicleStatus(), h.getPricing().getDailyPricing(),
+                h.getPricing().getWeeklyPricing(), h.getPricing().getMonthlyPricing(),
+                h.getFlightHours(),
+                h.getSpeciality());
+    }
+
+    @Transactional(readOnly = true)
     public Optional<HelicopterInfoDto> getHelicopterByPlateOrTailNumberAsInfoDto(String identifier) {
         return helicopterDao.findByPlateOrTailNumberAsInfoDto(identifier);
     }
@@ -132,20 +151,6 @@ public class HelicopterServices {
         }
 
         helicopter.setPlateOrTailNumber(newIdentifier);
-        return helicopterDao.save(helicopter);
-    }
-
-    @Transactional
-    public Helicopter updateCurrentFuel(Integer helicopterId, BigDecimal newCurrentFuel) {
-        Helicopter helicopter = getHelicopterById(helicopterId);
-        helicopter.setCurrentFuel(newCurrentFuel);
-        return helicopterDao.save(helicopter);
-    }
-
-    @Transactional
-    public Helicopter updateMaxFuelCapacity(Integer helicopterId, BigDecimal newMaxCapacity) {
-        Helicopter helicopter = getHelicopterById(helicopterId);
-        helicopter.setMaxFuelCapacity(newMaxCapacity);
         return helicopterDao.save(helicopter);
     }
 
