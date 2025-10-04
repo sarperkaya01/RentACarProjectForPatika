@@ -10,6 +10,7 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+
 import jakarta.persistence.Table;
 
 
@@ -19,6 +20,7 @@ import jakarta.persistence.Table;
 
 
 public class Helicopter extends Vehicle implements AirVehicle {
+
 
   
     @Column(name = "flight_hours", nullable = false, precision = 12, scale = 2)

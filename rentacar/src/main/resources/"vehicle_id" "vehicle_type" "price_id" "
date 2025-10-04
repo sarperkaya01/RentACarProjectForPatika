@@ -18,4 +18,4 @@ INSERT INTO vehicles (vehicle_id, vehicle_type, price_id, brand_name, model_name
 VALUES (2, 'AUTOMOBILE', 2, 'Ford', 'Mustang', 1969, 'MUST69', 850000, 'AVAILABLE');
 
 INSERT INTO vehicles (vehicle_id, vehicle_type, price_id, brand_name, model_name, model_year, plate_or_tailnumber, vehicle_value, vehicle_status) 
-VALUES (3, 'AUTOMOBILE', 3, 'Toyota', 'Camry', 2022, 'TCM22', 250000, 'RENTED');
+VALUES (2, 'AUTOMOBILE', 3, 'Mazda', 'MX5', 2021, 'MX521', 450000, 'AVAILABLE');

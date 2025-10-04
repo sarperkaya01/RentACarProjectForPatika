@@ -2,7 +2,6 @@ package com.example.Entities.DbModels.Vehicles;
 
 import java.math.BigDecimal;
 
-
 import com.example.Utils.Enums.MotorcycleMobility;
 
 import com.example.Utils.Interfaces.LandVehicle;
@@ -12,19 +11,20 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
 
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "motorcycles")
-@DiscriminatorValue("MOTORCYCLE") 
+@DiscriminatorValue("MOTORCYCLE")
 
 public class Motorcycle extends Vehicle implements LandVehicle {
 
-  
+ 
+
     @Column(name = "km", nullable = false, precision = 12, scale = 2)
     private BigDecimal km;
-   
+
     @Column(name = "engine_cc", nullable = false)
     private Integer engineCC;
 
@@ -32,34 +32,35 @@ public class Motorcycle extends Vehicle implements LandVehicle {
     @Column(name = "mobility_type", nullable = false, length = 20)
     private MotorcycleMobility mobilityType;
 
-   
-    
-    
     // --- Arayüz Metotlarının Uygulanması ---
 
-   
-   
     public BigDecimal getKm() {
         return km;
     }
+
     public void setKm(BigDecimal km) {
         this.km = km;
     }
+
     public Integer getEngineCC() {
         return engineCC;
     }
+
     public void setEngineCC(Integer engineCC) {
         this.engineCC = engineCC;
     }
+
     public MotorcycleMobility getMobilityType() {
         return mobilityType;
     }
+
     public void setMobilityType(MotorcycleMobility mobilityType) {
         this.mobilityType = mobilityType;
     }
+
     @Override
     public void addKm(BigDecimal distance) {
         this.km = this.km.add(distance);
     }
-   
+
 }

@@ -40,12 +40,6 @@ public class CustomerServices {
                 throw new IllegalStateException("Company with name " + finalCompanyName + " already exists.");
             });
         }
-        // customer.setUser(Global.newlyCreatedUserContext.get());
-        // UserRoles ur = finalCompanyName == "-" ? UserRoles.CORPORATE :
-        // UserRoles.INDIVIDUAL;
-
-        // userServices.updateRole(Global.newlyCreatedUserContext.get().getUserId(),
-        // ur);
 
         return customerDao.save(customer);
     }

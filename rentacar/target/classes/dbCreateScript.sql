@@ -64,23 +64,23 @@ CREATE TABLE rentals (
 );
 
 CREATE TABLE automobiles (
-    auto_id INT PRIMARY KEY,
+    vehicle_id INT PRIMARY KEY,
     km NUMERIC(12, 2) NOT NULL,
     wheel_drive_type VARCHAR(20) NOT NULL,
-    CONSTRAINT fk_auto_vehicle FOREIGN KEY (auto_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
+    CONSTRAINT fk_auto_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );
 
 CREATE TABLE motorcycles (
-    motor_id INT PRIMARY KEY,    
+    vehicle_id INT PRIMARY KEY,    
     km NUMERIC(12, 2) NOT NULL,
     engine_cc INT NOT NULL,
     mobility_type VARCHAR(20) NOT NULL,
-    CONSTRAINT fk_motor_vehicle FOREIGN KEY (motor_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
+    CONSTRAINT fk_motor_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );
 
 CREATE TABLE helicopters (
-    heli_id INT PRIMARY KEY,   
+    vehicle_id INT PRIMARY KEY,   
     flight_hours NUMERIC(12, 2) NOT NULL,
     speciality VARCHAR(20) NOT NULL,
-    CONSTRAINT fk_heli_vehicle FOREIGN KEY (heli_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
+    CONSTRAINT fk_heli_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );
