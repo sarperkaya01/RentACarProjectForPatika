@@ -5,11 +5,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-
 import com.example.Utils.Enums.RentalStatus;
 
 public class RentalListDto {
     private final Integer rentalId;
+
+    public Integer getRentalId() {
+        return rentalId;
+    }
+
     private final String customerName;
     private final String customerSurname;
     private final String brandName;

@@ -1,6 +1,7 @@
 package com.example.Controllers;
 
 import com.example.DTO.CustomerInfoDto;
+import com.example.DTO.RentalInfoDto;
 import com.example.Services.CustomerServices;
 import com.example.Services.UserServices;
 import com.example.Utils.Global;
@@ -36,7 +37,7 @@ public class ProfileController implements Controller {
 
     @Override
     public List<String> getMenuTitles() {
-        return Arrays.asList("Show My Info", "Change Password", "Exit");
+        return Arrays.asList("Show My Info", "Change Password", "Add Money", "Exit");
     }
 
     @SuppressWarnings("unused")
@@ -93,5 +94,33 @@ public class ProfileController implements Controller {
     private void pause() {
         System.out.println("\nPress Enter to return to the profile menu...");
         Global.scanner.nextLine();
+    }
+
+    public void addMoney() {
+
+        // boolean k = true;
+
+        // while (k) {
+
+        //     System.out.println("Please enter the amount to add to the budget  :");
+        //     if (Global.scanner.hasNextInt()) {
+
+        //         Integer input = Global.scanner.nextInt();
+        //         Global.scanner.nextLine();
+        //         customerServices.updateBudget(customerServices.get)
+        //         if (rentalInfoOptional.isPresent()) {
+        //             System.out.println(rentalInfoOptional.get()); // .get() ile içindeki DTO'yu alıp yazdır
+        //         } else {
+        //             System.out.println("Rental with ID " + input + " could not be found.");
+        //         }
+
+        //         k = false;
+
+        //     } else {
+        //         System.out.println("Only insert a digit !");
+        //         Global.scanner.nextLine();
+        //     }
+
+        // }
     }
 }

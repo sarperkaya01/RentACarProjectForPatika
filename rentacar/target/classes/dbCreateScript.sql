@@ -12,6 +12,7 @@ CREATE TABLE customers (
     customer_surname VARCHAR(30) not null,
     customer_age SMALLINT not null,
     company_name VARCHAR(20) not null UNIQUE,
+    budget NUMERIC not null,
     -- Foreign Key constraints
     CONSTRAINT fk_customer_user FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
 );
@@ -31,9 +32,7 @@ CREATE TABLE vehicles (
     brand_name VARCHAR(30) NOT NULL,
     model_name VARCHAR(30) NOT NULL,
     model_year INT NOT NULL,
-    plate_or_tailnumber VARCHAR(15) NOT NULL UNIQUE,
-    --current_fuel NUMERIC(6, 2) NOT NULL,
-    --max_fuel_capacity NUMERIC(6, 2) NOT NULL,
+    plate_or_tailnumber VARCHAR(15) NOT NULL UNIQUE,   
     vehicle_value INT NOT NULL,
     vehicle_status VARCHAR(20) NOT NULL,
     CONSTRAINT fk_vehicle_properties FOREIGN KEY (price_id) REFERENCES vehicle_properties (price_id)
@@ -46,10 +45,9 @@ CREATE TABLE checkout (
     planned_price DECIMAL(10, 2),
     depozit DECIMAL(10, 2),
     late_fee DECIMAL(10, 2),
-    --repair_fee DECIMAL(10, 2) DEFAULT NULL,
+    repair_fee DECIMAL(10, 2) DEFAULT NULL,
     checkout_amount DECIMAL(10, 2),
-    checkout_status VARCHAR(10) NOT NULL
-    -- Foreign Key constraints
+    checkout_status VARCHAR(10) NOT NULL   
 );
 
 CREATE TABLE rentals (
@@ -67,14 +65,14 @@ CREATE TABLE rentals (
 
 CREATE TABLE automobiles (
     auto_id INT PRIMARY KEY,
-    --km NUMERIC(12, 2) NOT NULL,
+    km NUMERIC(12, 2) NOT NULL,
     wheel_drive_type VARCHAR(20) NOT NULL,
     CONSTRAINT fk_auto_vehicle FOREIGN KEY (auto_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );
 
 CREATE TABLE motorcycles (
     motor_id INT PRIMARY KEY,    
-    --km NUMERIC(12, 2) NOT NULL,
+    km NUMERIC(12, 2) NOT NULL,
     engine_cc INT NOT NULL,
     mobility_type VARCHAR(20) NOT NULL,
     CONSTRAINT fk_motor_vehicle FOREIGN KEY (motor_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
@@ -82,7 +80,7 @@ CREATE TABLE motorcycles (
 
 CREATE TABLE helicopters (
     heli_id INT PRIMARY KEY,   
-    --flight_hours NUMERIC(12, 2) NOT NULL,
+    flight_hours NUMERIC(12, 2) NOT NULL,
     speciality VARCHAR(20) NOT NULL,
     CONSTRAINT fk_heli_vehicle FOREIGN KEY (heli_id) REFERENCES vehicles (vehicle_id) ON DELETE CASCADE
 );

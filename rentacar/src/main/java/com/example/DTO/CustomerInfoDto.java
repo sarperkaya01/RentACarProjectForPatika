@@ -1,5 +1,7 @@
 package com.example.DTO;
 
+import java.math.BigDecimal;
+
 import com.example.Utils.Enums.UserRoles;
 
 public class CustomerInfoDto {
@@ -9,7 +11,7 @@ public class CustomerInfoDto {
     private final String customerSurname;
     private final Integer age;
     private final String companyName;
-    private final Integer budget;
+    private final BigDecimal budget;
 
     // İlişkili User'dan gelen alanlar
     private final Integer userId;
@@ -18,7 +20,7 @@ public class CustomerInfoDto {
 
     public CustomerInfoDto(
             Integer customerId, String customerName, String customerSurname, Integer age, String companyName,
-            Integer budget, Integer userId, String email, UserRoles role) {
+            BigDecimal budget, Integer userId, String email, UserRoles role) {
         this.customerId = customerId;
         this.customerName = customerName;
         this.customerSurname = customerSurname;
@@ -48,7 +50,7 @@ public class CustomerInfoDto {
         return email;
     }
 
-    public Integer getBudget() {
+    public BigDecimal getBudget() {
         return budget;
     }
 

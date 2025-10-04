@@ -3,24 +3,28 @@ package com.example.Controllers;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
 import com.example.Controllers.SelectFactories.RentalSelectFactory;
+import com.example.DTO.RentalInfoDto;
 import com.example.DTO.RentalListDto;
 import com.example.Entities.DbModels.People.Customer;
 import com.example.Entities.DbModels.Vehicles.Vehicle;
-import com.example.Entities.Renting.Checkout;
 
+import com.example.Entities.Renting.Rental;
 import com.example.Services.CheckoutServices;
 import com.example.Services.CustomerServices;
 import com.example.Services.RentalServices;
 import com.example.Services.VehicleService;
 import com.example.Utils.Global;
 import com.example.Utils.Enums.DamageType;
-import com.example.Utils.Enums.RentalPeriod;
+
 import com.example.Utils.Enums.UserRoles;
 import com.example.Utils.Interfaces.Controller;
 import com.example.Utils.Interfaces.SummarizableController;
@@ -65,6 +69,7 @@ public class RentalsController implements Controller, SummarizableController<Ren
             menuCases.add("Search For a Rental");
         } else {
             menuCases.add("My Rental History");
+            menuCases.add("Rental Info");
         }
         menuCases.add("Exit");
         return menuCases;
@@ -94,27 +99,23 @@ public class RentalsController implements Controller, SummarizableController<Ren
         System.out.println("\nStarting checkout process for: " + vehicleToRent.getBrandName() + " "
                 + vehicleToRent.getModelName());
 
-        Checkout createdCheckout = checkoutServices.saveNewCheckout(vehicleToRent);
-
-        if (createdCheckout != null) {
+        {
             try {
-                Customer customer = customerService.getCustomerById(Global.currentUser.getUserId());
+                Customer customer = customerService.getCustomerByUserId(Global.currentUser.getUserId());
                 if (customer == null) {
                     throw new IllegalStateException("Could not find customer details for the logged-in user.");
                 }
 
-                rentalService.saveNewRental(customer, vehicleToRent, createdCheckout);
+                Rental newRent = rentalService.saveNewRental(customer, vehicleToRent);
 
-                System.out.println("Rental successfully created! Checkout ID: " + createdCheckout.getCheckoutId());
+                if (newRent != null) {
+                    System.out.println("Rental successfully created! Rental ID: " + newRent.getRentalId());
+                }
 
             } catch (Exception e) {
                 System.out.println("\n--- CRITICAL ERROR ---");
-                System.out.println("Checkout record was created, but the final rental could not be saved.");
-                System.out.println("Please contact support with Checkout ID: " + createdCheckout.getCheckoutId());
                 System.out.println("Error details: " + e.getMessage());
             }
-        } else {
-            System.out.println("\nRental process was canceled or failed.");
         }
     }
 
@@ -135,6 +136,7 @@ public class RentalsController implements Controller, SummarizableController<Ren
     }
 
     public void listAllRentals() {
+
         listAllSummary();
     }
 
@@ -153,8 +155,44 @@ public class RentalsController implements Controller, SummarizableController<Ren
     }
 
     public void myRentalHistory() {
-        Customer c = customerService.getCustomerById(Global.currentUser.getUserId());
-        rentalService.getRentalsByCustomerAsListDto(c);
+        Customer c = customerService.getCustomerByUserId(Global.currentUser.getUserId());
+        List<RentalListDto> myRentals = rentalService.getRentalsByCustomerAsListDto(c);
+
+        // Sıralanmış yeni bir liste oluşturma
+        List<RentalListDto> sortedRentals = myRentals.stream()
+                .sorted(Comparator.comparing(RentalListDto::getRentalId))
+                .collect(Collectors.toList());
+        sortedRentals.forEach(System.out::println);
+
+    }
+
+    public void rentalInfo() {
+
+        boolean k = true;
+
+        while (k) {
+
+            System.out.println("Please enter the RentalID :");
+            if (Global.scanner.hasNextInt()) {
+
+                Integer input = Global.scanner.nextInt();
+                Global.scanner.nextLine();
+                Optional<RentalInfoDto> rentalInfoOptional = rentalService.getRentalByIdAsInfoDto(input);
+                if (rentalInfoOptional.isPresent()) {
+                    System.out.println(rentalInfoOptional.get()); // .get() ile içindeki DTO'yu alıp yazdır
+                } else {
+                    System.out.println("Rental with ID " + input + " could not be found.");
+                }
+
+                k = false;
+
+            } else {
+                System.out.println("Only insert a digit !");
+                Global.scanner.nextLine();
+            }
+
+        }
+
     }
 
     public BigDecimal repairFee() {
@@ -207,11 +245,11 @@ public class RentalsController implements Controller, SummarizableController<Ren
             String input = Global.scanner.nextLine().trim();
 
             try {
-                // Kullanıcı sadece sayı (integer ya da decimal) girmişse burada yakalanır
+
                 value = new BigDecimal(input);
 
                 if (value.compareTo(BigDecimal.ZERO) >= 0) {
-                    validInput = true; // pozitif veya sıfır değer kabul edilir
+                    validInput = true;
                 } else {
                     System.out.println("Value cannot be negative. Please try again:");
                 }
@@ -222,4 +260,5 @@ public class RentalsController implements Controller, SummarizableController<Ren
 
         return value;
     }
+
 }

@@ -13,20 +13,23 @@ import com.example.DAO.RentalDao;
 import com.example.DTO.RentalInfoDto;
 import com.example.DTO.RentalListDto;
 import com.example.Entities.DbModels.People.Customer;
+import com.example.Entities.DbModels.People.User;
 import com.example.Entities.DbModels.Vehicles.Vehicle;
 import com.example.Entities.Renting.Checkout;
 import com.example.Entities.Renting.Rental;
-
+import com.example.Utils.Global;
 import com.example.Utils.Enums.RentalStatus;
 import com.example.Utils.Enums.VehicleStatus;
 
 @Service
 public class RentalServices {
     private final RentalDao rentalDao;
+    private final CheckoutServices checkoutServices;
 
     @Autowired
-    public RentalServices(RentalDao rentalDao) {
+    public RentalServices(RentalDao rentalDao, CheckoutServices checkoutServices) {
         this.rentalDao = rentalDao;
+        this.checkoutServices = checkoutServices;
 
     }
 
@@ -37,7 +40,7 @@ public class RentalServices {
 
     @Transactional(readOnly = true)
     public Optional<RentalInfoDto> getRentalByIdAsInfoDto(Integer id) {
-        return rentalDao.findByIdAsInfoDto(id);
+        return rentalDao.findById(id).map(this::convertToDto);
     }
 
     @Transactional(readOnly = true)
@@ -63,14 +66,16 @@ public class RentalServices {
     }
 
     @Transactional
-    public Rental saveNewRental(Customer customer, Vehicle vehicle, Checkout checkout) {
+    public Rental saveNewRental(Customer customer, Vehicle vehicle) {
+
+        Checkout createdCheckout = checkoutServices.saveNewCheckout(vehicle);
         Rental newRental = new Rental();
         if (vehicle.getVehicleStatus() != VehicleStatus.AVAILABLE) {
             throw new IllegalStateException(
                     "Vehicle is not available for rent. Current status: " + vehicle.getVehicleStatus());
         }
         newRental.setCustomer(customer);
-        newRental.setCheckout(checkout);
+        newRental.setCheckout(createdCheckout);
         newRental.setVehicle(vehicle);
         newRental.setRentDate(LocalDateTime.now());
         newRental.setRentalStatus(RentalStatus.RENTED);
@@ -101,6 +106,45 @@ public class RentalServices {
         }
 
         rentalDao.deleteById(id);
+    }
+
+    private RentalInfoDto convertToDto(Rental rental) {
+        // Rental nesnesine bağlı diğer entity'lere getter'lar üzerinden ulaşıyoruz.
+        Customer customer = rental.getCustomer();
+        Vehicle vehicle = rental.getVehicle();
+        Checkout checkout = rental.getCheckout();
+        User user = Global.currentUser;
+        // Artık tüm nesneler elimizde, DTO'yu oluşturabiliriz.
+        return new RentalInfoDto(
+                // Rental'dan gelenler
+                rental.getRentalId(),
+                rental.getRentDate(),
+                rental.getRentalStatus(),
+
+                // Customer'dan gelenler
+                customer.getCustomerId(),
+                customer.getCustomerName(),
+                customer.getCustomerSurname(),
+                user.getEmail(), // User'dan
+                customer.getCompanyName(),
+
+                // Vehicle'dan gelenler
+                vehicle.getId(),
+                vehicle.getVehicleType().name(), // Enum'ı String'e çeviriyoruz
+                vehicle.getBrandName(),
+                vehicle.getModelName(),
+                vehicle.getPlateOrTailNumber(),
+
+                // Checkout'tan gelenler
+                checkout.getCheckoutId(),
+                checkout.getPlannedDropoffDate(),
+                checkout.getActualDropoffDate(),
+                checkout.getPlannedPrice(),
+                checkout.getDeposit(),
+                checkout.getLateFee(),
+                checkout.getRepairFee(),
+                checkout.getCheckoutAmount(),
+                checkout.getCheckoutStatus());
     }
 
 }

@@ -5,12 +5,12 @@ import com.example.DTO.CustomerInfoDto;
 import com.example.DTO.CustomerListDto;
 import com.example.Entities.DbModels.People.Customer;
 
-
 import com.example.Utils.Enums.UserRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,9 +41,11 @@ public class CustomerServices {
             });
         }
         // customer.setUser(Global.newlyCreatedUserContext.get());
-        // UserRoles ur = finalCompanyName == "-" ? UserRoles.CORPORATE : UserRoles.INDIVIDUAL;
+        // UserRoles ur = finalCompanyName == "-" ? UserRoles.CORPORATE :
+        // UserRoles.INDIVIDUAL;
 
-        // userServices.updateRole(Global.newlyCreatedUserContext.get().getUserId(), ur);
+        // userServices.updateRole(Global.newlyCreatedUserContext.get().getUserId(),
+        // ur);
 
         return customerDao.save(customer);
     }
@@ -95,6 +97,11 @@ public class CustomerServices {
                 .orElseThrow(() -> new IllegalStateException("Customer not found with ID: " + id));
     }
 
+    public Customer getCustomerByUserId(Integer id) {
+        return customerDao.findByUser_UserId(id)
+                .orElseThrow(() -> new IllegalStateException("Customer not found with ID: " + id));
+    }
+
     // --- CRUD: UPDATE ---
 
     @Transactional
@@ -126,6 +133,13 @@ public class CustomerServices {
             throw new IllegalStateException("Company name " + newCompanyName + " is already in use.");
         }
         customer.setCompanyName(newCompanyName);
+        return customerDao.save(customer);
+    }
+
+    @Transactional
+    public Customer updateBudget(Integer customerId, BigDecimal amountToAdd) {
+        Customer customer = getCustomerById(customerId);
+        customer.setBudget(customer.getBudget().add(amountToAdd));
         return customerDao.save(customer);
     }
 

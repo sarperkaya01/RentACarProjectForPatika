@@ -20,7 +20,7 @@ public interface SelectFactory<T, D, S> extends DynamicController {
         return new ArrayList<>();
     }
 
-   // @SuppressWarnings("rawtypes")
+    // @SuppressWarnings("rawtypes")
     default void runSelectMenu(Class<T> entityType) {
         // Selector fonksiyonu artık genel bir Object döndürecek (List veya Optional)
         Map<String, Function<Object, Object>> fieldSelectors = generateFieldSelectors(entityType);
@@ -43,7 +43,8 @@ public interface SelectFactory<T, D, S> extends DynamicController {
                 continue;
             }
 
-            if (choice == menuActions.size() + 1) break;
+            if (choice == menuActions.size() + 1)
+                break;
 
             if (choice > 0 && choice <= menuActions.size()) {
                 menuActions.get(choice - 1).getAction().run();
@@ -53,7 +54,8 @@ public interface SelectFactory<T, D, S> extends DynamicController {
         }
     }
 
-    private List<MenuAction> generateSelectActions(Class<T> entityType, Map<String, Function<Object, Object>> fieldSelectors) {
+    private List<MenuAction> generateSelectActions(Class<T> entityType,
+            Map<String, Function<Object, Object>> fieldSelectors) {
         List<MenuAction> actions = new ArrayList<>();
         for (Field field : DynamicController.getAllFields(entityType)) {
             String fieldName = field.getName();
@@ -71,7 +73,8 @@ public interface SelectFactory<T, D, S> extends DynamicController {
         return () -> {
             try {
                 if (field.getType().isEnum()) {
-                    System.out.println("Please select a value for " + DynamicController.formatFieldName(field.getName()) + ":");
+                    System.out.println(
+                            "Please select a value for " + DynamicController.formatFieldName(field.getName()) + ":");
                     Object[] enumConstants = field.getType().getEnumConstants();
                     for (int i = 0; i < enumConstants.length; i++) {
                         System.out.println((i + 1) + ". " + enumConstants[i].toString());
@@ -83,12 +86,11 @@ public interface SelectFactory<T, D, S> extends DynamicController {
 
                 String input = Global.scanner.nextLine();
                 Object convertedValue = DynamicController.convertInput(input, field.getType());
-                
+
                 System.out.println("\n--- Search Results ---");
-                // Sonuç artık bir Object, tipini kontrol etmemiz gerekiyor.
+
                 Object result = selector.apply(convertedValue);
 
-                // Gelen sonucun tipine göre farklı yazdırma işlemi yap
                 if (result instanceof List) {
                     List<?> results = (List<?>) result;
                     if (results.isEmpty()) {
@@ -99,11 +101,12 @@ public interface SelectFactory<T, D, S> extends DynamicController {
                 } else if (result instanceof Optional) {
                     Optional<?> optionalResult = (Optional<?>) result;
                     optionalResult.ifPresentOrElse(
-                        System.out::println, // Optional doluysa içindekini yazdır
-                        () -> System.out.println("No record found matching your criteria.") // Optional boşsa bu mesajı yazdır
+                            System.out::println, // Optional doluysa içindekini yazdır
+                            () -> System.out.println("No record found matching your criteria.") // Optional boşsa bu
+                                                                                                // mesajı yazdır
                     );
                 } else {
-                     System.out.println("Unsupported result type from service method.");
+                    System.out.println("Unsupported result type from service method.");
                 }
 
             } catch (Exception e) {
@@ -112,16 +115,18 @@ public interface SelectFactory<T, D, S> extends DynamicController {
         };
     }
 
-    //@SuppressWarnings("unchecked")
+    // @SuppressWarnings("unchecked")
     default Map<String, Function<Object, Object>> generateFieldSelectors(Class<T> entityType) {
         S service = getSelectService();
         Map<String, Function<Object, Object>> selectors = new HashMap<>();
         Map<String, Class<?>> allFieldTypes = new HashMap<>();
-        DynamicController.getAllFields(entityType).forEach(field -> allFieldTypes.put(field.getName(), field.getType()));
+        DynamicController.getAllFields(entityType)
+                .forEach(field -> allFieldTypes.put(field.getName(), field.getType()));
 
         for (String fieldName : allFieldTypes.keySet()) {
             Class<?> fieldType = allFieldTypes.get(fieldName);
-            if (fieldType == null) continue;
+            if (fieldType == null)
+                continue;
 
             String capitalizedField = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
             String entityName = entityType.getSimpleName();

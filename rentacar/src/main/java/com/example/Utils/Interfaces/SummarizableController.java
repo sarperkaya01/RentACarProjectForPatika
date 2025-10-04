@@ -9,7 +9,7 @@ public interface SummarizableController<D> {
 
     String getEntityName();
 
-    default void listAllSummary() {
+    default void  listAllSummary() {
         System.out.println("\n--- All " + getEntityName() + "s in the System (Summary View) ---");
 
         List<D> summaryList = getSummaryDtoListSupplier().get();
@@ -19,5 +19,6 @@ public interface SummarizableController<D> {
         } else {
             summaryList.forEach(System.out::println);
         }
+        //return summaryList;
     }
 }
