@@ -112,3 +112,5 @@ java -jar target/Rent-car-project.jar
 
 For questions, suggestions, or contributions, feel free to reach out:
 📧 sarperkaya@sarperkaya.site
+
+<div align="center"> Made with ❤️ by <strong>Sarper Kaya</strong> </div> ```
