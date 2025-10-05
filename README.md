@@ -56,7 +56,7 @@ The project follows a **layered architecture** to separate logic and improve mai
 
 ## Project Structure
 RentCarProject/
-
+```
 │
 ├── rentacar/
 │ ├── src/
@@ -75,7 +75,7 @@ RentCarProject/
 └── README.md
 
 ---Ï
-
+```
 ## Requirements
 Make sure you have the following installed:
 
