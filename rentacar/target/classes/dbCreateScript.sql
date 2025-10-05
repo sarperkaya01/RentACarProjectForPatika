@@ -47,7 +47,7 @@ CREATE TABLE checkout (
     late_fee DECIMAL(10, 2),
     repair_fee DECIMAL(10, 2) DEFAULT NULL,
     checkout_amount DECIMAL(10, 2),
-    checkout_status VARCHAR(10) NOT NULL   
+    checkout_status VARCHAR(25) NOT NULL   
 );
 
 CREATE TABLE rentals (
@@ -56,7 +56,7 @@ CREATE TABLE rentals (
     vehicle_id INT NOT NULL,
     checkout_id INT NOT NULL,
     rent_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    rental_status VARCHAR(10) NOT NULL,
+    rental_status VARCHAR(25) NOT NULL,
     -- Foreign Key constraints
     CONSTRAINT fk_rental_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles (vehicle_id) ON DELETE RESTRICT,
     CONSTRAINT fk_rental_customer FOREIGN KEY (customer_id) REFERENCES customers (customer_id) ON DELETE RESTRICT,

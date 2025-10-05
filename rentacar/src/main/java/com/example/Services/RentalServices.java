@@ -25,11 +25,13 @@ import com.example.Utils.Enums.VehicleStatus;
 public class RentalServices {
     private final RentalDao rentalDao;
     private final CheckoutServices checkoutServices;
+    private final CustomerServices customerServices;
 
     @Autowired
-    public RentalServices(RentalDao rentalDao, CheckoutServices checkoutServices) {
+    public RentalServices(RentalDao rentalDao, CheckoutServices checkoutServices, CustomerServices customerServices) {
         this.rentalDao = rentalDao;
         this.checkoutServices = checkoutServices;
+        this.customerServices = customerServices;
 
     }
 
@@ -74,6 +76,8 @@ public class RentalServices {
             throw new IllegalStateException(
                     "Vehicle is not available for rent. Current status: " + vehicle.getVehicleStatus());
         }
+
+        customerServices.updateBudget(customer.getCustomerId(), createdCheckout.getDeposit().negate());
         newRental.setCustomer(customer);
         newRental.setCheckout(createdCheckout);
         newRental.setVehicle(vehicle);

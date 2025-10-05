@@ -1,10 +1,10 @@
 <div align="center">
-  <img src="RentThenWent.png" alt="Reana Logo" width="200" />
+  <img src="RentThenWent.png" alt="Rent Logo" width="200" />
 
-  <h1>🚗 Reana Car Project</h1>
+  <h1>🚗 Rent Car Project</h1>
 
   <p style="max-width:650px; margin:auto; text-align:center;">
-    <strong>Reana Car Project</strong> is a comprehensive application designed to simplify vehicle management and tracking.  
+    <strong>Rent Car Project</strong> is a comprehensive application designed to simplify vehicle management and tracking.  
     It allows you to store vehicle data, manage users, and perform various fleet-related operations efficiently.
   </p>
 </div>
@@ -55,12 +55,12 @@ The project follows a **layered architecture** to separate logic and improve mai
 ---
 
 ## 📂 Project Structure
-ReanaCarProject/
+RentCarProject/
 
 │
 ├── rentacar/
 │ ├── src/
-│ │ ├── main/java/com/reana/
+│ │ ├── main/java/com/Rent/
 │ │ │ ├── model/ # Data models (Vehicle, User, Price)
 │ │ │ ├── service/ # Business logic
 │ │ │ ├── repository/ # JSON data management
@@ -90,7 +90,7 @@ Make sure you have the following installed:
 ### 1️⃣ Open the terminal
 ### 2️⃣ Navigate to the project directory
 ```bash
-cd path/to/your/ReanaCarProject/rentacar
+cd path/to/your/RentCarProject/rentacar
 ```
 ```bash
 mvn clean install
@@ -101,7 +101,7 @@ mvn exec:java
 ```
 
 ```bash
-java -jar target/reana-car-project.jar
+java -jar target/Rent-car-project.jar
 ```
 🛠️ Badges
 <p align="center"> <img src="https://img.shields.io/badge/java-24.0.1-blue?logo=java&logoColor=white" alt="Java Version" /> <img src="https://img.shields.io/badge/maven-3.9+-orange?logo=apache-maven&logoColor=white" alt="Maven Version" /> <img src="https://img.shields.io/badge/jakarta-3.1-green?logo=jakartaee&logoColor=white" alt="Jakarta Version" /> <img src="https://img.shields.io/badge/build-passing-brightgreen?logo=githubactions&logoColor=white" alt="Build Status" /> </p>

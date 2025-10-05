@@ -84,14 +84,23 @@ public class CheckoutServices {
                 .add(finalRepairFee);
 
         BigDecimal deposit = checkout.getDeposit();
-        BigDecimal finalPaymentDue = subTotal.subtract(deposit);
 
-        if (customer.getBudget().compareTo(finalPaymentDue) < 0) {
-            throw new IllegalStateException("Insufficient budget. Customer needs to pay " + finalPaymentDue
-                    + " but only has " + customer.getBudget());
+        int comparison = subTotal.compareTo(deposit);
+
+        if (comparison > 0) {
+            BigDecimal amountToPay = subTotal.subtract(deposit);
+            if (customer.getBudget().compareTo(amountToPay) < 0) {
+                throw new IllegalStateException("Insufficient budget. Customer needs to pay " + amountToPay
+                        + " but only has " + customer.getBudget());
+            }
+            customer.setBudget(customer.getBudget().subtract(amountToPay));
+
+        } else if (comparison < 0) {
+            BigDecimal refundAmount = deposit.subtract(subTotal);
+            customer.setBudget(customer.getBudget().add(refundAmount));
         }
 
-        customer.setBudget(customer.getBudget().subtract(finalPaymentDue));
+        
 
         checkout.setActualDropoffDate(now);
         checkout.setRepairFee(finalRepairFee);

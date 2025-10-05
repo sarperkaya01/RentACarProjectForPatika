@@ -37,7 +37,7 @@ public class ProfileController implements Controller {
 
     @Override
     public List<String> getMenuTitles() {
-        return Arrays.asList("Show My Info", "Change Password", "Add Money", "Exit");
+        return Arrays.asList("Show My Info", "Change Password",  "Exit");
     }
 
     @SuppressWarnings("unused")
@@ -96,32 +96,4 @@ public class ProfileController implements Controller {
         Global.scanner.nextLine();
     }
 
-    public void addMoney() {
-
-        // boolean k = true;
-
-        // while (k) {
-
-        // System.out.println("Please enter the amount to add to the budget :");
-        // if (Global.scanner.hasNextInt()) {
-
-        // Integer input = Global.scanner.nextInt();
-        // Global.scanner.nextLine();
-        // customerServices.updateBudget(customerServices.get)
-        // if (rentalInfoOptional.isPresent()) {
-        // System.out.println(rentalInfoOptional.get()); // .get() ile içindeki DTO'yu
-        // alıp yazdır
-        // } else {
-        // System.out.println("Rental with ID " + input + " could not be found.");
-        // }
-
-        // k = false;
-
-        // } else {
-        // System.out.println("Only insert a digit !");
-        // Global.scanner.nextLine();
-        // }
-
-        // }
-    }
 }
