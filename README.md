@@ -26,13 +26,13 @@
 
 ---
 
-## 🧩 Project Overview
+## Project Overview
 **Vehicle Rental Project** is an extendable and modular vehicle management system that can be used for car rental, fleet management, or asset tracking purposes.  
 The system provides features such as JSON-based data storage, user authorization, and a simple command-line interface for direct interaction.
 
 ---
 
-## ✨ Features
+## Features
 - 🚘 **Vehicle Management:** Add, update, or delete vehicles  
 - 🔧 **Technical Tracking:** Monitor vehicle specifications and service history  
 - 👥 **User & Role Management:** Manage administrators and regular users with different privileges  
@@ -42,7 +42,7 @@ The system provides features such as JSON-based data storage, user authorization
 
 ---
 
-## 🧱 Architecture
+## Architecture
 The project follows a **layered architecture** to separate logic and improve maintainability:
 
 | Layer | Description |
@@ -54,7 +54,7 @@ The project follows a **layered architecture** to separate logic and improve mai
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 RentCarProject/
 
 │
@@ -74,7 +74,9 @@ RentCarProject/
 │
 └── README.md
 
-## ⚙️ Requirements
+---Ï
+
+## Requirements
 Make sure you have the following installed:
 
 | Requirement | Version / Description |
@@ -85,7 +87,7 @@ Make sure you have the following installed:
 
 ---
 
-## 🏗️ How to Build & Run
+## How to Build & Run
 
 ### 1️⃣ Open the terminal
 ### 2️⃣ Navigate to the project directory
