@@ -16,7 +16,7 @@ public interface CustomerDao extends JpaRepository<Customer, Integer> {
         Optional<Customer> findByUser_UserId(Integer userId);
 
         String LIST_DTO_CONSTRUCTOR = "new com.example.DTO.CustomerListDto(" +
-                        "c.customerId, c.customerName, c.customerSurname, c.companyName, c.budget, u.email, u.role)";
+                        "c.customerId, c.customerName, c.customerSurname, c.companyName, u.email, u.role)";
 
         @Query("SELECT " + LIST_DTO_CONSTRUCTOR + " FROM Customer c JOIN c.user u ORDER BY c.customerName")
         List<CustomerListDto> findAllAsListDto();
